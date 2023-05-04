@@ -116,6 +116,9 @@ public class Tabuleiro {
         destino.inserePiao(p);
         if (destino.isBarreira()) barreiras[p.getCorNum()].add(destino);    // caso isso crie uma barreira ela é salva no conjunto
         if (destino.getQtdPioes() == 4) this.termina();
+
+        destino.dump();
+        System.out.println(this.barreiras[p.getCorNum()].toString());
         
         // (Tomaz) FALTA UMA CLÁUSULA PARA SE ISSO CAPTURA UM PIÃO OPONENTE!!!!!!!! (Lembrando da função captura(Piao p) )
     }   
@@ -175,6 +178,13 @@ public class Tabuleiro {
         }
         for (Cor c: Cor.values()) {
             System.out.printf("Jogador %s: %d pontos\n",c.toString(),distanciasTotais[c.ordinal()]);
+        }
+    }
+
+    public boolean fim() {
+        for (Casa c: finais) {
+            if (c.getQtdPioes() == 4) return true;
+            return false;
         }
     }
     
