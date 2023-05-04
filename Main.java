@@ -1,4 +1,5 @@
 import regras.*;
+import cores.*;
 
 // A Main serve para testar.
 // (Tomaz) Usar Model em vez de Tester para testar DEPOIS DE MODEL ESTAR COMPLETA!!!
