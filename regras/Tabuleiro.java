@@ -1,5 +1,6 @@
 package regras;
 
+import cores.*;
 import java.util.*;
 
 // Tabuleiro representa o Tabuleiro de Ludo, e implementa 2 dos 3 métodos passados para Model.
@@ -137,7 +138,7 @@ public class Tabuleiro {
         
         // se tem mais de um piao no destino e ele nao é o final, o piao nao se move:
         Casa destino = this.search(p.getPosicao() + i, p.getCor());
-        if (destino.getQtdPioes > 1 && destino.Tipo != Tipo.vitoria) return false;
+        if (destino.getQtdPioes() > 1 && destino.getTipo() != Tipo.vitoria) return false;
         
         // FALTANDO!!!
         // se rolou 6 e tem barreiras liberáveis, elas devem ser liberadas:

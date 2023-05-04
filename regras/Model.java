@@ -1,5 +1,7 @@
 package regras;
 
+import cores.*;
+
 // Model é a fachada das regras, e é a única classe pública da 1a iteração.
 public class Model {
     Tabuleiro tabuleiro = new Tabuleiro();

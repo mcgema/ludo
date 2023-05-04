@@ -1,7 +1,7 @@
 package regras;
 
 import java.util.*;
-
+import cores.*;
 
 // tirar public de tudo quando for pra testar pra valer (depois de terminar as funcionalidades)
 

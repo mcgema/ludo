@@ -1,5 +1,6 @@
 package regras;
 
+import cores.*;
 // Piao representa um Pião colorido.
 public class Piao {
     private int posicao;

@@ -1,4 +1,5 @@
 package regras;
+import cores.*;
 
 // Tester é um jeito tosco de testar se tudo tá funcionando. Não é pra estar no arquivo final.
 public class Tester {
