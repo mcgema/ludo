@@ -8,16 +8,13 @@ public class Tabuleiro {
     // obs: com o tabuleiro correto em mãos, recontar TODO NÚMERO DE CASAS!!!
 
     // (Tomaz) Todas essas variáveis estão aqui só até o Ivan liberar o tabuleiro oficial. Depois disso, SUBSTITUIR POR NÚMEROS!!
-    int abrigos[] = {7, 11, 22, 26, 37, 41, 52, 56, 0};
-    int TOTAL_CASAS_PERCURSO = 60;
-    int TOTAL_CASAS_RETA_FINAL = 6;
-    int TOTAL_CASAS_ENTRE_SAIDA_E_RETA_FINAL = 2;
+    int abrigos[] = {10, 23, 36, 49, 0};
     
     // Tabuleiro é representado por Arrays de Casas.
-    Casa percurso  []   = new Casa [TOTAL_CASAS_PERCURSO];
+    Casa percurso  []   = new Casa [52];
     Casa iniciais  []   = new Casa [4];
     Casa finais    []   = new Casa [4];
-    Casa retaFinal [][] = new Casa [4][TOTAL_CASAS_RETA_FINAL];
+    Casa retaFinal [][] = new Casa [4][5];
     
     // Matriz de Piões guarda os "ponteiros" para todos os Piões, garantido que sempre serão facilmente acessíveis pela sua cor e índice.
     // (Tomaz) Guardado como arrayPioes[cor][indice]
@@ -30,8 +27,8 @@ public class Tabuleiro {
     {
         // inicializa Casas:
         int j = 0;
-        for (int i = 0; i < TOTAL_CASAS_PERCURSO; i++) {
-            if (i%(TOTAL_CASAS_PERCURSO/4) == 0) {}
+        for (int i = 0; i < 52; i++) {
+            if (i%13 == 0) {}
             
             // abrigos:
             else if (abrigos[j] == i) percurso[abrigos[j++]] = new Casa(i,Tipo.abrigo);
@@ -44,17 +41,17 @@ public class Tabuleiro {
             int corNum = c.ordinal();
             
             // casas de saída:
-            percurso [corNum*(TOTAL_CASAS_PERCURSO/4)] = new Casa(corNum*(TOTAL_CASAS_PERCURSO/4), Tipo.saida, c);
+            percurso [corNum*13] = new Casa(corNum*13, Tipo.saida, c);
             
             // casas iniciais (as grandes de 4 piões):
             iniciais [corNum]    = new Casa(0, Tipo.inicial, c);
             
             // casas finais ("vitoria")
             // (Tomaz) Eu usei "vitoria" em vez de "final", porque "final" é uma palavra reservada e buga o código.
-            finais   [corNum]    = new Casa(TOTAL_CASAS_RETA_FINAL+1, Tipo.vitoria, c);
+            finais   [corNum]    = new Casa(5+1, Tipo.vitoria, c);
             
             // casas das retas finais (exclusivas para uma cor cada:
-            for (int i = 0; i < TOTAL_CASAS_RETA_FINAL; i++) {
+            for (int i = 0; i < 5; i++) {
                 retaFinal[corNum][i] = new Casa(i+1,Tipo.retaFinal, c);
             }
             
@@ -95,9 +92,9 @@ public class Tabuleiro {
         
         // (Tomaz) Confia em mim: depois de trocar para números isso fica bem mais legível. Usar CTRL+H pra fazer isso quando for.
         if      (pos == 0 ) return iniciais  [corNum];
-        else if (pos == TOTAL_CASAS_RETA_FINAL+TOTAL_CASAS_PERCURSO+1-TOTAL_CASAS_ENTRE_SAIDA_E_RETA_FINAL) return finais    [corNum];
-        else if (pos >  TOTAL_CASAS_PERCURSO-TOTAL_CASAS_ENTRE_SAIDA_E_RETA_FINAL) return retaFinal [corNum][pos-(TOTAL_CASAS_PERCURSO+1-TOTAL_CASAS_ENTRE_SAIDA_E_RETA_FINAL)];
-        else return percurso[((TOTAL_CASAS_PERCURSO/4)*corNum+pos-1)%TOTAL_CASAS_PERCURSO];
+        else if (pos == 57) return finais    [corNum];
+        else if (pos >  51) return retaFinal [corNum][pos-52];
+        else return percurso[(13*corNum+pos-1)%52];
     }
     
     // search(Piao p) é polimórfica com a outra search(), e retorna a Casa em que o Pião p está.
@@ -125,7 +122,7 @@ public class Tabuleiro {
 
     public boolean possibleMove (Piao p, int i) {
         // se rolou 5 e tem pioes na casa inicial e eles podem sair, só eles podem mover:
-        if (i == 5 && this.getInicial(p.getCor()).getQtdPioes() > 0 && percurso[p.getCorNum()*(TOTAL_CASAS_PERCURSO/4)].getPiao(p.getCor())==null) {
+        if (i == 5 && this.getInicial(p.getCor()).getQtdPioes() > 0 && percurso[p.getCorNum()*13].getPiao(p.getCor())==null) {
             if (p.getPosicao() == 0) return true;
             else return false;
         }

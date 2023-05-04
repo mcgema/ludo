@@ -57,7 +57,7 @@ public class Piao {
 
     // distFinal() retorna a distância que o Pião está do final de seu percurso pessoal.
     public int distFinal () {
-        return 65-posicao;
+        return 57-posicao;
     }
     
     // reset() reseta o INDICE do Pião para 0. Assim como move(), ela NÃO ALTERA A CASA DO PIÃO! ISSO É FEITO EM Tabuleiro !!
@@ -69,7 +69,7 @@ public class Piao {
     // (Tomaz) É a última função que implementei hoje (03/05). Serve como auxiliar para a funcao de avaliar se um movimento é possível em Tabuleiro.
     public boolean isBarreiraNoCaminho (int distancia) {
         for (int i = posicao; i < posicao + distancia; i++) {
-            if (i > 64) return false;
+            if (i > 57) return false;
             if (tabuleiro.search(i, cor).isBarreira()) return true;
         }
         return false;
