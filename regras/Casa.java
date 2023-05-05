@@ -94,7 +94,7 @@ public class Casa {
     
     // dump() é uma função de teste que deve ser deletada. Ela imprime as informações de uma Casa no terminal.
     public void dump () {
-        System.out.printf("[%2d] Tipo = %s\tCor = %s\t",indice,tipo.toString(),cor==null?"-  ":cor.toString());
+        System.out.printf("[%2d] Tipo = %s\tCor = %s\t",indice,tipo==Tipo.padrao?"-       ":tipo.toString(),cor==null?"-  ":cor.toString());
         System.out.printf("Set (%d) = ",set.size());
         Iterator<Piao> iterator = set.iterator();
         while (iterator.hasNext()) {
