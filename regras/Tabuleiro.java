@@ -11,69 +11,56 @@ public class Tabuleiro {
     int abrigos[] = {10, 23, 36, 49, 0};
     
     // Tabuleiro é representado por Arrays de Casas.
-    Casa percurso  []   = new Casa [52];
-    Casa iniciais  []   = new Casa [4];
-    Casa finais    []   = new Casa [4];
-    Casa retaFinal [][] = new Casa [4][5];
+    Casa tabuleiro [][] = new Casa [4][58];
     
     // Matriz de Piões guarda os "ponteiros" para todos os Piões, garantido que sempre serão facilmente acessíveis pela sua cor e índice.
     // (Tomaz) Guardado como arrayPioes[cor][indice]
     Piao arrayPioes[][] = new Piao[4][4];
     
     // Conjunto de Casas guarda quais são as casas que tem barreiras.
-    Set barreiras[] = new HashSet[4];
+    ArrayList<HashSet<Casa>> barreiras = new ArrayList<HashSet<Casa>>();
     
+    private Casa casasNormais[] = new Casa [52];
     // bloco de inicialização
     {
-        // inicializa Casas:
         int j = 0;
         for (int i = 0; i < 52; i++) {
-            if (i%13 == 0) {}
-            
+            // casas de saída:
+            if (i%13 == 0) casasNormais[i] = new Casa(i+1, Tipo.saida, Cor.values()[i/13]);
+
             // abrigos:
-            else if (abrigos[j] == i) percurso[abrigos[j++]] = new Casa(i,Tipo.abrigo);
+            else if (this.abrigos[j] == i) casasNormais[abrigos[j++]] = new Casa(i,Tipo.abrigo);
             
             // casas padrão:
-            else percurso[i] = new Casa(i,Tipo.padrao);
+            else casasNormais[i] = new Casa(i,Tipo.padrao);
         }
-        
-        for (Cor c: Cor.values()) {
-            int corNum = c.ordinal();
-            
-            // casas de saída:
-            percurso [corNum*13] = new Casa(corNum*13, Tipo.saida, c);
-            
-            // casas iniciais (as grandes de 4 piões):
-            iniciais [corNum]    = new Casa(0, Tipo.inicial, c);
-            
-            // casas finais ("vitoria")
-            // (Tomaz) Eu usei "vitoria" em vez de "final", porque "final" é uma palavra reservada e buga o código.
-            finais   [corNum]    = new Casa(5+1, Tipo.vitoria, c);
-            
-            // casas das retas finais (exclusivas para uma cor cada:
-            for (int i = 0; i < 5; i++) {
-                retaFinal[corNum][i] = new Casa(i+1,Tipo.retaFinal, c);
-            }
-            
+
+        for (Cor cor: Cor.values()) {
+            int i = 0;
+            this.tabuleiro[cor.ordinal()][0] = new Casa(0, Tipo.inicial, cor);
+            for (i = 1;  i < 52; i++) this.tabuleiro[cor.ordinal()][i] = casasNormais[((i-1)+cor.ordinal()*13)%52];
+            for (i = 52; i < 57; i++) this.tabuleiro[cor.ordinal()][i] = new Casa(i, Tipo.retaFinal, cor);
+            this.tabuleiro[cor.ordinal()][i] = new Casa(57, Tipo.vitoria, cor);
+
             // inicializa os Piões:
-            for (int i = 0; i < 4; i++) {
-                arrayPioes[c.ordinal()][i] = new Piao(c,i, this);
-                this.getInicial(c).inserePiao(arrayPioes[c.ordinal()][i]);
+            for (i = 0; i < 4; i++) {
+                arrayPioes[cor.ordinal()][i] = new Piao(cor,i, this);
+                this.getInicial(cor).inserePiao(arrayPioes[cor.ordinal()][i]);
             }
             
             // inicializa o conjunto de barreiras:
-            barreiras[c.ordinal()] = new HashSet<Casa>();
+            barreiras.add(new HashSet<Casa>());
         }
     }
-    
+
     // getInicial(Cor cor) retorna a Casa inicial da Cor cor
     public Casa getInicial (Cor cor) {
-        return iniciais[cor.ordinal()];
+        return tabuleiro[cor.ordinal()][0];
     }
     
     // getFinal(Cor cor) retorna a Casa inicial da Cor cor
     public Casa getFinal (Cor cor) {
-        return finais[cor.ordinal()];
+        return tabuleiro[cor.ordinal()][57];
     }
     
     // getPiao (Cor c, int i) retorna o "ponteiro" (objeto) para o Pião de Cor c e índice i
@@ -88,13 +75,7 @@ public class Tabuleiro {
     
     // search(int pos, Cor corJogador) retorna a Casa correspondente à pos-ésima posição no percurso do jogador de Cor corJogador
     public Casa search (int pos, Cor corJogador) {
-        int corNum = corJogador.ordinal();
-        
-        // (Tomaz) Confia em mim: depois de trocar para números isso fica bem mais legível. Usar CTRL+H pra fazer isso quando for.
-        if      (pos == 0 ) return iniciais  [corNum];
-        else if (pos == 57) return finais    [corNum];
-        else if (pos >  51) return retaFinal [corNum][pos-52];
-        else return percurso[(13*corNum+pos-1)%52];
+        return tabuleiro[corJogador.ordinal()][pos];
     }
     
     // search(Piao p) é polimórfica com a outra search(), e retorna a Casa em que o Pião p está.
@@ -106,20 +87,21 @@ public class Tabuleiro {
     // (Tomaz) Essa função realmente altera a Casa em que o Pião p está!!
     public void move (Piao p, int qtdCasas) {
         Casa inicial = this.search(p);
-        if (inicial.isBarreira()) barreiras[p.getCorNum()].remove(inicial); // caso isso desfaça uma barreira ela é excluída do conjunto
+        if (inicial.isBarreira()) barreiras.get(p.getCorNum()).remove(inicial); // caso isso desfaça uma barreira ela é excluída do conjunto
         inicial.removePiao(p);
         p.move(qtdCasas);
         Casa destino = this.search(p);
         destino.inserePiao(p);
-        if (destino.isBarreira()) barreiras[p.getCorNum()].add(destino);    // caso isso crie uma barreira ela é salva no conjunto
+        if (destino.isBarreira()) barreiras.get(p.getCorNum()).add(destino);    // caso isso crie uma barreira ela é salva no conjunto
         if (destino.getQtdPioes() == 4) this.termina();
         
         // (Tomaz) FALTA UMA CLÁUSULA PARA SE ISSO CAPTURA UM PIÃO OPONENTE!!!!!!!! (Lembrando da função captura(Piao p) )
     }   
 
+    boolean possibleMove(Piao p, int i ) { return true;}
     // possibleMove(Piao p, int i) está INCOMPLETA. Ela DEVE retornar TRUE se o Pião p pode se mover i casas e FALSE caso não possa.
     // (Tomaz) Nota: Não sei se essa é a melhor implementação pra isso. Se quiserem fazer totalmente diferente, sintam-se à vontade. Tenho backups de tudo se precisar.
-
+    /*
     public boolean possibleMove (Piao p, int i) {
         // se rolou 5 e tem pioes na casa inicial e eles podem sair, só eles podem mover:
         if (i == 5 && this.getInicial(p.getCor()).getQtdPioes() > 0 && percurso[p.getCorNum()*13].getPiao(p.getCor())==null) {
@@ -145,15 +127,15 @@ public class Tabuleiro {
             
             // essas foram algumas ideias:
             /*
-            if (i == 6 && !barreiras[p.getCorNum()].isEmpty()) {
-                if (this.isBarreiraNoCaminho(barreiras[p.getCorNum()].getPiao())) return true;
+            if (i == 6 && !barreiras.get(p.getCorNum()).isEmpty()) {
+                if (this.isBarreiraNoCaminho(barreiras.get(p.getCorNum()).getPiao())) return true;
             }
             */
-        
+        /*
         // (Tomaz) Deve estar faltando mais coisa nessa função também?
         return true;    // esse retorno é, em parte, pra garantir que o código compile.
     }
-    
+    */
     // captura(Piao p) captura o Piao p.
     public void captura (Piao p) {
         this.search(p).removePiao(p);
@@ -177,6 +159,6 @@ public class Tabuleiro {
     
     // Eu não lembro mais o que isso aqui era pra ser.
     public void is (Piao p) {
-        
+        System.out.println(p);
     }
 }
