@@ -4,20 +4,18 @@ import static org.junit.Assert.*;
 
 public class DadoTest {
 
-//sugestao do ai utilizado apenas como exemplo a ser EDITADO
-
     @Test
     public void testRolar() {
-        Random rand = new Random(123); // semente definida para garantir a reprodutibilidade do teste - verificar necessidade
-        for (int i = 0; i < 100; i++) {//mudar
+        Random rand = new Random(123); // garante a reprodutibilidade
+        for (int i = 0; i < 100; i++) {
             int resultado = Dado.rolar();
-            assertTrue(resultado >= 1 && resultado <= 6);//manter
+            assertTrue(resultado >= 1 && resultado <= 6);
         }
     }
 
     @Test
     public void testMensagemRolagem() {
-        Random rand = new Random(123); // semente definida para garantir a reprodutibilidade do teste
+        Random rand = new Random(123); // garante a reprodutibilidade
         for (int i = 0; i < 100; i++) {
             int resultado = Dado.rolar();
             String mensagemEsperada = String.format("Dado rolado: %d", resultado);
