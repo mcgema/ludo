@@ -1,4 +1,4 @@
-package regras;
+packagec regras;
 
 import cores.Cor;
 import cores.Piao;
