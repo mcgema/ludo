@@ -100,6 +100,6 @@ public class Casa {
         while (iterator.hasNext()) {
             System.out.printf("%s ",iterator.next().dumpString());
         }
-        System.out.printf("\n\n");
+        System.out.printf("\t\t Barreiras = ");
     }
 }

@@ -52,7 +52,7 @@ public class Piao {
     
     // dumpString() é uma função de teste que retorna a referência do pião (cor e índice) como String. É uma função de TESTE que deve ser APAGADA na entrega final.
     public String dumpString () {
-        return String.format("(%s, %d)",cor.toString(),indice);
+        return String.format("(%s, %d, [%2d])",cor.toString(),indice,posicao);
     }
 
     // distFinal() retorna a distância que o Pião está do final de seu percurso pessoal.
@@ -62,13 +62,15 @@ public class Piao {
     
     // reset() reseta o INDICE do Pião para 0. Assim como move(), ela NÃO ALTERA A CASA DO PIÃO! ISSO É FEITO EM Tabuleiro !!
     public void reset () {
+        this.tabuleiro.search(this).removePiao(this);
         this.setPosicao(0);
+        this.tabuleiro.getInicial(cor).inserePiao(this);
     }
     
     // isBarreiraNoCaminho() retorna TRUE se tem uma barreira nas próximas 'distancia' casas depois do Pião e FALSE caso contrário.
     // (Tomaz) É a última função que implementei hoje (03/05). Serve como auxiliar para a funcao de avaliar se um movimento é possível em Tabuleiro.
     public boolean isBarreiraNoCaminho (int distancia) {
-        for (int i = posicao; i < posicao + distancia; i++) {
+        for (int i = posicao+1; i < posicao + distancia+1; i++) {
             if (i > 57) return false;
             if (tabuleiro.search(i, cor).isBarreira()) return true;
         }
