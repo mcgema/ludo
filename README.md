@@ -5,16 +5,22 @@ Grupo: Laís, Maria Clara, Tomaz
 # Feito:
 (1) Model: arquitetura base de dados;
 
-(1) Model: método rolaDado();
+(1) Model: método lancaDado();
 
 (1) Model: criação de fachada;
 
-# Em andamento:
 (1) Model: método movePiao();
 
-(1) Model: método podeMoverPiao();
+(1) Model: método fimDoJogo();
 
-(1) Model: determinar forma de implementar checagem de regras;
+(1) Model: método podeJogar();
+
+# Em andamento:
+(1) Model: consertar saídas no terminal;
+
+(1) Model: organizar código;
+
+(1) Model: corrigir possíveis bugs;
 
 # Não iniciado:
 (1) Model: consertar visibilidade de classes e métodos;
