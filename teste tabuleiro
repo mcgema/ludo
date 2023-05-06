@@ -53,7 +53,10 @@ public class TabuleiroTest {
         }
     }
 
-    @Test
+    @Test //Se o método isEmptyInicial retorna true para uma cor cuja casa inicial não tem piões e false caso contrário.
     public void testIsEmptyInicial() {
         assertTrue(tabuleiro.isEmptyInicial(Cor.VERMELHO));
        
+//Se o método search retorna a casa correta para cada posição e cor.
+//Se o método search polimórfico retorna a casa correta para cada pião.
+//Se o método move move o pião para a casa correta.
