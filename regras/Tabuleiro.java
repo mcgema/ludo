@@ -19,6 +19,9 @@ public class Tabuleiro {
     
     // Conjunto de Casas guarda quais são as casas que tem barreiras.
     ArrayList<HashSet<Casa>> barreiras = new ArrayList<HashSet<Casa>>();
+
+    Piao ultimoPiaoMovimentado;
+    int qtdSeisRolados = 0;
     
     private Casa casasNormais[] = new Casa [52];
     // bloco de inicialização
@@ -29,10 +32,10 @@ public class Tabuleiro {
             if (i%13 == 0) casasNormais[i] = new Casa(i+1, Tipo.saida, Cor.values()[i/13]);
 
             // abrigos:
-            else if (this.abrigos[j] == i) casasNormais[abrigos[j++]] = new Casa(i,Tipo.abrigo);
+            else if (this.abrigos[j] == i) casasNormais[abrigos[j++]] = new Casa(i+1,Tipo.abrigo);
             
             // casas padrão:
-            else casasNormais[i] = new Casa(i,Tipo.padrao);
+            else casasNormais[i] = new Casa(i+1,Tipo.padrao);
         }
 
         for (Cor cor: Cor.values()) {
@@ -62,6 +65,11 @@ public class Tabuleiro {
     public Casa getFinal (Cor cor) {
         return tabuleiro[cor.ordinal()][57];
     }
+
+    // getSaida(Cor cor) retorna a Casa de saida da Cor cor
+    public Casa getSaida (Cor cor) {
+        return tabuleiro[cor.ordinal()][1];
+    }
     
     // getPiao (Cor c, int i) retorna o "ponteiro" (objeto) para o Pião de Cor c e índice i
     public Piao getPiao (Cor c, int i) {
@@ -85,64 +93,104 @@ public class Tabuleiro {
     
     // move(Piao p, int qtdCasas) move o Pião p em qtdCasas Casas.
     // (Tomaz) Essa função realmente altera a Casa em que o Pião p está!!
-    public void move (Piao p, int qtdCasas) {
+    public boolean move (Piao p, int resultadoDado) {
+    	int qtdCasas = resultadoDado;
+    	if (p.getPosicao() == 0) qtdCasas = 1;
+        if (qtdCasas == 6 && p.getCor() == ultimoPiaoMovimentado.getCor()) qtdSeisRolados++;
+        else qtdSeisRolados = 0;
+        
+        if (!podeMover(p, this.ultimoPiaoMovimentado, qtdCasas, qtdSeisRolados)) {System.out.printf("F-00\n");return false;}
+        
+
         Casa inicial = this.search(p);
         if (inicial.isBarreira()) barreiras.get(p.getCorNum()).remove(inicial); // caso isso desfaça uma barreira ela é excluída do conjunto
         inicial.removePiao(p);
         p.move(qtdCasas);
         Casa destino = this.search(p);
+
+        // captura pião
+        if (destino.getQtdPioes() == 1) if (destino.getTipo() == Tipo.padrao && destino.getPiao().getCor() != p.getCor()) destino.getPiao().reset();
+
         destino.inserePiao(p);
         if (destino.isBarreira()) barreiras.get(p.getCorNum()).add(destino);    // caso isso crie uma barreira ela é salva no conjunto
-        if (destino.getQtdPioes() == 4) this.termina();
-        
-        // (Tomaz) FALTA UMA CLÁUSULA PARA SE ISSO CAPTURA UM PIÃO OPONENTE!!!!!!!! (Lembrando da função captura(Piao p) )
+        if (destino.getQtdPioes() == 4) {
+        	this.termina();
+        	System.out.println("move() chamou termina");
+        }
+
+        ultimoPiaoMovimentado = p;
+        return true;
     }   
 
-    boolean possibleMove(Piao p, int i ) { return true;}
-    // possibleMove(Piao p, int i) está INCOMPLETA. Ela DEVE retornar TRUE se o Pião p pode se mover i casas e FALSE caso não possa.
-    // (Tomaz) Nota: Não sei se essa é a melhor implementação pra isso. Se quiserem fazer totalmente diferente, sintam-se à vontade. Tenho backups de tudo se precisar.
-    /*
-    public boolean possibleMove (Piao p, int i) {
-        // se rolou 5 e tem pioes na casa inicial e eles podem sair, só eles podem mover:
-        if (i == 5 && this.getInicial(p.getCor()).getQtdPioes() > 0 && percurso[p.getCorNum()*13].getPiao(p.getCor())==null) {
-            if (p.getPosicao() == 0) return true;
-            else return false;
+    boolean temBloqueio (Piao p, int qtdCasas) {
+        if (p.getPosicao() == 0) qtdCasas = 1;
+        if (p.isBarreiraNoCaminho(qtdCasas)) {System.out.printf("F-01\n");return false;}
+        if (p.distFinal() < qtdCasas) {System.out.printf("F-02\n");return false;}
+        if (p.distFinal() == qtdCasas) return true;
+        Casa destino = this.search(p.getPosicao()+qtdCasas, p.getCor());
+        switch (destino.getQtdPioes()) {
+            case 2:
+                {System.out.printf("F-03\n");return false;}
+            case 1:
+                Piao piaoDestino = destino.getPiao();
+                if (piaoDestino.getCor() == p.getCor()) {
+                    if (destino.getTipo() == Tipo.saida) {System.out.printf("F-04\n");return false;}
+                    else return true; // forma barreira: delegado à move()
+                }
+                else {
+                    if (destino.getTipo() == Tipo.abrigo) return true;
+                    if (destino.getTipo() != Tipo.saida) return true; // captura piao: papel da move()
+                    if (destino.getCor() == p.getCor() || destino.getCor() == piaoDestino.getCor()) return true;
+                    {System.out.printf("F-05\n");return false;}
+                }
+            default:
+                return true;
         }
-        
-        // se tem uma barreira no caminho, o piao nao se move:
-        if (p.isBarreiraNoCaminho(i)) return false;
-        
-        // se tem menos casas à frente que o resultado o dado, o piao nao se move:
-        if (65-p.getPosicao() < i) return false;
-        
-        // se tem mais de um piao no destino e ele nao é o final, o piao nao se move:
-        Casa destino = this.search(p.getPosicao() + i, p.getCor());
-        if (destino.getQtdPioes() > 1 && destino.getTipo() != Tipo.vitoria) return false;
-        
-        // FALTANDO!!!
-        // se rolou 6 e tem barreiras liberáveis, elas devem ser liberadas:
-        
-            // (Tomaz) eu não faço a menor ideia de como implementar isso.
-            
-            
-            // essas foram algumas ideias:
-            /*
-            if (i == 6 && !barreiras.get(p.getCorNum()).isEmpty()) {
-                if (this.isBarreiraNoCaminho(barreiras.get(p.getCorNum()).getPiao())) return true;
-            }
-            */
-        /*
-        // (Tomaz) Deve estar faltando mais coisa nessa função também?
-        return true;    // esse retorno é, em parte, pra garantir que o código compile.
     }
-    */
+
+    boolean checaDado (Piao p, int resultadoDado, int qtd6, Piao ultimoPiaoMovimentado) {
+        switch(resultadoDado) {
+            case 6:
+                if (qtd6 == 3) {
+                    if (ultimoPiaoMovimentado.distFinal() > 5) ultimoPiaoMovimentado.reset();
+                    {System.out.printf("F-06\n");return false;}
+                }
+                if (barreiras.get(p.getCorNum()).size() > 0) {
+                    Iterator<Casa> iterator = barreiras.get(p.getCorNum()).iterator();
+                    boolean existeBarreiraQuebravel = false;
+                    while (iterator.hasNext()) {
+                        Casa casaComBarreira = iterator.next();
+                        if (this.temBloqueio(casaComBarreira.getPiao(),resultadoDado)) {
+                            existeBarreiraQuebravel = true;
+                            if (p.getPosicao() == casaComBarreira.getPiao().getPosicao()) return true;
+                        }
+                    }
+                    return (!existeBarreiraQuebravel);
+                }
+            case 5:
+                if (this.getInicial(p.getCor()).getQtdPioes() == 0) return true;
+                if (!this.temBloqueio(this.getInicial(p.getCor()).getPiao(), 1)) return true;
+                if (p.getPosicao() == 0) return true;
+                {System.out.printf("F-07\n");return false;}
+            default:
+                return true; 
+        }
+    }
+
+    boolean podeMover (Piao p, Piao ultimoPiaoMovimentado, int resultadoDado, int qtdSeisRolados) {
+        return this.temBloqueio(p, resultadoDado) && checaDado(p, resultadoDado, qtdSeisRolados, ultimoPiaoMovimentado);
+    }
+
+    // Função Tabuleiro.captura(Piao p) foi substituída por Piao.reset().
+    /*
     // captura(Piao p) captura o Piao p.
     public void captura (Piao p) {
         this.search(p).removePiao(p);
         this.getInicial(p.getCor()).inserePiao(p);
         p.reset();
     }
-    
+    */
+
     // termina() termina o jogo.
     // (Tomaz) Nota: essa função não está imprimindo conforme o enunciado! Ela DEVERIA imprimir as cores dos jogadores em ordem de colocação (aka: de pontos). FALTANDO!
     public void termina () {
