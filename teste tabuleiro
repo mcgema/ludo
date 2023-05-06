@@ -60,6 +60,6 @@ public class TabuleiroTest {
         assertFalse(board.isEmptyInicial(Color.BLACK));
     }
        
-//Se o método search retorna a casa correta para cada posição e cor.
+//Se o método search retorna a casa correta para cada posição e cor. getPosicao()
 //Se o método search polimórfico retorna a casa correta para cada pião.
-//Se o método move move o pião para a casa correta.
+//Se o método move move o pião para a casa correta. getPosicao()
