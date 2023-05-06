@@ -1,5 +1,5 @@
 import cores.*;
-import regras.*;
+import model.*;
 
 public class Guloso {
 	Model model = new Model();
