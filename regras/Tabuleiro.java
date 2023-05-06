@@ -22,6 +22,7 @@ public class Tabuleiro {
 
     Piao ultimoPiaoMovimentado;
     int qtdSeisRolados = 0;
+    boolean fimDeJogo = false;
     
     private Casa casasNormais[] = new Casa [52];
     // bloco de inicialização
@@ -54,6 +55,9 @@ public class Tabuleiro {
             // inicializa o conjunto de barreiras:
             barreiras.add(new HashSet<Casa>());
         }
+        
+        // assume-se que o jogador VERMELHO (0) sempre começa:
+        ultimoPiaoMovimentado = arrayPioes[0][0];
     }
 
     // getInicial(Cor cor) retorna a Casa inicial da Cor cor
@@ -76,6 +80,10 @@ public class Tabuleiro {
         return arrayPioes[c.ordinal()][i];
     }
     
+    public boolean getStatus () {
+    	return !fimDeJogo;
+    }
+    
     // isEmptyInicial(Cor cor) retorna TRUE se a casa inicial da Cor cor estiver vazia e FALSE caso ainda tenham Piões nela
     public boolean isEmptyInicial (Cor cor) {
         return this.getInicial(cor).isEmpty();
@@ -96,11 +104,11 @@ public class Tabuleiro {
     public boolean move (Piao p, int resultadoDado) {
     	int qtdCasas = resultadoDado;
     	if (p.getPosicao() == 0) qtdCasas = 1;
-        if (qtdCasas == 6 && p.getCor() == ultimoPiaoMovimentado.getCor()) qtdSeisRolados++;
-        else qtdSeisRolados = 0;
         
-        if (!podeMover(p, this.ultimoPiaoMovimentado, qtdCasas, qtdSeisRolados)) {System.out.printf("F-00\n");return false;}
-        
+        if (!podeMover(p, qtdCasas)) {
+        	System.out.printf("F-00\n");
+        	return false;
+        }
 
         Casa inicial = this.search(p);
         if (inicial.isBarreira()) barreiras.get(p.getCorNum()).remove(inicial); // caso isso desfaça uma barreira ela é excluída do conjunto
@@ -114,71 +122,126 @@ public class Tabuleiro {
         destino.inserePiao(p);
         if (destino.isBarreira()) barreiras.get(p.getCorNum()).add(destino);    // caso isso crie uma barreira ela é salva no conjunto
         if (destino.getQtdPioes() == 4) {
-        	this.termina();
-        	System.out.println("move() chamou termina");
+        	fimDeJogo = true;
+        	//this.termina();
+        	//System.out.println("move() chamou termina");
         }
 
         ultimoPiaoMovimentado = p;
         return true;
     }   
 
-    boolean temBloqueio (Piao p, int qtdCasas) {
+    boolean isLivreParaMover (Piao p, int qtdCasas) {
+        // se o pião está para sair, ele só anda uma casa, independente do dado:
         if (p.getPosicao() == 0) qtdCasas = 1;
-        if (p.isBarreiraNoCaminho(qtdCasas)) {System.out.printf("F-01\n");return false;}
-        if (p.distFinal() < qtdCasas) {System.out.printf("F-02\n");return false;}
+
+        // se tem uma barreira no caminho, o pião não pode se mover (código F-01):
+        if (p.isBarreiraNoCaminho(qtdCasas)) {
+            System.out.printf("F-01\n");
+            return false;
+        }
+
+        // se o valor rolado no dado for maior que a quantidade de casas até o final, o pião não pode se mover (código F-02):
+        if (p.distFinal() < qtdCasas) {
+            System.out.printf("F-02\n");
+            return false;
+        }
+
+        // ...mas se tem exatamente essa quantidade de casas (e não tem barreiras), ele pode:
         if (p.distFinal() == qtdCasas) return true;
+
         Casa destino = this.search(p.getPosicao()+qtdCasas, p.getCor());
+        System.out.printf("\ndestino:\t");
+        destino.dump();
+        System.out.printf("\n");
         switch (destino.getQtdPioes()) {
+
+            // se tiverem dois piões na casa de destino do movimento (e ela não é o final -- esse caso já foi analisado!), o pião não se move (código F-03):
             case 2:
-                {System.out.printf("F-03\n");return false;}
+                System.out.printf("F-03\n");
+                return false;
+            
             case 1:
                 Piao piaoDestino = destino.getPiao();
                 if (piaoDestino.getCor() == p.getCor()) {
-                    if (destino.getTipo() == Tipo.saida) {System.out.printf("F-04\n");return false;}
+
+                    // se tiver 1 pião no destino e ele for da mesma cor que o seu e ele estiver em uma casa de saída (que impede barreiras), ele não pode se mover (código F-04):
+                    if (destino.getTipo() == Tipo.saida) {
+                        System.out.printf("F-04\n");
+                        return false;
+                    }
+
+                    // ...mas se ele não estiver em uma casa de saída, ele se move (e forma uma barreira):
                     else return true; // forma barreira: delegado à move()
                 }
                 else {
-                    if (destino.getTipo() == Tipo.abrigo) return true;
-                    if (destino.getTipo() != Tipo.saida) return true; // captura piao: papel da move()
+
+                    // se tiver 1 pião no destino e ele for de uma cor diferente e ele estiver em um abrigo OU casa padrão, pode mover:
+                    if (destino.getTipo() != Tipo.saida) return true; // capturar piao é papel da move()
+
+                    // se tiver 1 pião no destino e ele for de uma cor diferente e o destino for uma casa de saída da cor do seu pião ou da cor do oponente, pode se mover:
                     if (destino.getCor() == p.getCor() || destino.getCor() == piaoDestino.getCor()) return true;
-                    {System.out.printf("F-05\n");return false;}
+
+                    // ...mas, se tiver um pião e ele for de uma cor diferente e o destino for uma casa de saída de uma cor diferente das dos dois, ele não pode mover (código F-05):
+                    System.out.printf("F-05\n");
+                    return false;
                 }
+            
             default:
+                // se não tiverem piões na casa de destino ele pode se mover:
                 return true;
         }
     }
 
-    boolean checaDado (Piao p, int resultadoDado, int qtd6, Piao ultimoPiaoMovimentado) {
+    boolean bloqueadoPeloDado (Piao p, int resultadoDado) {
         switch(resultadoDado) {
             case 6:
-                if (qtd6 == 3) {
-                    if (ultimoPiaoMovimentado.distFinal() > 5) ultimoPiaoMovimentado.reset();
-                    {System.out.printf("F-06\n");return false;}
-                }
+
+                // caso o jogador tenha barreiras...
                 if (barreiras.get(p.getCorNum()).size() > 0) {
                     Iterator<Casa> iterator = barreiras.get(p.getCorNum()).iterator();
                     boolean existeBarreiraQuebravel = false;
                     while (iterator.hasNext()) {
                         Casa casaComBarreira = iterator.next();
-                        if (this.temBloqueio(casaComBarreira.getPiao(),resultadoDado)) {
+
+                        // ...e a barreira possa ser quebrada...
+                        if (this.isLivreParaMover(casaComBarreira.getPiao(),resultadoDado)) {
                             existeBarreiraQuebravel = true;
-                            if (p.getPosicao() == casaComBarreira.getPiao().getPosicao()) return true;
+
+                            // ...e o pião em questão é dessa barreira, ele pode se mover:
+                            if (p.getPosicao() == casaComBarreira.getPiao().getPosicao()) return false;
                         }
                     }
+
+                    // caso exista barreira quebrável mas esse pião não seja dela, ele não move;
+                    // caso não exista barreira quebrável, nada dos dados impede o pião de mover:
                     return (!existeBarreiraQuebravel);
                 }
+                // se rolou 6 mas não tem barreiras e rolou menos de dois 6, nada dos dados impede de mover:
+                return false;
+
             case 5:
-                if (this.getInicial(p.getCor()).getQtdPioes() == 0) return true;
-                if (!this.temBloqueio(this.getInicial(p.getCor()).getPiao(), 1)) return true;
-                if (p.getPosicao() == 0) return true;
-                {System.out.printf("F-07\n");return false;}
+                // se o jogador não tiver piões para iniciar, nada dos dados impede o pião de mover:
+                if (this.getInicial(p.getCor()).getQtdPioes() == 0) return false;
+
+                // se o jogador tiver piões para iniciar, mas eles estão bloqueados, nada dos dados impede os piões de mover (move() vai bloquear esse pião):
+                if (this.isLivreParaMover(this.getInicial(p.getCor()).getPiao(), 1)) return false;
+
+                // caso o jogador tenha piões para iniciar e esses piões possam ser iniciados só eles podedm se mover:
+                if (p.getPosicao() == 0) return false;
+
+                // ...ou seja: se o jogador pode iniciar piões e esse pião já está iniciado, ele não move (código F-07):
+                System.out.printf("F-07\n");
+                return true;
+                
             default:
-                return true; 
+                // se o dado rolou 1, 2, 3 ou 4, ele não influencia na possibilidade de movimentação:
+                return false; 
         }
     }
 
-    boolean podeMover (Piao p, Piao ultimoPiaoMovimentado, int resultadoDado, int qtdSeisRolados) {
-        return this.temBloqueio(p, resultadoDado) && checaDado(p, resultadoDado, qtdSeisRolados, ultimoPiaoMovimentado);
+    boolean podeMover (Piao p, int resultadoDado) {
+        return this.isLivreParaMover(p, resultadoDado) && !bloqueadoPeloDado(p, resultadoDado);
     }
 
     // Função Tabuleiro.captura(Piao p) foi substituída por Piao.reset().
@@ -205,8 +268,26 @@ public class Tabuleiro {
         }
     }
     
-    // Eu não lembro mais o que isso aqui era pra ser.
-    public void is (Piao p) {
-        System.out.println(p);
+    // jogadorPodeJogar (Cor corDoJogador, int resultadoDado) retorna TRUE se o jogador pode jogar e FALSE caso sua rodada deva ser pulada.
+    public boolean jogadorPodeJogar (Cor corDoJogador, int resultadoDado) {
+        if (resultadoDado == 6 && corDoJogador == ultimoPiaoMovimentado.getCor()) qtdSeisRolados++;
+        else qtdSeisRolados = 0;
+    	System.out.println(qtdSeisRolados);
+
+        if (qtdSeisRolados == 3) {
+            // caso três 6 consecutivos sejam tirados no dado, o jogador não tem rodada (movimento forçado do pião):
+            if (ultimoPiaoMovimentado.distFinal() > 5) ultimoPiaoMovimentado.reset();
+
+            System.out.printf("Vo-seis-agerou...\n");
+            return false;
+        }
+        
+        boolean piaoPodeMover = false;
+        for (Piao p: arrayPioes[corDoJogador.ordinal()]) {
+        	if (podeMover(p,resultadoDado)) piaoPodeMover = true;
+        }
+        
+        // se nenhum pião pode se mover, o jogador não tem rodada:
+        return piaoPodeMover;
     }
 }
