@@ -1,7 +1,7 @@
 import cores.*;
 import model.*;
 
-public class Guloso {
+public class Algoritmo {
 	Model model = new Model();
 	
     public void greedy(Cor corDoJogador) {
