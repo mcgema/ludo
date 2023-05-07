@@ -257,32 +257,6 @@ class Tabuleiro {
         for (int j=3; j>-1; j--){
             System.out.printf("Jogador %s: %d pontos\n",Cor.values()[distanciasTotais[j][0]].toString(),distanciasTotais[j][1]);
         }
-        
-    }
-
-    //(DELETAR UMA VERSAO)
-    protected void termina1 () {
-        int distanciasTotais[] = new int[4];
-        for (Piao[] aux: arrayPioes) {
-            for (Piao p: aux) {
-                distanciasTotais[p.getCorNum()] += p.getPosicao();
-            }
-        }
-        int distT[][] = new int[4][1];
-        distT[0] = new int[]{distanciasTotais[0]};
-        distT[1] = new int[]{distanciasTotais[1]};
-        distT[2] = new int[]{distanciasTotais[2]};
-        distT[3] = new int[]{distanciasTotais[3]};
-        Arrays.sort(distanciasTotais);
-        for (int i=3; i>-1; i--){
-            for (Cor c: Cor.values()) {
-                if (distanciasTotais[i] == distT[c.ordinal()][0]){
-                    System.out.printf("Jogador %s: %d pontos\n",c.toString(),distanciasTotais[i]);
-                    break;   
-                }
-            }
-        }
-
     }
     
     // jogadorPodeJogar (Cor corDoJogador, int resultadoDado) retorna TRUE se o jogador pode jogar e FALSE caso sua rodada deva ser pulada.

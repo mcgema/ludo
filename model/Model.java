@@ -36,12 +36,4 @@ public class Model {
     	if (jogoAcabou) tabuleiro.termina();
     	return jogoAcabou;
     }
-    /*
-    // podeMoverPiao(corPiao, idPiao, casas) checa se o "idPiao-ésimo" Pião de cor "corPiao" pode se mover "casas" casas para a frente.
-    // (Tomaz) Está INCOMPLETA: Falta implementar a interação entre barreiras e o número 6.
-    //                          Também falta checar se tem mais algo faltando. Bem possível --  estão bem difíceis de ler.
-    public boolean podeMoverPiao (Cor corPiao, int idPiao, int casas) {
-        return tabuleiro.possibleMove(tabuleiro.getPiao(corPiao, idPiao), casas);
-    }
-    */
 }
