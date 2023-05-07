@@ -27,7 +27,6 @@ class Piao {
     }
     
     // getCorNum() retorna o inteiro que representa a Cor do Piao.
-    // (Tomaz) Serve basicamente para evitar a quantidade de cor.ordinal() que apareceria para mexer nos arrays.
     protected int getCorNum () {
         return cor.ordinal();
     }
@@ -38,13 +37,13 @@ class Piao {
     }
     
     // setPosicao() seta a posição do Piao como novaPosicao
-    // (Tomaz) Acho que também não foi usado no código.
+    // não foi usado no código ainda
     protected void setPosicao (int novaPosicao) {
         posicao = novaPosicao;
     }
 
     // move() altera a posição do Pião no SEU TRAJETO por uma quantidade de casas.
-    // (Tomaz) Nota: isso não move o pião de Casa, apenas muda o valor que ele guarda de quanto já completou do trajeto!!
+    // isso não move o pião de Casa, apenas muda o valor que ele guarda de quanto já completou do trajeto!!
     protected void move (int casas) {
         if (posicao == 0) posicao ++;
         else posicao += casas;
@@ -68,7 +67,6 @@ class Piao {
     }
     
     // isBarreiraNoCaminho() retorna TRUE se tem uma barreira nas próximas 'distancia' casas depois do Pião e FALSE caso contrário.
-    // (Tomaz) É a última função que implementei hoje (03/05). Serve como auxiliar para a funcao de avaliar se um movimento é possível em Tabuleiro.
     protected boolean isBarreiraNoCaminho (int distancia) {
         for (int i = posicao+1; i < posicao + distancia+1; i++) {
             if (i > 57) return false;

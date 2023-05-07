@@ -63,13 +63,12 @@ class Casa {
     }
     
     // getIndice() retorna o indice da Casa.
-    // (Tomaz) Nota: acho que isso não foi usado no código... Acabei esquecendo que Casas tinham índice :P
+    // nao foi utilizada ainda
     protected int getIndice () {
         return indice;
     }
     
     // getQtdPioes() retorna a quantidade de Pioes da Casa.
-    // (Tomaz) Nota: o mesmo objeto Casa é usado para as casas do tabuleiro (com até 2 pioes) e para as casas iniciais e finais (com até 4 piões). Garantir que não tenha excesso de Piões é resultado da implementação.
     protected int getQtdPioes () {
         return set.size();
     }

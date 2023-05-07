@@ -126,7 +126,7 @@ class Tabuleiro {
         return true;
     }   
 
-    boolean isLivreParaMover (Piao p, int qtdCasas) {
+    protected boolean isLivreParaMover (Piao p, int qtdCasas) {
         // se o pião está para sair, ele só anda uma casa, independente do dado:
         if (p.getPosicao() == 0) qtdCasas = 1;
 
@@ -188,7 +188,7 @@ class Tabuleiro {
         }
     }
 
-    boolean bloqueadoPeloDado (Piao p, int resultadoDado) {
+    protected boolean bloqueadoPeloDado (Piao p, int resultadoDado) {
         switch(resultadoDado) {
             case 6:
 
@@ -235,7 +235,7 @@ class Tabuleiro {
         }
     }
 
-    boolean podeMover (Piao p, int resultadoDado) {
+    protected boolean podeMover (Piao p, int resultadoDado) {
         return this.isLivreParaMover(p, resultadoDado) && !bloqueadoPeloDado(p, resultadoDado);
     }
 
