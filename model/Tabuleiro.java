@@ -240,18 +240,34 @@ class Tabuleiro {
     }
 
     // termina() termina o jogo.
-    // (Tomaz) Nota: essa função não está imprimindo conforme o enunciado! Ela DEVERIA imprimir as cores dos jogadores em ordem de colocação (aka: de pontos). FALTANDO!
-
-    
     protected void termina () {
-        System.out.printf("nao");
+        int distanciasTotais[][] = new int[4][2];
+        for (int i=0; i<4; i++){
+            distanciasTotais[i][0] = i;
+        }
+
+        //atualiza pontuacao por cor
+        for (Piao[] aux: arrayPioes) {
+            for (Piao p: aux) {
+                distanciasTotais[p.getCorNum()][1] += p.getPosicao();
+            }
+        }
+        // ordena pontuacao
+        Arrays.sort(distanciasTotais, Comparator.comparingDouble(o -> o[1]));
+        for (int j=3; j>-1; j--){
+            System.out.printf("Jogador %s: %d pontos\n",Cor.values()[distanciasTotais[j][0]].toString(),distanciasTotais[j][1]);
+        }
+        
+    }
+
+    //(DELETAR UMA VERSAO)
+    protected void termina1 () {
         int distanciasTotais[] = new int[4];
         for (Piao[] aux: arrayPioes) {
             for (Piao p: aux) {
                 distanciasTotais[p.getCorNum()] += p.getPosicao();
             }
         }
-        //Arrays.sort(distanciasTotais);
         int distT[][] = new int[4][1];
         distT[0] = new int[]{distanciasTotais[0]};
         distT[1] = new int[]{distanciasTotais[1]};
@@ -268,7 +284,6 @@ class Tabuleiro {
         }
 
     }
-    
     
     // jogadorPodeJogar (Cor corDoJogador, int resultadoDado) retorna TRUE se o jogador pode jogar e FALSE caso sua rodada deva ser pulada.
     protected boolean jogadorPodeJogar (Cor corDoJogador, int resultadoDado) {
