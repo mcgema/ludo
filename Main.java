@@ -13,11 +13,5 @@ public class Main {
         		}
         	}
         }
-        /*
-        model.movePiao(Cor.vermelho, 0, 6);
-        model.movePiao(Cor.vermelho, 0, 6);
-        model.movePiao(Cor.vermelho, 0, 6);
-        model.movePiao(Cor.vermelho, 0, 6);
-        */
     }
 }

@@ -241,15 +241,27 @@ class Tabuleiro {
 
     // termina() termina o jogo.
     // (Tomaz) Nota: essa função não está imprimindo conforme o enunciado! Ela DEVERIA imprimir as cores dos jogadores em ordem de colocação (aka: de pontos). FALTANDO!
+
+    public int compareTo(int[] a, int[] b) {
+        return Double.compare(a[1], b[1]);
+    }
+    
     protected void termina () {
-        int distanciasTotais[] = new int[4];
+        int distanciasTotais[][] = new int[4][1];
         for (Piao[] aux: arrayPioes) {
             for (Piao p: aux) {
-                distanciasTotais[p.getCorNum()] += p.getPosicao();
+                distanciasTotais[p.getCorNum()][0] += p.getPosicao();
             }
         }
-        for (Cor c: Cor.values()) {
-            System.out.printf("Jogador %s: %d pontos\n",c.toString(),distanciasTotais[c.ordinal()]);
+        Arrays.sort(distanciasTotais);
+        for (int i=0; i<4; i++){
+           System.out.printf("Jogador %d: %d pontos\n",distanciasTotais[i],distanciasTotais[i][0]);
+
+        }
+        for (int i=0; i<4; i++){
+            for (Cor c: Cor.values()) {
+                if (c.ordinal() == i) System.out.printf("Jogador %s: %d pontos\n",c.toString(),distanciasTotais[c.ordinal()]);
+            }
         }
     }
     
