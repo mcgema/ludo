@@ -1,0 +1,108 @@
+package regras;
+
+import static org.junit.Assert.*;
+import org.junit.Test;
+
+public class CasaTest {
+    
+    @Test
+    public void testInserePiao() {
+        Casa casa = new Casa(1, Tipo.PADRAO);
+        Piao piao = new Piao(Cor.VERMELHO);
+        casa.inserePiao(piao);
+        assertTrue(casa.contains(piao));
+    }
+    
+    @Test
+    public void testRemovePiao() {
+        Casa casa = new Casa(1, Tipo.PADRAO);
+        Piao piao = new Piao(Cor.VERMELHO);
+        casa.inserePiao(piao);
+        casa.removePiao(piao);
+        assertFalse(casa.contains(piao));
+    }
+    
+    @Test
+    public void testCriaPiao() {
+        Casa casa = new Casa(1, Tipo.PADRAO);
+        Piao piao1 = new Piao(Cor.VERMELHO);
+        Piao piao2 = new Piao(Cor.AZUL);
+        casa.inserePiao(piao1);
+        casa.inserePiao(piao2);
+        assertTrue(casa.contains(casa.getPiao()));//cores?
+    }
+    
+    @Test
+    public void testPiaoCor() {
+        Casa casa = new Casa(1, Tipo.PADRAO);//testar outras cores
+        Piao piao1 = new Piao(Cor.VERMELHO);
+        Piao piao2 = new Piao(Cor.AZUL);
+        casa.inserePiao(piao1);
+        casa.inserePiao(piao2);
+        assertTrue(casa.contains(casa.getPiao(Cor.VERMELHO)));
+    }
+    
+    @Test
+    public void testTipo() {
+        Casa casa = new Casa(1, Tipo.PADRAO);
+        assertEquals(Tipo.PADRAO, casa.getTipo());
+    }
+    
+    @Test
+    public void testCor() {
+        Casa casa = new Casa(1, Tipo.PADRAO, Cor.VERMELHO); //testar outras cores
+        assertEquals(Cor.VERMELHO, casa.getCor());
+    }
+    
+    @Test
+    public void testIndice() { //????
+        Casa casa = new Casa(1, Tipo.PADRAO);
+        assertEquals(1, casa.getIndice());
+    }
+    
+    @Test
+    public void testQtdPioes() { //testar 3 pioes, piao outra cor, testar captura
+        Casa casa = new Casa(1, Tipo.PADRAO);
+        Piao piao1 = new Piao(Cor.VERMELHO);
+        Piao piao2 = new Piao(Cor.AZUL);
+        casa.inserePiao(piao1);
+        casa.inserePiao(piao2);
+        assertEquals(2, casa.getQtdPioes());
+    }
+    
+    @Test
+    public void testVazia() {
+        Casa casa = new Casa(1, Tipo.PADRAO);
+        assertTrue(casa.isEmpty());
+        Piao piao = new Piao(Cor.VERMELHO);
+        casa.inserePiao(piao);
+        assertFalse(casa.isEmpty());
+    }
+    
+    @Test
+    public void testBarreira() { //checar outra cor? mais amarelo
+        Casa casa = new Casa(1, Tipo.PADRAO);
+        assertFalse(casa.isBarreira());
+        casa.inserePiao(new Piao(Cor.VERMELHO));
+        casa.inserePiao(new Piao(Cor.VERMELHO));
+        assertTrue(casa.isBarreira());
+        casa.removePiao(casa.getPiao(Cor.VERMELHO));
+        assertFalse(casa.isBarreira());
+        casa.inserePiao(new Piao(Cor.VERDE));
+        assertFalse(casa.isBarreira());
+        casa.inserePiao(new Piao(Cor.AZUL));
+        assertFalse(casa.isBarreira());
+    }
+    
+    @Test
+        void testContem() {
+        Piao piao1 = new Piao(Cor.VERMELHO);
+        Piao piao2 = new Piao(Cor.AZUL);
+        assertTrue(casa.contains(piao1));
+        assertTrue(casa.contains(piao2));
+        assertFalse(casa.contains(new Piao(Cor.VERDE)));
+        assertFalse(casa.contains(new Piao(Cor.AMARELO)));
+    }
+}
+
+//ver se falta algo

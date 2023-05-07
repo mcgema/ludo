@@ -1,0 +1,82 @@
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
+import org.junit.Before;
+import org.junit.Test;
+
+import cores.Cor;
+
+public class PiaoTest {
+    private Piao piao;
+    private Tabuleiro tabuleiro;
+    
+    @Before
+    public void setUp() {
+        tabuleiro = new Tabuleiro();
+        piao = new Piao(Cor.AMARELO, 0, tabuleiro);
+    }
+    
+    @Test
+    public void testGetPosicao() {
+        assertEquals(0, piao.getPosicao());
+    }
+    
+    @Test
+    public void testGetCor() {
+        assertEquals(Cor.AMARELO, piao.getCor());
+    }
+    
+    @Test
+    public void testGetCorNum() {
+        assertEquals(0, piao.getCorNum());
+    }
+    
+    @Test
+    public void testGetIndice() {
+        assertEquals(0, piao.getIndice());
+    }
+    
+    @Test
+    public void testSetPosicao() {
+        piao.setPosicao(10);
+        assertEquals(10, piao.getPosicao());
+    }
+    
+    @Test
+    public void testMove() {
+        piao.move(5);
+        assertEquals(5, piao.getPosicao());
+        piao.move(10);
+        assertEquals(15, piao.getPosicao());
+    }
+    
+    @Test
+    public void testDumpString() {
+        assertEquals("(AMARELO, 0, [ 0])", piao.dumpString());
+    }
+    
+    @Test
+    public void testDistFinal() {
+        assertEquals(57, piao.distFinal());
+        piao.move(10);
+        assertEquals(47, piao.distFinal());
+    }
+    
+    @Test
+    public void testReset() {
+        piao.move(10);
+        piao.reset();
+        assertEquals(0, piao.getPosicao());
+    }
+    
+    @Test
+    public void testIsBarreiraNoCaminho() {
+        // Test case where no barriers in the way
+        assertFalse(piao.isBarreiraNoCaminho(5));
+        
+        // Test case where a barrier exists in the way
+        tabuleiro.getCasa(10, Cor.AMARELO).setBarreira();
+        assertTrue(piao.isBarreiraNoCaminho(5));
+    }
+}

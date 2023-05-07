@@ -1,0 +1,65 @@
+package regras;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
+import org.junit.Before;
+import org.junit.Test;
+
+import cores.Cor;
+import cores.Tipo;
+
+public class TabuleiroTest {
+    Tabuleiro tabuleiro;
+
+    @Before
+    public void setUp() {
+        tabuleiro = new Tabuleiro();
+    }
+
+    @Test
+    public void testCasasIniciais() {
+        assertEquals(Tipo.inicial, tabuleiro.getInicial(Cor.VERMELHO).getTipo());
+        assertEquals(Tipo.inicial, tabuleiro.getInicial(Cor.AMARELO).getTipo());
+        assertEquals(Tipo.inicial, tabuleiro.getInicial(Cor.VERDE).getTipo());
+        assertEquals(Tipo.inicial, tabuleiro.getInicial(Cor.AZUL).getTipo());
+    }
+
+    @Test
+    public void testCasasFinais() {
+        assertEquals(Tipo.vitoria, tabuleiro.getFinal(Cor.VERMELHO).getTipo());
+        assertEquals(Tipo.vitoria, tabuleiro.getFinal(Cor.AMARELO).getTipo());
+        assertEquals(Tipo.vitoria, tabuleiro.getFinal(Cor.VERDE).getTipo());
+        assertEquals(Tipo.vitoria, tabuleiro.getFinal(Cor.AZUL).getTipo());
+    }
+
+    @Test
+    public void testCasasDeSaida() {
+        assertEquals(Tipo.saida, tabuleiro.getSaida(Cor.VERMELHO).getTipo());
+        assertEquals(Tipo.saida, tabuleiro.getSaida(Cor.AMARELO).getTipo());
+        assertEquals(Tipo.saida, tabuleiro.getSaida(Cor.VERDE).getTipo());
+        assertEquals(Tipo.saida, tabuleiro.getSaida(Cor.AZUL).getTipo());
+    }
+
+    @Test
+    public void testArrayPioes() {
+        for (Cor cor : Cor.values()) {
+            for (int i = 0; i < 4; i++) {
+                assertEquals(cor, tabuleiro.getPiao(cor, i).getCor());
+                assertEquals(i, tabuleiro.getPiao(cor, i).getIndice());
+            }
+        }
+    }
+
+    @Test
+    public void testIsEmptyInicial() {
+        Board board = new Board();
+        assertTrue(board.isEmptyInicial(Color.WHITE));
+        assertFalse(board.isEmptyInicial(Color.BLACK));
+    }
+       
+//Se o método search retorna a casa correta para cada posição e cor. getPosicao()
+//Se o método search polimórfico retorna a casa correta para cada pião.
+//Se o método move move o pião para a casa correta. getPosicao()
