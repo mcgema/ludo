@@ -3,28 +3,17 @@ INF1636 - 2023.1
 Grupo: Laís, Maria Clara, Tomaz
 
 # Feito:
-(1) Model: arquitetura base de dados;
-
-(1) Model: método lancaDado();
-
-(1) Model: criação de fachada;
-
-(1) Model: método movePiao();
-
-(1) Model: método fimDoJogo();
-
-(1) Model: método podeJogar();
+(1) Model:
+arquitetura de dados, funções públicas.
 
 # Em andamento:
-(1) Model: consertar saídas no terminal;
-
-(1) Model: organizar código;
-
-(1) Model: corrigir possíveis bugs;
+(1) Model: Testagem com JUnit;
+(2) Model: modificações da 2a iteração;
+(2) View: Menu lateral;
+(2) View: Tabuleiro;
+(2) Controller: Implementação base;
+(2) Controller: Salvamento/carregamento de dados
 
 # Não iniciado:
-(1) Model: consertar visibilidade de classes e métodos;
-
-(1) Model: Testar com JUnit;
-
-(1) Gravar e editar o vídeo.
+(2) Controller: Testagem com JUnit;
+(2) View: Testagem com JUnit;
