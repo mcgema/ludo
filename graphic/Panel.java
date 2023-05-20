@@ -15,12 +15,22 @@ public class Panel extends JPanel {
     public static final int ALT_DEFAULT=700;
     int[] inicial = {(LARG_DEFAULT-15*LADO)/2, (ALT_DEFAULT-15*LADO)/2};
 
+    public int resultadoDado = 5;
+    public String vez = "vermelho";
     public Map<String, Command> commands = new HashMap<>();
 
     Color verde = new Color(34, 139, 34); 
     Color amarelo = new Color(255, 239, 0);
     Color azul = new Color(13, 101, 189);
     Color vermelho = new Color(218, 0, 0);
+
+    public void setResultadoDado(int resultado) {
+        this.resultadoDado = resultado;
+    }
+
+    public void setVez(String vez) {
+        this.vez = vez;
+    }
 
     public void getFuncaoCor(Graphics g){
         Graphics2D g2d=(Graphics2D) g;
@@ -37,15 +47,19 @@ public class Panel extends JPanel {
         Rectangle2D rt1=new Rectangle2D.Double(x, y, LADO*6, LADO*6);
         commands.get(cor1).invoke();
         g2d.fill(rt1);
-        //circulos dos peoes
+        //circulos dos peoes e peoes
         Ellipse2D e1 = new Ellipse2D.Double();
         for (int i=0; i<2; i++){
             for (int j=0; j<2; j++){
                 e1 = new Ellipse2D.Double(x+LADO+LADO2+2*i*LADO, y+LADO+LADO2+2*j*LADO, LADO, LADO);
                 g2d.setPaint(Color.WHITE);
-                g2d.fill(e1); //ou fillOval]
+                g2d.fill(e1); //ou fillOval
+                e1 = new Ellipse2D.Double(x+LADO+LADO2+2*i*LADO+LADO4, y+LADO+LADO2+2*j*LADO+LADO4, LADO2, LADO2);
+                commands.get(cor1).invoke();
+                g2d.fill(e1);
             }
         }
+
        
         BasicStroke stroke = new BasicStroke(3.0f);
         g2d.setStroke(stroke);
@@ -157,6 +171,7 @@ public class Panel extends JPanel {
         g2d.draw(rt);
         getFuncaoCor(g);
         desenhaTabuleiro(g);
-        desenhaDado(g2d, 5, "verde");
+        // termina (x,y) trocados
+        desenhaDado(g2d, this.resultadoDado, this.vez);
     }
 }

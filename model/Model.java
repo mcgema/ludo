@@ -9,7 +9,6 @@ public class Model {
     {
     	System.out.printf("\n\n\n");
     }
-    
     // movePiao(corPiao, idPiao, casas) tenta mover o "idPiao-ésimo" Pião de cor "corPiao" "casas" casas para a frente. retorna TRUE em caso de sucesso e FALSE em caso de falha.
     public boolean movePiao (Cor corPiao, int idPiao, int casas) {
     	Piao p = tabuleiro.getPiao(corPiao, idPiao);
@@ -36,4 +35,7 @@ public class Model {
     	if (jogoAcabou) tabuleiro.termina();
     	return jogoAcabou;
     }
+
+    // //nova funcao
+    // public v
 }
