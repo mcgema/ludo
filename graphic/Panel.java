@@ -17,12 +17,19 @@ public class Panel extends JPanel {
 
     public int resultadoDado = 5;
     public String vez = "vermelho";
+    int peaox = 0;
+    int peaoy = 0;
     public Map<String, Command> commands = new HashMap<>();
 
     Color verde = new Color(34, 139, 34); 
     Color amarelo = new Color(255, 239, 0);
     Color azul = new Color(13, 101, 189);
     Color vermelho = new Color(218, 0, 0);
+
+    public void setPeao(int x, int y){
+        this.peaox = x;
+        this.peaoy = y;
+    }
 
     public void setResultadoDado(int resultado) {
         this.resultadoDado = resultado;
@@ -78,7 +85,7 @@ public class Panel extends JPanel {
             commands.get(cor1).invoke();
             g2d.fill(rt1); 
         }
-        
+
          // casa inicial
          rt1 = new Rectangle2D.Double(x+LADO, y, LADO, LADO);
          commands.get(cor1).invoke();
@@ -131,6 +138,12 @@ public class Panel extends JPanel {
         g2d.fill(e1);
     }
 
+    // public void movePeao(int x, int y) {
+    //     peaox = x;
+    //     peaoy = y;
+    //     repaint();
+    // }
+    
     public void desenhaDado(Graphics g, int resultado, String vez){
         Graphics2D g2d = (Graphics2D) g;
         Image dado = Toolkit.getDefaultToolkit().getImage("imagens/Dado1.png"); //caso 1 já feito
@@ -175,5 +188,10 @@ public class Panel extends JPanel {
         desenhaTabuleiro(g);
         // termina (x,y) trocados
         desenhaDado(g2d, this.resultadoDado, this.vez);
+        // for (Cor cor: Cor.values()) {
+        //     for (int j=0; j<4; j++){
+        //         desenhaPeao(g2d, this.peao[cor.ordinal()][j][0], this.peao[cor.ordinal()][j][1], cor);
+        //     }
+        // }
     }
 }
