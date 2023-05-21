@@ -72,6 +72,31 @@ public class Panel extends JPanel {
         g2d.setStroke(stroke);
         y += 6*LADO;
 
+        // linha de casas da cor
+        for (int j=0; j<5; j++){
+            rt1 = new Rectangle2D.Double(x+LADO+LADO*j, y+LADO, LADO, LADO );
+            commands.get(cor1).invoke();
+            g2d.fill(rt1); 
+        }
+        
+         // casa inicial
+         rt1 = new Rectangle2D.Double(x+LADO, y, LADO, LADO);
+         commands.get(cor1).invoke();
+         g2d.fill(rt1);
+ 
+         // trocou x com y 
+         int[] xPoints1 =  {x + LADO + LADO3, x + LADO + LADO3, x + LADO + 2*LADO3}; 
+         int[] yPoints1 = {y + LADO3, y + 2*LADO3, y + LADO2}; 
+ 
+         g2d.setPaint(Color.WHITE);
+         g2d.fillPolygon(xPoints1, yPoints1, 3); 
+
+         //casa preta
+         rt1 = new Rectangle2D.Double(x+LADO, y+2*LADO, LADO, LADO);
+         g2d.setPaint(Color.BLACK);
+         g2d.fill(rt1);
+     
+
         // casas brancas
         for (int j=0; j<3; j++){
             for (int i=0; i<6; i++){
@@ -80,34 +105,11 @@ public class Panel extends JPanel {
                 g2d.draw(rt1); 
             }
         }
-        // linha de casas da cor
-        for (int j=0; j<5; j++){
-            rt1 = new Rectangle2D.Double(x+LADO+LADO*j, y+LADO, LADO, LADO );
-            commands.get(cor1).invoke();
-            g2d.fill(rt1); 
-        }
         // triangulo central
         int[] xPoints = {x + LADO*6, x + LADO*6, x + LADO*7 + LADO2}; // X coordenadas dos vérticecs de triangulo
         int[] yPoints = {y,          y + LADO*3, y + LADO + LADO2}; // Y coordenadas dos vérticecs de triangulo
         commands.get(cor1).invoke();
         g2d.fillPolygon(xPoints, yPoints, 3);
-
-        // casa inicial
-        rt1 = new Rectangle2D.Double(x+LADO, y, LADO, LADO);
-        commands.get(cor1).invoke();
-        g2d.fill(rt1);
-
-        int[] xPoints1 =  {x + LADO + LADO3, x + LADO + LADO3, x + LADO + LADO3*2}; // X coordinates of the triangle's vertices
-        int[] yPoints1 = {y + LADO3,          y + LADO3*3, y + LADO3*2}; // Y coordinates of the triangle's vertices
-
-        g2d.setPaint(Color.WHITE);
-        g2d.fillPolygon(xPoints1, yPoints1, 3); // Draw the triangle using the specified points
-
-        //casa preta
-        rt1 = new Rectangle2D.Double(x+LADO, y+2*LADO, LADO, LADO);
-        g2d.setPaint(Color.BLACK);
-        g2d.fill(rt1);
-    
     }
 
     public void desenhaTabuleiro(Graphics g){
