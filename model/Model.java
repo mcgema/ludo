@@ -36,6 +36,9 @@ public class Model {
     	return jogoAcabou;
     }
 
-    // //nova funcao
-    // public v
+    // comunicacao com graphics
+    public int posicaoPiao(Cor c, int i){
+        Piao p = tabuleiro.getPiao(c, i);
+        return p.getPosicao();
+    }
 }
