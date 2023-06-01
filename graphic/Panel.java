@@ -5,8 +5,10 @@ import java.awt.geom.*;
 import java.util.Map;
 import java.util.HashMap;
 import cores.*;
+import model.Model;
 
 public class Panel extends JPanel {
+    public Model model = new Model(); //faz algum sentido?
     public final int LADO = 36;
     public final int LADO2 = 18;
     public final int LADO3 = 12;
@@ -121,7 +123,6 @@ public class Panel extends JPanel {
 
     public void desenhaTabuleiro(Graphics g){
         Graphics2D g2d=(Graphics2D) g;
-
         parteTabuleiro(g, "vermelho", "verde", inicial[0], inicial[1]);
         g2d.rotate(-1.57079632679, inicial[0]+LADO*6, inicial[1]+9*LADO);
         parteTabuleiro(g, "azul", "vermelho", inicial[0], inicial[1]+LADO*3);
@@ -129,6 +130,16 @@ public class Panel extends JPanel {
         parteTabuleiro(g, "amarelo", "azul", inicial[0]-3*LADO,inicial[1]-3*LADO);
         g2d.rotate(-1.57079632679, inicial[0]+LADO*6, inicial[1]+9*LADO);
         parteTabuleiro(g, "verde", "amarelo", inicial[0]+3*LADO, inicial[1]);
+    }
+
+    public int[] posicaoTabuleiroPeao(String cor, int i){
+        int[] v = new int[2];
+        Cor c = Cor.valueOf(cor);
+        int pos = model.posicaoPiao(c, i);
+        //mapeia pos para tabuleiro 
+        //ruim
+        //mc
+        return v;
     }
 
     public void desenhaPeao(Graphics g, int x, int y, String cor){ // (x,y) coordenada do ponto mais a esquerda e topo da casa do peao
