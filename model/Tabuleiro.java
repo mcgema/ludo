@@ -8,7 +8,7 @@ class Tabuleiro {
     int abrigos[] = {10, 23, 36, 49, 0};
     
     // Tabuleiro é representado por Arrays de Casas.
-    Casa tabuleiro [][] = new Casa [4][56]; //[MC] peao percorre 56 casas
+    Casa tabuleiro [][] = new Casa [4][58]; //[MC] peao percorre 56 casas
     
     // Matriz de Piões guarda os "ponteiros" para todos os Piões, garantido que sempre serão facilmente acessíveis pela sua cor e índice.
     Piao arrayPioes[][] = new Piao[4][4];

@@ -19,11 +19,12 @@ public class Frame extends JFrame {
 
     //private Panel panel;
 
-    public Frame(){
+    public Frame(Model model){
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setTitle("Super Ludo");
 
         Panel p = new Panel();
+        p.setModel(model);
         getContentPane().add(p);
 
         JButton novoJogoButton = new JButton("Novo Jogo");
@@ -53,11 +54,10 @@ public class Frame extends JFrame {
         lancarDadoButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 int resultado = Model.lancaDado(); 
-                String vez = "azul"; //[MUDAR] controller vai dizer de quem é vez
 
                 // Update dado no Panel
                 p.setResultadoDado(resultado);
-                p.setVez(vez);
+                model.updateVez();
                 p.repaint();
 
             }
@@ -78,16 +78,4 @@ public class Frame extends JFrame {
         setSize(LARG_DEFAULT, ALT_DEFAULT);
         setVisible(true);
     }
-
-    public void sim() {
-
-
-        JButton b1 = new JButton("Novo Jogo");
-    
-        //[mc] VER COMO FUNCIONA: bounds para botoes 
-        b1.setBounds(3,4, 4 * LADO, LADO);
-    
-    
-    }
-    
 }

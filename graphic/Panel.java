@@ -1,15 +1,13 @@
 package graphic;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.awt.geom.*;
 import java.util.Map;
 import java.util.HashMap;
 import cores.*;
 import model.Model;
 
-public class Panel extends JPanel implements MouseListener {
+public class Panel extends JPanel{
     public Model model; //faz algum sentido?
     public final int LADO = 36, LADO2 = 18, LADO3 = 12, LADO4 = 9;
     public static final int LARG_DEFAULT=1200, ALT_DEFAULT=700;
@@ -24,11 +22,10 @@ public class Panel extends JPanel implements MouseListener {
     Color azul = new Color(13, 101, 189);
     Color vermelho = new Color(218, 0, 0);
 
-    // public Panel(Model m){
-    //     model = m;
-    //     //inicializa matrix de tabuleiro
-    //     addMouseListener(this);
-    // }
+    public void setModel(Model model) { 
+        this.model = model; 
+    }
+
     public void setPeao(int x, int y){
         this.peaox = x;
         this.peaoy = y;
@@ -128,15 +125,6 @@ public class Panel extends JPanel implements MouseListener {
         parteTabuleiro(g, Cor.verde, Cor.amarelo, inicial[0]+3*LADO, inicial[1]);
     }
 
-    public int[] posicaoTabuleiroPeao(String cor, int i){
-        int[] v = new int[2];
-        Cor c = Cor.valueOf(cor);
-        int pos = model.posicaoPiao(c, i);
-        //mapeia pos para tabuleiro 
-        //ruim
-        //mc
-        return v;
-    }
 
     public void desenhaPeao(Graphics g, int x, int y, Cor cor){ // (x,y) coordenada do ponto mais a esquerda e topo da casa do peao
         Graphics2D g2d=(Graphics2D) g;
@@ -201,17 +189,5 @@ public class Panel extends JPanel implements MouseListener {
         // }
     }
     
-    public void mousePressed(MouseEvent e){
-        int x = e.getX(), y = e.getY();
-      //  int position = convertCoordinatesToPosition(x, y); // Implement this method based on your board layout
-
-
-
-    }
-
-    public void mouseEntered(MouseEvent e) {}
-	public void mouseClicked(MouseEvent e) {}
-	public void mouseReleased(MouseEvent e) {}
-	public void mouseExited(MouseEvent e) {}
     
 }

@@ -5,7 +5,7 @@ import cores.*;
 // Model é a fachada das regras, e é a única classe pública da 1a iteração.
 public class Model {
     public Tabuleiro tabuleiro = new Tabuleiro();
-    public Cor vez;
+    public Cor vez = Cor.valueOf("vermelho");
     boolean jogoAcabou = false;
     {
     	System.out.printf("\n\n\n");
@@ -42,9 +42,18 @@ public class Model {
         Piao p = tabuleiro.getPiao(c, i);
         return p.getPosicao();
     }
-    public Cor getVez(){
+    public Cor updateVez(){
         Cor c = vez;
-        vez = Cor.values()[c.ordinal()+1];
+        if (c.ordinal() < 3){
+            vez = Cor.values()[c.ordinal()+1];
+        }
+        else {
+            vez = Cor.values()[0];
+        }
+        return vez;
+    }
+
+    public Cor getVez(){
         return vez;
     }
 }
