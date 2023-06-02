@@ -53,13 +53,9 @@ public class Frame extends JFrame {
         lancarDadoButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 int resultado = Model.lancaDado(); 
-                String vez = "azul"; //[MUDAR] controller vai dizer de quem é vez
-
                 // Update dado no Panel
                 p.setResultadoDado(resultado);
-                p.setVez(vez);
                 p.repaint();
-
             }
         });
         
