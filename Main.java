@@ -2,7 +2,7 @@ import graphic.*;
 // A Main serve para testar.
 public class Main {
     public static void main(String[] args) {
-	DesenhaJogo f=new DesenhaJogo();
+	Frame f=new Frame();
     f.setVisible(true);
     }
 }

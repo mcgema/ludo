@@ -8,7 +8,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class DesenhaJogo extends JFrame {
+public class Frame extends JFrame {
     public static final int LADO = 36;
     public static final int LADO2 = 18;
     public static final int LADO3 = 12;
@@ -19,7 +19,7 @@ public class DesenhaJogo extends JFrame {
 
     //private Panel panel;
 
-    public DesenhaJogo(){
+    public Frame(){
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setTitle("Super Ludo");
 

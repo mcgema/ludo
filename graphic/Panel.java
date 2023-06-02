@@ -1,33 +1,34 @@
 package graphic;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.geom.*;
 import java.util.Map;
 import java.util.HashMap;
 import cores.*;
 import model.Model;
 
-public class Panel extends JPanel {
-    public Model model = new Model(); //faz algum sentido?
-    public final int LADO = 36;
-    public final int LADO2 = 18;
-    public final int LADO3 = 12;
-    public final int LADO4 = 9;
-    public static final int LARG_DEFAULT=1200;
-    public static final int ALT_DEFAULT=700;
+public class Panel extends JPanel implements MouseListener {
+    public Model model; //faz algum sentido?
+    public final int LADO = 36, LADO2 = 18, LADO3 = 12, LADO4 = 9;
+    public static final int LARG_DEFAULT=1200, ALT_DEFAULT=700;
     int[] inicial = {(LARG_DEFAULT-15*LADO)/2, (ALT_DEFAULT-15*LADO)/2};
-
+    int iClick, jClick;
     public int resultadoDado = 5;
-    public String vez = "vermelho";
-    int peaox = 0;
-    int peaoy = 0;
-    public Map<String, Command> commands = new HashMap<>();
+    int peaox = 0, peaoy = 0;
+    public Map<Cor, Command> commands = new HashMap<>();
 
     Color verde = new Color(34, 139, 34); 
     Color amarelo = new Color(255, 239, 0);
     Color azul = new Color(13, 101, 189);
     Color vermelho = new Color(218, 0, 0);
 
+    // public Panel(Model m){
+    //     model = m;
+    //     //inicializa matrix de tabuleiro
+    //     addMouseListener(this);
+    // }
     public void setPeao(int x, int y){
         this.peaox = x;
         this.peaoy = y;
@@ -37,19 +38,15 @@ public class Panel extends JPanel {
         this.resultadoDado = resultado;
     }
 
-    public void setVez(String vez) {
-        this.vez = vez;
-    }
-
     public void getFuncaoCor(Graphics g){
         Graphics2D g2d=(Graphics2D) g;
-        commands.put("vermelho", () -> g2d.setPaint(vermelho));
-        commands.put("verde", () -> g2d.setPaint(verde));
-        commands.put("amarelo", () -> g2d.setPaint(amarelo));
-        commands.put("azul", () -> g2d.setPaint(azul));
+        commands.put(Cor.vermelho, () -> g2d.setPaint(vermelho));
+        commands.put(Cor.verde, () -> g2d.setPaint(verde));
+        commands.put(Cor.amarelo, () -> g2d.setPaint(amarelo));
+        commands.put(Cor.azul, () -> g2d.setPaint(azul));
     }
 
-    public void parteTabuleiro(Graphics g, String cor1, String cor2, int x, int y){
+    public void parteTabuleiro(Graphics g, Cor cor1, Cor cor2, int x, int y){
         Graphics2D g2d=(Graphics2D) g;
 
         // casa onde começam peoes
@@ -105,7 +102,6 @@ public class Panel extends JPanel {
          g2d.setPaint(Color.BLACK);
          g2d.fill(rt1);
      
-
         // casas brancas
         for (int j=0; j<3; j++){
             for (int i=0; i<6; i++){
@@ -123,13 +119,13 @@ public class Panel extends JPanel {
 
     public void desenhaTabuleiro(Graphics g){
         Graphics2D g2d=(Graphics2D) g;
-        parteTabuleiro(g, "vermelho", "verde", inicial[0], inicial[1]);
+        parteTabuleiro(g, Cor.vermelho, Cor.verde, inicial[0], inicial[1]);
         g2d.rotate(-1.57079632679, inicial[0]+LADO*6, inicial[1]+9*LADO);
-        parteTabuleiro(g, "azul", "vermelho", inicial[0], inicial[1]+LADO*3);
+        parteTabuleiro(g, Cor.azul, Cor.vermelho, inicial[0], inicial[1]+LADO*3);
         g2d.rotate(-1.57079632679, inicial[0]+ 9*LADO, inicial[1]+6*LADO);
-        parteTabuleiro(g, "amarelo", "azul", inicial[0]-3*LADO,inicial[1]-3*LADO);
+        parteTabuleiro(g, Cor.amarelo, Cor.azul, inicial[0]-3*LADO,inicial[1]-3*LADO);
         g2d.rotate(-1.57079632679, inicial[0]+LADO*6, inicial[1]+9*LADO);
-        parteTabuleiro(g, "verde", "amarelo", inicial[0]+3*LADO, inicial[1]);
+        parteTabuleiro(g, Cor.verde, Cor.amarelo, inicial[0]+3*LADO, inicial[1]);
     }
 
     public int[] posicaoTabuleiroPeao(String cor, int i){
@@ -142,7 +138,7 @@ public class Panel extends JPanel {
         return v;
     }
 
-    public void desenhaPeao(Graphics g, int x, int y, String cor){ // (x,y) coordenada do ponto mais a esquerda e topo da casa do peao
+    public void desenhaPeao(Graphics g, int x, int y, Cor cor){ // (x,y) coordenada do ponto mais a esquerda e topo da casa do peao
         Graphics2D g2d=(Graphics2D) g;
         Ellipse2D e1 = new Ellipse2D.Double(x+LADO4, y+LADO4, LADO2, LADO2);
         commands.get(cor).invoke();
@@ -155,7 +151,7 @@ public class Panel extends JPanel {
     //     repaint();
     // }
     
-    public void desenhaDado(Graphics g, int resultado, String vez){
+    public void desenhaDado(Graphics g, int resultado, Cor vez){
         Graphics2D g2d = (Graphics2D) g;
         Image dado = Toolkit.getDefaultToolkit().getImage("imagens/Dado1.png"); //caso 1 já feito
         switch(resultado){
@@ -186,7 +182,6 @@ public class Panel extends JPanel {
         Rectangle2D rt1 = new Rectangle2D.Double(x, y, 2*LADO, 2*LADO);
         commands.get(vez).invoke();
         g2d.draw(rt1); 
-
     }
 
     public void paintComponent(Graphics g){
@@ -198,11 +193,25 @@ public class Panel extends JPanel {
         getFuncaoCor(g);
         desenhaTabuleiro(g);
         // termina (x,y) trocados
-        desenhaDado(g2d, this.resultadoDado, this.vez);
+        desenhaDado(g2d, this.resultadoDado, model.getVez());
         // for (Cor cor: Cor.values()) {
         //     for (int j=0; j<4; j++){
         //         desenhaPeao(g2d, this.peao[cor.ordinal()][j][0], this.peao[cor.ordinal()][j][1], cor);
         //     }
         // }
     }
+    
+    public void mousePressed(MouseEvent e){
+        int x = e.getX(), y = e.getY();
+      //  int position = convertCoordinatesToPosition(x, y); // Implement this method based on your board layout
+
+
+
+    }
+
+    public void mouseEntered(MouseEvent e) {}
+	public void mouseClicked(MouseEvent e) {}
+	public void mouseReleased(MouseEvent e) {}
+	public void mouseExited(MouseEvent e) {}
+    
 }
