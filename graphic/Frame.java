@@ -13,9 +13,9 @@ public class Frame extends JFrame {
     public static final int LADO2 = 18;
     public static final int LADO3 = 12;
     public static final int LADO4 = 9;
-    public static final int LARG_DEFAULT = 1200;
-    public static final int ALT_DEFAULT = 700;
-    int[] inicial = {(LARG_DEFAULT - 15 * LADO) / 2, (ALT_DEFAULT - 15 * LADO) / 2};
+    public static final int LARG_DEFAULT = 19*LADO;
+    public static final int ALT_DEFAULT = 16*LADO;
+    int[] inicial = {0,0};
 
     //private Panel panel;
 
@@ -54,7 +54,6 @@ public class Frame extends JFrame {
         lancarDadoButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 int resultado = Model.lancaDado(); 
-
                 // Update dado no Panel
                 p.setResultadoDado(resultado);
                 model.updateVez();

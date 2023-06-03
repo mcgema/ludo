@@ -9,9 +9,10 @@ import model.Model;
 
 public class Panel extends JPanel{
     public Model model; //faz algum sentido?
-    public final int LADO = 36, LADO2 = 18, LADO3 = 12, LADO4 = 9;
-    public static final int LARG_DEFAULT=1200, ALT_DEFAULT=700;
-    int[] inicial = {(LARG_DEFAULT-15*LADO)/2, (ALT_DEFAULT-15*LADO)/2};
+    public static final int LADO = 36, LADO2 = 18, LADO3 = 12, LADO4 = 9;
+    public static final int LARG_DEFAULT = 19*LADO;
+    public static final int ALT_DEFAULT = 16*LADO;
+    int[] inicial = {0,0};
     int iClick, jClick;
     public int resultadoDado = 5;
     int peaox = 0, peaoy = 0;
