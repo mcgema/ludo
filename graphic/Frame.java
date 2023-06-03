@@ -58,7 +58,6 @@ public class Frame extends JFrame {
                 p.setResultadoDado(resultado);
                 model.updateVez();
                 p.repaint();
-
             }
         });
         

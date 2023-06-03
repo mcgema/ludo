@@ -42,6 +42,8 @@ public class Model {
         Piao p = tabuleiro.getPiao(c, i);
         return p.getPosicao();
     }
+
+
     public Cor updateVez(){
         Cor c = vez;
         if (c.ordinal() < 3){
@@ -55,5 +57,23 @@ public class Model {
 
     public Cor getVez(){
         return vez;
+    }
+
+
+
+    public Casa[][] getTabuleiros(){
+        return tabuleiro.getTabuleiro();
+    }
+
+
+    private Casa convertCoordinatesToPosition(int x, int y) {
+        int indiceJogador = vez.ordinal();
+        Casa[] tabuleiroJogador = getTabuleiros()[indiceJogador];
+        int tabuleiroTamanho = 56;
+        
+        // converte coordenadas para tabuleiro do jogador
+        int posicao = 0;
+        
+        return tabuleiroJogador[posicao];
     }
 }

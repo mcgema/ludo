@@ -56,6 +56,11 @@ class Tabuleiro {
         ultimoPiaoMovimentado = arrayPioes[0][0];
     }
 
+    // getTabuleiro() retorna tabuleiro de cada cor
+    protected Casa[][] getTabuleiro(){
+        return tabuleiro;
+    }
+
     // getInicial(Cor cor) retorna a Casa inicial da Cor cor
     protected Casa getInicial (Cor cor) {
         return tabuleiro[cor.ordinal()][0];
