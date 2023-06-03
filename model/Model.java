@@ -66,14 +66,55 @@ public class Model {
     }
 
 
-    private Casa convertCoordinatesToPosition(int x, int y) {
+    public Casa converteCoordenadas(int x, int y, int LADO) { //[mc] funciona apenas para cor vermelha!!!!
         int indiceJogador = vez.ordinal();
         Casa[] tabuleiroJogador = getTabuleiros()[indiceJogador];
         int tabuleiroTamanho = 56;
-        
-        // converte coordenadas para tabuleiro do jogador
-        int posicao = 0;
-        
-        return tabuleiroJogador[posicao];
+    
+        //  verifica se apertou em coordenas que pode se jogar
+        if (x < 0 || y < 0 || x > 15 * LADO || y > 15 * LADO) {
+            return null; // retorna null se coordenadas fora de área de jogo
+        }
+    
+        // ajuste das coordenadas para área de jogo
+        x -= LADO;
+        y -= LADO;
+    
+        // Calcula posicao baseada nas coordenas clicadas
+        int posicao = -1;
+        int coluna = x / LADO;
+        int linha = y / LADO;
+    
+        // parte do oeste 
+        if (coluna < 6 && linha >= 6 && linha <= 8) {
+            if (linha == 6) posicao += coluna;
+            else if (linha == 7) posicao += 51 + coluna;
+            else posicao += 50 - coluna;
+        } 
+        // parte do norte
+        else if (coluna >= 6 && coluna <= 8 && linha < 6) {
+            if (coluna == 6) posicao += 12 - linha;
+            else if (coluna == 7 && linha == 0) posicao += 13;
+            else if (coluna == 8) posicao += 14 + linha;
+        } 
+        // parte do leste
+        else if (coluna >= 9 && linha >= 6 && linha <= 8) {
+            if (linha == 6) posicao += 20 + coluna - 9;
+            else if (linha == 7 && coluna == 14) posicao += 26;
+            else if (linha == 8) posicao += 27 +  14 - coluna;
+        } 
+        // parte do sul
+        else if (coluna >= 6 && coluna <= 8 && linha > 8) {
+            if (coluna == 8) posicao += 33 + linha - 8;
+            else if (coluna == 7 && linha == 14) posicao += 39;
+            else if (coluna == 6) posicao += 40 + 14 - linha;
+        }
+    
+        if (posicao >= 0 && posicao < tabuleiroTamanho) {
+            return tabuleiroJogador[posicao];
+        } else {
+            return null; // returna null para posicoes invalidas
+        }
     }
+    
 }

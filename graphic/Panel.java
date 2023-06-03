@@ -4,13 +4,15 @@ import java.awt.*;
 import java.awt.geom.*;
 import java.util.Map;
 import java.util.HashMap;
-import cores.*;
+import cores.Cor;
 import model.Model;
+import java.awt.event.MouseListener;
 
-public class Panel extends JPanel{
+
+public class Panel extends JPanel {
     public Model model; //faz algum sentido?
     public static final int LADO = 36, LADO2 = 18, LADO3 = 12, LADO4 = 9;
-    public static final int LARG_DEFAULT = 19*LADO;
+    public static final int LARG_DEFAULT = 22*LADO;
     public static final int ALT_DEFAULT = 16*LADO;
     int[] inicial = {0,0};
     int iClick, jClick;
@@ -22,6 +24,10 @@ public class Panel extends JPanel{
     Color amarelo = new Color(255, 239, 0);
     Color azul = new Color(13, 101, 189);
     Color vermelho = new Color(218, 0, 0);
+
+    public Panel(Model m){
+        model = m;
+    }
 
     public void setModel(Model model) { 
         this.model = model; 
@@ -161,7 +167,7 @@ public class Panel extends JPanel{
                 break;         
         }
         int x = inicial[0]+15*LADO;
-        int y = inicial[1]-5*LADO;
+        int y = inicial[1]-3*LADO;
 
         g2d.drawImage(dado, x, y, 2*LADO, 2*LADO, this);
 
@@ -189,6 +195,4 @@ public class Panel extends JPanel{
         //     }
         // }
     }
-    
-    
 }

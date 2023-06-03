@@ -13,7 +13,7 @@ public class Frame extends JFrame {
     public static final int LADO2 = 18;
     public static final int LADO3 = 12;
     public static final int LADO4 = 9;
-    public static final int LARG_DEFAULT = 19*LADO;
+    public static final int LARG_DEFAULT = 22*LADO;
     public static final int ALT_DEFAULT = 16*LADO;
     int[] inicial = {0,0};
 
@@ -23,8 +23,8 @@ public class Frame extends JFrame {
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setTitle("Super Ludo");
 
-        Panel p = new Panel();
-        p.setModel(model);
+        Panel p = new Panel(model);
+        //p.setModel(model);
         getContentPane().add(p);
 
         JButton novoJogoButton = new JButton("Novo Jogo");
@@ -56,8 +56,12 @@ public class Frame extends JFrame {
                 int resultado = Model.lancaDado(); 
                 // Update dado no Panel
                 p.setResultadoDado(resultado);
-                model.updateVez();
-                p.repaint();
+                if (model.podeJogar(model.vez, resultado)) { //true 
+                    // [mc] precisa atualizar peao
+                    model.updateVez();
+                    p.repaint();
+                }
+              
             }
         });
         
