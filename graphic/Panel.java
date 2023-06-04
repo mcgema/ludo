@@ -39,6 +39,7 @@ public class Panel extends JPanel {
         this.peaoy = y;
     }
 
+    //controller/model
     public void setResultadoDado(int resultado) {
         this.resultadoDado = resultado;
     }
@@ -190,12 +191,14 @@ public class Panel extends JPanel {
         desenhaTabuleiro(g);
         // termina (x,y) trocados
         desenhaDado(g2d, this.resultadoDado, model.getVez());
-        // for (Cor cor: Cor.values()) {
-        //      for (int j=0; j<4; j++){
-        //          desenhaPeao(g2d, this.peao[cor.ordinal()][j][0], this.peao[cor.ordinal()][j][1], cor);
-        //      }
-        // }
-        desenhaPeao(g2d, 32, 32, Cor.verde);
+        for (Cor cor: Cor.values()) {
+             for (int j=0; j<4; j++){
+                 desenhaPeao(g2d, this.peao[cor.ordinal()][j][0], this.peao[cor.ordinal()][j][1], cor);
+             }
+        }
+        desenhaPeao(g2d, this.peao[0][0][0], this.peao[0][0][1], Cor.verde);
+       // desenhaTabuleiro(g);
+
         System.out.printf("x=%d y=%d",this.peao[0][0][0], this.peao[0][0][1] );
 
     }
