@@ -15,12 +15,14 @@ public class Controller implements ObserverTom{
     }
 
     public void notify(ObservableIF o) {
-        int[][] listaPioes = (int[][]) o.getPioes();
-        view.updatePioes(listaPioes);
+        //[mc] nao entendi e funciona sem
+       // int[][] listaPioes = (int[][]) o.getPioes();
+       // view.updatePioes(listaPioes);
         view.updateVez(model.getVez());
     }
 
-    public boolean movePiao(Cor c, int pos, int dado) {
-        return model.tentaMoverPiao(c, pos, dado);
+    public boolean movePiao(Cor c, int indice, int pos, int dado) {
+        System.out.printf("cor movePiao: %s", c.toString());
+        return model.tentaMoverPiao(c, indice, pos, dado);
     }
 }

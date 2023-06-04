@@ -27,8 +27,10 @@ public class Model implements ObservableIF {
     // }
 
     // movePiao(corPiao, idPiao, casas) tenta mover o "idPiao-ésimo" Pião de cor "corPiao" "casas" casas para a frente. retorna TRUE em caso de sucesso e FALSE em caso de falha.
-    public boolean movePiao (Cor corPiao, int idPiao, int casas) {
+    public boolean movePiao (Cor corPiao,int idPiao,  int posicao, int casas) {
+        System.out.printf("cor Model movePiao: %s", corPiao.toString());
     	Piao p = tabuleiro.getPiao(corPiao, idPiao);
+        p.setPosicao(posicao); //[MC] ALTEREI ISSO!!!
 		//System.out.printf("\n>>> move(%s, %d) = ", p.dumpString(),casas);
     	boolean retorno = tabuleiro.move(p, dadoAtual);
 		//System.out.printf("%s\t",retorno?"permitido (T):":"proibido (F):");
@@ -40,6 +42,8 @@ public class Model implements ObservableIF {
             ultimoPiaoMovido = p;
             this.atualiza();
         }
+        System.out.printf("cor Model movePiao no final: %s", p.getCor().toString());
+
         return retorno;
     }
     
@@ -102,8 +106,9 @@ public class Model implements ObservableIF {
     	return jogoAcabou;
     }
 
-    public boolean tentaMoverPiao (Cor corPiao, int pos, int casas) {
-        return movePiao(corPiao,tabuleiro.search(pos, corPiao).getIndice(),casas);
+    public boolean tentaMoverPiao (Cor corPiao, int indice, int pos, int casas) {
+        System.out.printf("cor tentaMoverPiao: %s", corPiao.toString());
+        return movePiao(corPiao, indice, tabuleiro.search(pos, corPiao).getIndice(),casas);
         // duvida 
     }
 
@@ -114,10 +119,10 @@ public class Model implements ObservableIF {
     }
 
 
-    public Cor updateVez(){
+    public void updateVez(){
         corVez = Cor.values()[(corVez.ordinal()+1)%4];
         this.atualiza();
-        return corVez;
+        // return corVez;
     }
 
     public Cor getVez(){

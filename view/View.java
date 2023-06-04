@@ -11,6 +11,7 @@ import java.awt.event.MouseEvent;
 import controller.*;
 
 public class View extends JPanel implements java.awt.event.MouseListener {
+    public Model model;
     public static final int LADO = 36, LADO2 = 18, LADO3 = 12, LADO4 = 9;
     public static final int LARG_DEFAULT = 22*LADO;
     public static final int ALT_DEFAULT = 16*LADO;
@@ -56,11 +57,16 @@ public class View extends JPanel implements java.awt.event.MouseListener {
     }
 
     public void updateVez(){
+        model.updateVez();
         corVez = Cor.values()[(corVez.ordinal()+1)%4];
     }
 
     public void updateDado (int i) {
         dadoVez = i;
+    }
+
+    public void setModel (Model m){
+        model = m;
     }
 
     static Color getCor (Cor c) {
@@ -250,15 +256,15 @@ public class View extends JPanel implements java.awt.event.MouseListener {
 
         desenhaTabuleiro(g);
         // teste
-       if (cont.movePiao(corVez, 1, dadoVez)) pioesPos[corVez.ordinal()][0]+=dadoVez;
-
+        // if (cont.movePiao(corVez, 1, dadoVez)) pioesPos[corVez.ordinal()][0]+=dadoVez;
+        // [mc] precisa de jeito de inicializar peao a andar, metodo de clicar nao funciona...
         if (qtdPeaos[corVez.ordinal()] == 0){
             pioesPos[corVez.ordinal()][0] += dadoVez;
             qtdPeaos[corVez.ordinal()] += 1;
         } 
-        else if (qtdPeaos[corVez.ordinal()] == 1){
-            pioesPos[corVez.ordinal()][0] += dadoVez;
-        } else { addMouseListener(this);}
+        // else if (qtdPeaos[corVez.ordinal()] == 1){
+        //     pioesPos[corVez.ordinal()][0] += dadoVez;
+        // } else { addMouseListener(this);}
         //
         for (Cor cor: Cor.values()) {
             int qtdInicio = 0;
@@ -294,13 +300,26 @@ public class View extends JPanel implements java.awt.event.MouseListener {
            // acha a posicao que apertei
            if (LADO*lutX[corVez.ordinal()][i] <= m.getX() && m.getX() <= LADO*lutX[corVez.ordinal()][i] + LADO &&
            LADO*lutY[corVez.ordinal()][i] <= m.getY() && m.getY() <= LADO*lutY[corVez.ordinal()][i] + LADO) {
-                   System.out.println("CLIQUEI NO PIAO!");
-                   //if (cont.movePiao(corVez, i, dadoVez)) pioesPos[corVez.ordinal()][0]+=dadoVez;
-                   System.out.println(cont.movePiao(corVez, i, dadoVez));
+                   System.out.printf("CLIQUEI NA CASA! posicao %d", i);
+                   for (int j=0; j<4; j++){
+                        if (pioesPos[corVez.ordinal()][j] == i){
+                            // tem um peao da cor nessa posicao
+                            System.out.printf("\n cor peao %s! ",  corVez.toString());
+                            System.out.printf("\n velha pos %d", pioesPos[corVez.ordinal()][j]);
+                            System.out.println("corVez: " + corVez + ", peao: " + j + ", posicao: " + i + ", dadoVez: " + dadoVez);
+                            boolean moveSuccessful = cont.movePiao(corVez, j, i, dadoVez);
+                            System.out.println("Move sucesso: " + moveSuccessful);
+                            System.out.printf("\n nova pos %d, cor %s", pioesPos[corVez.ordinal()][j], corVez.toString());
+                            if (moveSuccessful) pioesPos[corVez.ordinal()][j]+=dadoVez;
+                            
+                        }
+                   }
+                   
+                   //System.out.println(cont.movePiao(corVez, i, dadoVez));
 
                }
        }
-       System.out.printf("peao: %d", pioesPos[corVez.ordinal()][0]);
+       //System.out.printf("peao: %d", pioesPos[corVez.ordinal()][0]);
        this.repaint();
     }
 
@@ -311,19 +330,6 @@ public class View extends JPanel implements java.awt.event.MouseListener {
 
     public void mouseReleased(MouseEvent m) {
         // System.out.printf("Mouse Released: %d,\t%d\n",m.getX(), m.getY());
-        // for (int i = 0; i<57; i++) {
-        //     // acha a posicao que apertei
-        //     if (LADO*lutX[corVez.ordinal()][i] <= m.getX() && m.getX() <= LADO*lutX[corVez.ordinal()][i] + LADO &&
-        //     LADO*lutY[corVez.ordinal()][i] <= m.getY() && m.getY() <= LADO*lutY[corVez.ordinal()][i] + LADO) {
-        //             System.out.println("CLIQUEI NO PIAO!");
-        //             if (cont.movePiao(corVez, i, dadoVez)) pioesPos[corVez.ordinal()][0]+=dadoVez;
-        //             System.out.println(cont.movePiao(corVez, i, dadoVez));
-
-        //         }
-        // }
-        // System.out.printf("peao: %d", pioesPos[corVez.ordinal()][0]);
-        // this.repaint();
-
     }
 
     public void mouseExited(MouseEvent m) {
