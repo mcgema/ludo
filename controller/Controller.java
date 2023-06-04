@@ -18,7 +18,9 @@ public class Controller implements ObserverTom{
         //[mc] nao entendi e funciona sem
        // int[][] listaPioes = (int[][]) o.getPioes();
        // view.updatePioes(listaPioes);
-        view.updateVez(model.getVez());
+        System.out.printf("\n CONTROLLER cor %s", model.getVez().toString());
+
+        //view.updateVez(model.getVez());
     }
 
     public boolean movePiao(Cor c, int indice, int pos, int dado) {

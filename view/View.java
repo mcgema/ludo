@@ -11,7 +11,6 @@ import java.awt.event.MouseEvent;
 import controller.*;
 
 public class View extends JPanel implements java.awt.event.MouseListener {
-    public Model model;
     public static final int LADO = 36, LADO2 = 18, LADO3 = 12, LADO4 = 9;
     public static final int LARG_DEFAULT = 22*LADO;
     public static final int ALT_DEFAULT = 16*LADO;
@@ -57,16 +56,11 @@ public class View extends JPanel implements java.awt.event.MouseListener {
     }
 
     public void updateVez(){
-        model.updateVez();
         corVez = Cor.values()[(corVez.ordinal()+1)%4];
     }
 
     public void updateDado (int i) {
         dadoVez = i;
-    }
-
-    public void setModel (Model m){
-        model = m;
     }
 
     static Color getCor (Cor c) {
