@@ -203,7 +203,7 @@ class Tabuleiro {
                     boolean existeBarreiraQuebravel = false;
                     while (iterator.hasNext()) {
                         Casa casaComBarreira = iterator.next();
-
+                        
                         // ...e a barreira possa ser quebrada...
                         if (this.isLivreParaMover(casaComBarreira.getPiao(),resultadoDado)) {
                             existeBarreiraQuebravel = true;
@@ -219,7 +219,8 @@ class Tabuleiro {
                 }
                 // se rolou 6 mas não tem barreiras e rolou menos de dois 6, nada dos dados impede de mover:
                 return false;
-
+            
+            /*
             case 5:
                 // se o jogador não tiver piões para iniciar, nada dos dados impede o pião de mover:
                 if (this.getInicial(p.getCor()).getQtdPioes() == 0) return false;
@@ -233,7 +234,8 @@ class Tabuleiro {
                 // ...ou seja: se o jogador pode iniciar piões e esse pião já está iniciado, ele não move (código F-07):
                 System.out.printf("F-07\n");
                 return true;
-                
+            */
+
             default:
                 // se o dado rolou 1, 2, 3 ou 4, ele não influencia na possibilidade de movimentação:
                 return false; 
@@ -266,6 +268,7 @@ class Tabuleiro {
     
     // jogadorPodeJogar (Cor corDoJogador, int resultadoDado) retorna TRUE se o jogador pode jogar e FALSE caso sua rodada deva ser pulada.
     protected boolean jogadorPodeJogar (Cor corDoJogador, int resultadoDado) {
+        
         if (resultadoDado == 6 && corDoJogador == ultimoPiaoMovimentado.getCor()) qtdSeisRolados++;
         else qtdSeisRolados = 0;
     	System.out.println(qtdSeisRolados);
@@ -285,5 +288,6 @@ class Tabuleiro {
         
         // se nenhum pião pode se mover, o jogador não tem rodada:
         return piaoPodeMover;
+        
     }
 }

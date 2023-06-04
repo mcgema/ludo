@@ -53,7 +53,7 @@ public class Frame extends JFrame {
        
         lancarDadoButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                int dado = Model.lancaDado(); 
+                int dado = model.lancaDado(); 
                 boolean jogou = false;
                 p.setResultadoDado(dado);
                 if (model.podeJogar(model.vez, dado)) { //true 

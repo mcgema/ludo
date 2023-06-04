@@ -8,25 +8,47 @@ public class Model {
     public Cor vez = Cor.valueOf("vermelho");
     boolean jogoAcabou = false;
     public int qtdPeaos[] = {0, 0, 0, 0};
+    private int qtdSeisRolados = 0;
+    private Piao ultimoPiaoMovido = null;
     {
     	System.out.printf("\n\n\n");
     }
     // movePiao(corPiao, idPiao, casas) tenta mover o "idPiao-ésimo" Pião de cor "corPiao" "casas" casas para a frente. retorna TRUE em caso de sucesso e FALSE em caso de falha.
     public boolean movePiao (Cor corPiao, int idPiao, int casas) {
     	Piao p = tabuleiro.getPiao(corPiao, idPiao);
-		System.out.printf("\n>>> move(%s, %d) = ", p.dumpString(),casas);
+		//System.out.printf("\n>>> move(%s, %d) = ", p.dumpString(),casas);
     	boolean retorno = tabuleiro.move(p, casas);
-		System.out.printf("%s\t",retorno?"permitido (T):":"proibido (F):");
-		tabuleiro.search(p).dump();
-		System.out.printf("%s\n",(tabuleiro.barreiras.get(p.getCor().ordinal()).toString()));
+		//System.out.printf("%s\t",retorno?"permitido (T):":"proibido (F):");
+		//tabuleiro.search(p).dump();
+		//System.out.printf("%s\n",(tabuleiro.barreiras.get(p.getCor().ordinal()).toString()));
 		
 		jogoAcabou = !tabuleiro.getStatus();
+        if (retorno) ultimoPiaoMovido = p;
         return retorno;
     }
     
     // lancaDado() lanca um dado virtual de 6 lados, retornando um inteiro dentre {1, 2, 3, 4, 5, 6} com chance pseudo-aleatória.
-    public static int lancaDado () {
-        return Dado.rolar();
+    public int lancaDado () {
+        int resultado = Dado.rolar();
+        if (resultado == 6) {
+            qtdSeisRolados++;
+            if (qtdSeisRolados > 2) {
+                // caso o joagor tenha rolado o 3o 6 seguido...
+                ultimoPiaoMovido.reset();
+                updateVez();
+                return 0;
+            }
+            if (tabuleiro.barreiras.get(vez.ordinal()).size() > 1) {
+                System.out.println("incompleto");
+            }
+        }
+        else if (resultado == 5) {
+            if (tabuleiro.getInicial(vez).getQtdPioes() > 0 && tabuleiro.move(tabuleiro.getInicial(vez).getPiao(),1)) {
+                updateVez();
+                return 0;
+            }
+        }
+        return 99;
     }
 
     public boolean podeJogar (Cor corDoJogador, int resultadoDado) {
@@ -36,6 +58,10 @@ public class Model {
     public boolean fimDoJogo() {
     	if (jogoAcabou) tabuleiro.termina();
     	return jogoAcabou;
+    }
+
+    public boolean tentaMoverPiao (Cor corPiao, int idPiao, int casas) {
+        return movePiao(corPiao,idPiao,casas);
     }
 
     // comunicacao com graphics
@@ -54,12 +80,9 @@ public class Model {
         return vez;
     }
 
-
-
     public Casa[][] getTabuleiros(){
         return tabuleiro.getTabuleiro();
     }
-
 
     public Casa converteCoordenadas(int x, int y, int LADO) { //[mc] funciona apenas para cor vermelha!!!!
         int indiceJogador = vez.ordinal();
