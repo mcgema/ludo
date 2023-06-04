@@ -144,23 +144,13 @@ public class Model implements ObservableIF {
     }
 
     public boolean tentaMoverPiao (Cor corPiao, int indice, int pos, int casas) {
-        //System.out.printf("Model.tentaMoverPiao(%s)\n", corPiao.toString());
         return movePiao(corPiao, indice, tabuleiro.search(pos, corPiao).getIndice(),casas);
-        // duvida 
     }
-
-    // comunicacao com graphics
-    public int posicaoPiao(Cor c, int i){
-        Piao p = tabuleiro.getPiao(c, i);
-        return p.getPosicao();
-    }
-
 
     public void updateVez(){
         corVez = Cor.values()[(corVez.ordinal()+1)%4];
         System.out.println("Vez passada para o "+corVez.toString());
         this.atualiza();
-        // return corVez;
     }
 
     public Cor getVez(){
@@ -192,75 +182,8 @@ public class Model implements ObservableIF {
     }
 
     public int[][] getPosPioes () {
-        /*
-        for (Cor clr: Cor.values()) {
-            System.out.printf("%8s: ", clr.toString());
-            for (int j = 0; j < 4; j++) {
-                System.out.printf("%d, ",tabuleiro.arrayPioes[clr.ordinal()][j].getPosicao());
-            }
-            System.out.printf("\n");
-        }
-        */
         int[][] pos = new int[4][4];
         for (int i = 0; i < 4; i++) for (int j = 0; j < 4; j++) pos[i][j] = tabuleiro.arrayPioes[i][j].getPosicao();
         return pos;
     }
-/*
-    public Casa[][] getTabuleiros(){
-        return tabuleiro.getTabuleiro();
-    }
-
-    public Casa converteCoordenadas(int x, int y, int LADO) { //[mc] funciona apenas para cor vermelha!!!!
-        int indiceJogador = vez.ordinal();
-        Casa[] tabuleiroJogador = getTabuleiros()[indiceJogador];
-        int tabuleiroTamanho = 56;
-    
-        //  verifica se apertou em coordenas que pode se jogar
-        if (x < 0 || y < 0 || x > 15 * LADO || y > 15 * LADO) {
-            return null; // retorna null se coordenadas fora de área de jogo
-        }
-    
-        // ajuste das coordenadas para área de jogo
-        x -= LADO;
-        y -= LADO;
-    
-        // Calcula posicao baseada nas coordenas clicadas
-        int posicao = -1;
-        int coluna = x / LADO;
-        int linha = y / LADO;
-    
-        // parte do oeste 
-        if (coluna < 6 && linha >= 6 && linha <= 8) {
-            if (linha == 6) posicao += coluna;
-            else if (linha == 7) posicao += 51 + coluna;
-            else posicao += 50 - coluna;
-        } 
-        // parte do norte
-        else if (coluna >= 6 && coluna <= 8 && linha < 6) {
-            if (coluna == 6) posicao += 12 - linha;
-            else if (coluna == 7 && linha == 0) posicao += 13;
-            else if (coluna == 8) posicao += 14 + linha;
-        } 
-        // parte do leste
-        else if (coluna >= 9 && linha >= 6 && linha <= 8) {
-            if (linha == 6) posicao += 20 + coluna - 9;
-            else if (linha == 7 && coluna == 14) posicao += 26;
-            else if (linha == 8) posicao += 27 +  14 - coluna;
-        } 
-        // parte do sul
-        else if (coluna >= 6 && coluna <= 8 && linha > 8) {
-            if (coluna == 8) posicao += 33 + linha - 8;
-            else if (coluna == 7 && linha == 14) posicao += 39;
-            else if (coluna == 6) posicao += 40 + 14 - linha;
-        }
-    
-        if (posicao >= 0 && posicao < tabuleiroTamanho) {
-            return tabuleiroJogador[posicao];
-        } else {
-            return null; // returna null para posicoes invalidas
-        }
-    }
-    
-}
-*/
 }
