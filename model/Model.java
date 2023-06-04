@@ -46,13 +46,7 @@ public class Model {
 
 
     public Cor updateVez(){
-        Cor c = vez;
-        if (c.ordinal() < 3){
-            vez = Cor.values()[c.ordinal()+1];
-        }
-        else {
-            vez = Cor.values()[0];
-        }
+        vez = Cor.values()[(vez.ordinal()+1)%4];
         return vez;
     }
 
