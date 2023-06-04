@@ -19,15 +19,16 @@ public class Panel extends JPanel {
     public int resultadoDado = 5;
     int peaox = 0, peaoy = 0;
     public Map<Cor, Command> commands = new HashMap<>();
+   // x+LADO+LADO2+2*i*LADO+LADO4, y+LADO+LADO2+2*j*LADO+LADO4
+    int[][][] peao = { {{LADO+LADO4+LADO2, LADO+LADO4+LADO2}, {3*LADO+3*LADO4, LADO+3*LADO4}, {3*LADO+3*LADO4, LADO+3*LADO4}, {3*LADO+3*LADO4, 3*LADO+3*LADO4}},
+                       {{4*LADO+3*LADO4, LADO+3*LADO4}, {4*LADO+3*LADO4, LADO+3*LADO4}, {4*LADO+3*LADO4, LADO+3*LADO4}, {4*LADO+3*LADO4, 3*LADO+3*LADO4} },
+                       { {-2*LADO+3*LADO4, -2*LADO+3*LADO4}, {LADO+3*LADO4, -2*LADO+3*LADO4}, {LADO+3*LADO4, -2*LADO+3*LADO4}, {LADO+3*LADO4, LADO+3*LADO4} },
+                       { {LADO+3*LADO4, 4*LADO+3*LADO4}, {3*LADO+3*LADO4, 4*LADO+3*LADO4}, {3*LADO+3*LADO4, 4*LADO+3*LADO4}, {3*LADO+3*LADO4, 6*LADO+3*LADO4} } };
 
     Color verde = new Color(34, 139, 34); 
     Color amarelo = new Color(255, 239, 0);
     Color azul = new Color(13, 101, 189);
     Color vermelho = new Color(218, 0, 0);
-
-    public Panel(Model m){
-        model = m;
-    }
 
     public void setModel(Model model) { 
         this.model = model; 
@@ -64,9 +65,9 @@ public class Panel extends JPanel {
                 e1 = new Ellipse2D.Double(x+LADO+LADO2+2*i*LADO, y+LADO+LADO2+2*j*LADO, LADO, LADO);
                 g2d.setPaint(Color.WHITE);
                 g2d.fill(e1); //ou fillOval
-                e1 = new Ellipse2D.Double(x+LADO+LADO2+2*i*LADO+LADO4, y+LADO+LADO2+2*j*LADO+LADO4, LADO2, LADO2);
-                commands.get(cor1).invoke();
-                g2d.fill(e1);
+                // e1 = new Ellipse2D.Double(x+LADO+LADO2+2*i*LADO+LADO4, y+LADO+LADO2+2*j*LADO+LADO4, LADO2, LADO2);
+                // commands.get(cor1).invoke();
+                // g2d.fill(e1);
             }
         }
 
@@ -135,7 +136,7 @@ public class Panel extends JPanel {
 
     public void desenhaPeao(Graphics g, int x, int y, Cor cor){ // (x,y) coordenada do ponto mais a esquerda e topo da casa do peao
         Graphics2D g2d=(Graphics2D) g;
-        Ellipse2D e1 = new Ellipse2D.Double(x+LADO4, y+LADO4, LADO2, LADO2);
+        Ellipse2D e1 = new Ellipse2D.Double(x, y, LADO2, LADO2);
         commands.get(cor).invoke();
         g2d.fill(e1);
     }
@@ -190,9 +191,12 @@ public class Panel extends JPanel {
         // termina (x,y) trocados
         desenhaDado(g2d, this.resultadoDado, model.getVez());
         // for (Cor cor: Cor.values()) {
-        //     for (int j=0; j<4; j++){
-        //         desenhaPeao(g2d, this.peao[cor.ordinal()][j][0], this.peao[cor.ordinal()][j][1], cor);
-        //     }
+        //      for (int j=0; j<4; j++){
+        //          desenhaPeao(g2d, this.peao[cor.ordinal()][j][0], this.peao[cor.ordinal()][j][1], cor);
+        //      }
         // }
+        desenhaPeao(g2d, 32, 32, Cor.verde);
+        System.out.printf("x=%d y=%d",this.peao[0][0][0], this.peao[0][0][1] );
+
     }
 }

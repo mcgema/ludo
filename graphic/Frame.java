@@ -23,8 +23,8 @@ public class Frame extends JFrame {
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setTitle("Super Ludo");
 
-        Panel p = new Panel(model);
-        //p.setModel(model);
+        Panel p = new Panel();
+        p.setModel(model);
         getContentPane().add(p);
 
         JButton novoJogoButton = new JButton("Novo Jogo");
@@ -53,11 +53,24 @@ public class Frame extends JFrame {
        
         lancarDadoButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                int resultado = Model.lancaDado(); 
-                // Update dado no Panel
-                p.setResultadoDado(resultado);
-                if (model.podeJogar(model.vez, resultado)) { //true 
+                int dado = Model.lancaDado(); 
+                boolean jogou = false;
+                p.setResultadoDado(dado);
+                if (model.podeJogar(model.vez, dado)) { //true 
                     // [mc] precisa atualizar peao
+                    if (model.qtdPeaos[model.vez.ordinal()] <= 1){
+                        //unico peao possivel para mover
+                        model.movePiao(model.vez, 0, dado); //[mc] precisa atualizar posicao do peao1
+                        jogou = true;
+                        p.repaint();
+                    }
+                    else{
+                        //precisa do botao do mouse
+                        // enquanto botao do mouse nao faz algo valido, espera
+                        // quando mover, jogou = true
+                    }
+                }
+                if (jogou) {
                     model.updateVez();
                     p.repaint();
                 }

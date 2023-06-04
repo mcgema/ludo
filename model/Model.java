@@ -7,6 +7,7 @@ public class Model {
     public Tabuleiro tabuleiro = new Tabuleiro();
     public Cor vez = Cor.valueOf("vermelho");
     boolean jogoAcabou = false;
+    public int qtdPeaos[] = {0, 0, 0, 0};
     {
     	System.out.printf("\n\n\n");
     }
