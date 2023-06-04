@@ -30,7 +30,7 @@ public class Frame extends JFrame {
         
         */
         //View view = new View();
-        Controller controller = new Controller();
+        Controller controller = Controller.create();
         View view = controller.view;
         //view.setModel(model);
 

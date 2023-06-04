@@ -3,11 +3,11 @@ package model;
 import cores.*;
 import java.util.*;
 import observer.*;
-import controller.*;
+//import controller.*;
 
 // Model é a fachada das regras, e é a única classe pública da 1a iteração.
 public class Model implements ObservableIF {
-    public Tabuleiro tabuleiro = new Tabuleiro();
+    public Tabuleiro tabuleiro = Tabuleiro.create();
     public Cor corVez = Cor.vermelho;
     boolean jogoAcabou = false;
     public int qtdPeaos[] = {0, 0, 0, 0};
@@ -15,10 +15,20 @@ public class Model implements ObservableIF {
     private Piao ultimoPiaoMovido = tabuleiro.arrayPioes[0][0];
     //public int[][] pioesPos = {{0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}};
     public int dadoAtual = 0;
+    private static Model uniqueinstance;
     List<ObserverTom> lob = new ArrayList<ObserverTom>();
     {
-    	System.out.printf("\n\n\n");
+    	System.out.printf("Model iniciado!\n\n\n");
     }
+    private Model() {
+
+    }
+    public static Model iniciaModel () {
+        if (    uniqueinstance == null) uniqueinstance = new Model();
+        return uniqueinstance;
+    }
+
+
 
     // public void novoJogo(){
     //     pioesPos = {{0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}};
@@ -27,13 +37,17 @@ public class Model implements ObservableIF {
     // }
 
     // movePiao(corPiao, idPiao, casas) tenta mover o "idPiao-ésimo" Pião de cor "corPiao" "casas" casas para a frente. retorna TRUE em caso de sucesso e FALSE em caso de falha.
-    public boolean movePiao (Cor corPiao,int idPiao,  int posicao, int casas) {
-        System.out.printf("cor Model movePiao: %s", corPiao.toString());
+    public boolean movePiao (Cor corPiao, int idPiao,  int posicao, int casas) {
+        //System.out.printf("Model.movePiao(%s)", corPiao.toString());
     	Piao p = tabuleiro.getPiao(corPiao, idPiao);
-        p.setPosicao(posicao); //[MC] ALTEREI ISSO!!!
-		//System.out.printf("\n>>> move(%s, %d) = ", p.dumpString(),casas);
-    	boolean retorno = tabuleiro.move(p, dadoAtual);
-		//System.out.printf("%s\t",retorno?"permitido (T):":"proibido (F):");
+        //System.out.printf(" -> Piao p.cor=%s\n", p.getCor().toString());
+        //p.setPosicao(posicao); //[MC] ALTEREI ISSO!!!
+		boolean retorno = tabuleiro.move(p, casas);
+        //System.out.printf("\n>>> move(%s, %d) = ", p.dumpString(),casas);
+    	
+        //boolean retorno = tabuleiro.move(p, dadoAtual);
+		
+        //System.out.printf("%s\t",retorno?"permitido (T):":"proibido (F):");
 		//tabuleiro.search(p).dump();
 		//System.out.printf("%s\n",(tabuleiro.barreiras.get(p.getCor().ordinal()).toString()));
 		
@@ -42,7 +56,6 @@ public class Model implements ObservableIF {
             ultimoPiaoMovido = p;
             this.atualiza();
         }
-        System.out.printf("cor Model movePiao no final: %s", p.getCor().toString());
 
         return retorno;
     }
@@ -50,6 +63,7 @@ public class Model implements ObservableIF {
     // lancaDado() lanca um dado virtual de 6 lados, retornando um inteiro dentre {1, 2, 3, 4, 5, 6} com chance pseudo-aleatória.
     // também realiza jogadas forçadas, retornando 0 caso ocorram.
     public int lancaDado () {
+        System.out.printf("Model.lancaDado(): vez do %s!\n", corVez.toString());
         int resultado = Dado.rolar();
         dadoAtual = resultado;
         if (resultado == 6) {
@@ -58,6 +72,7 @@ public class Model implements ObservableIF {
                 // caso o joagor tenha rolado o 3o 6 seguido...
                 ultimoPiaoMovido.reset();
                 updateVez();
+                System.out.println("Cod1: qtd 6 > 2");
                 return 0;
             }
             int qtdBarreiras = tabuleiro.barreiras.get(corVez.ordinal()).size();
@@ -86,18 +101,40 @@ public class Model implements ObservableIF {
                     tabuleiro.move(piaoQuebrado, resultado);
                     ultimoPiaoMovido = piaoQuebrado;
                     updateVez();
+                    System.out.println("Cod2: barreira quebrada automaticamente");
                     return 0;
                 }
             }
         }
         else if (resultado == 5) {
+            System.out.println("Model.lancaDado: resultado = 5!");
             Piao p = tabuleiro.getInicial(corVez).getPiao();
             if (tabuleiro.getInicial(corVez).getQtdPioes() > 0 && tabuleiro.move(p,1)) {
                 ultimoPiaoMovido = p;
                 updateVez();
+                System.out.println("Cod3: 5 => inicia piao");
                 return 0;
             }
         }
+        if (!tabuleiro.existeJogadaPermitida(corVez, resultado)) {
+            System.out.println("Model.lancaDado: nenhuma jogada possível");
+            updateVez();
+            System.out.println("Cod4: sem jogadas");
+            return 0;
+        }
+        boolean tudoZerado = true;
+        for (int i = 0; i < 4; i++) {
+            if (tabuleiro.arrayPioes[corVez.ordinal()][i].getPosicao() != 0) {
+                tudoZerado = false;
+                break;
+            }
+        }
+        if (tudoZerado && resultado != 5) {
+            updateVez();
+            System.out.println("Cod5: nada pra iniciar");
+            return 0;
+        }
+        
         return resultado;
     }
     
@@ -107,7 +144,7 @@ public class Model implements ObservableIF {
     }
 
     public boolean tentaMoverPiao (Cor corPiao, int indice, int pos, int casas) {
-        System.out.printf("cor tentaMoverPiao: %s", corPiao.toString());
+        //System.out.printf("Model.tentaMoverPiao(%s)\n", corPiao.toString());
         return movePiao(corPiao, indice, tabuleiro.search(pos, corPiao).getIndice(),casas);
         // duvida 
     }
@@ -121,6 +158,7 @@ public class Model implements ObservableIF {
 
     public void updateVez(){
         corVez = Cor.values()[(corVez.ordinal()+1)%4];
+        System.out.println("Vez passada para o "+corVez.toString());
         this.atualiza();
         // return corVez;
     }
@@ -153,7 +191,20 @@ public class Model implements ObservableIF {
         return listaPioes;
     }
 
-    
+    public int[][] getPosPioes () {
+        /*
+        for (Cor clr: Cor.values()) {
+            System.out.printf("%8s: ", clr.toString());
+            for (int j = 0; j < 4; j++) {
+                System.out.printf("%d, ",tabuleiro.arrayPioes[clr.ordinal()][j].getPosicao());
+            }
+            System.out.printf("\n");
+        }
+        */
+        int[][] pos = new int[4][4];
+        for (int i = 0; i < 4; i++) for (int j = 0; j < 4; j++) pos[i][j] = tabuleiro.arrayPioes[i][j].getPosicao();
+        return pos;
+    }
 /*
     public Casa[][] getTabuleiros(){
         return tabuleiro.getTabuleiro();

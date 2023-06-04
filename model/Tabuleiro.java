@@ -5,6 +5,7 @@ import java.util.*;
 
 // Tabuleiro representa o Tabuleiro de Ludo, e implementa 2 dos 3 métodos passados para Model.
 class Tabuleiro {
+    private static Tabuleiro singleton;
     int abrigos[] = {10, 23, 36, 49, 0};
     
     // Tabuleiro é representado por Arrays de Casas.
@@ -23,6 +24,7 @@ class Tabuleiro {
     private Casa casasNormais[] = new Casa [52];
     // bloco de inicialização
     {
+        System.out.println("Tabuleiro inicializado!");
         int j = 0;
         for (int i = 0; i < 52; i++) {
             // casas de saída:
@@ -55,6 +57,15 @@ class Tabuleiro {
         // assume-se que o jogador VERMELHO (0) sempre começa:
         ultimoPiaoMovimentado = arrayPioes[0][0];
     }
+
+    private Tabuleiro () {
+
+    }
+
+    public static Tabuleiro create() {
+        if (singleton == null) singleton = new Tabuleiro();
+        return singleton;
+     }
 
     // getTabuleiro() retorna tabuleiro de cada cor
     protected Casa[][] getTabuleiro(){
@@ -106,7 +117,10 @@ class Tabuleiro {
     	if (p.getPosicao() == 0) qtdCasas = 1;
         
         if (!podeMover(p, qtdCasas)) {
-        	System.out.printf("F-00\n");
+        	System.out.printf("F-00: MOVIMENTO BLOQUEADO\n");
+            System.out.printf("model.Tabuleiro: Posições dos %ss: ", p.getCor().toString());
+            for (int dor = 0; dor < 4; dor++) System.out.printf("%d, ", arrayPioes[p.getCorNum()][dor].getPosicao());
+            System.out.printf("\n");
         	return false;
         }
 
@@ -128,6 +142,11 @@ class Tabuleiro {
         }
 
         ultimoPiaoMovimentado = p;
+        System.out.printf("S-00: MOVIMENTO PERMITIDO\n");
+        System.out.printf("model.Tabuleiro: Posições dos %ss: ", p.getCor().toString());
+        for (int dor = 0; dor < 4; dor++) System.out.printf("%d, ", arrayPioes[p.getCorNum()][dor].getPosicao());
+        System.out.printf("\n");
+
         return true;
     }   
 
@@ -137,13 +156,13 @@ class Tabuleiro {
 
         // se tem uma barreira no caminho, o pião não pode se mover (código F-01):
         if (p.isBarreiraNoCaminho(qtdCasas)) {
-            System.out.printf("F-01\n");
+            System.out.printf("F-01: BARREIRA NO CAMINHO\n");
             return false;
         }
 
         // se o valor rolado no dado for maior que a quantidade de casas até o final, o pião não pode se mover (código F-02):
         if (p.distFinal() < qtdCasas) {
-            System.out.printf("F-02\n");
+            System.out.printf("F-02: PASSA DO FINAL\n");
             return false;
         }
 
@@ -158,7 +177,7 @@ class Tabuleiro {
 
             // se tiverem dois piões na casa de destino do movimento (e ela não é o final -- esse caso já foi analisado!), o pião não se move (código F-03):
             case 2:
-                System.out.printf("F-03\n");
+                System.out.printf("F-03: DESTINO LOTADO\n");
                 return false;
             
             case 1:
@@ -167,7 +186,7 @@ class Tabuleiro {
 
                     // se tiver 1 pião no destino e ele for da mesma cor que o seu e ele estiver em uma casa de saída (que impede barreiras), ele não pode se mover (código F-04):
                     if (destino.getTipo() == Tipo.saida) {
-                        System.out.printf("F-04\n");
+                        System.out.printf("F-04: BARREIRA IMPOSSÍVEL\n");
                         return false;
                     }
 
@@ -183,7 +202,7 @@ class Tabuleiro {
                     if (destino.getCor() == p.getCor() || destino.getCor() == piaoDestino.getCor()) return true;
 
                     // ...mas, se tiver um pião e ele for de uma cor diferente e o destino for uma casa de saída de uma cor diferente das dos dois, ele não pode mover (código F-05):
-                    System.out.printf("F-05\n");
+                    System.out.printf("F-05: ABRIGO EM SAÍDA DE COR ERRADA\n");
                     return false;
                 }
             
@@ -246,6 +265,11 @@ class Tabuleiro {
         return this.isLivreParaMover(p, resultadoDado) && !bloqueadoPeloDado(p, resultadoDado);
     }
 
+    protected boolean existeJogadaPermitida(Cor c, int dado) {
+        for (int i = 0; i < 4; i++) if (this.podeMover(arrayPioes[c.ordinal()][i], dado)) return true;
+        return false;
+    }
+
     // termina() termina o jogo.
     protected void termina () {
         int distanciasTotais[][] = new int[4][2];
@@ -268,7 +292,7 @@ class Tabuleiro {
     
     // jogadorPodeJogar (Cor corDoJogador, int resultadoDado) retorna TRUE se o jogador pode jogar e FALSE caso sua rodada deva ser pulada.
     protected boolean jogadorPodeJogar (Cor corDoJogador, int resultadoDado) {
-        
+        /*
         if (resultadoDado == 6 && corDoJogador == ultimoPiaoMovimentado.getCor()) qtdSeisRolados++;
         else qtdSeisRolados = 0;
     	System.out.println(qtdSeisRolados);
@@ -288,6 +312,7 @@ class Tabuleiro {
         
         // se nenhum pião pode se mover, o jogador não tem rodada:
         return piaoPodeMover;
-        
+        */
+        return true;
     }
 }

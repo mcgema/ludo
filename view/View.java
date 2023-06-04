@@ -2,15 +2,17 @@ package view;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.geom.*;
+import java.awt.geom.*;/*
 import java.util.Map;
 import java.util.HashMap;
+import model.Model;*/
 import cores.Cor;
-import model.Model;
 import java.awt.event.MouseEvent;
 import controller.*;
 
 public class View extends JPanel implements java.awt.event.MouseListener {
+    private static View singleton;
+
     public static final int LADO = 36, LADO2 = 18, LADO3 = 12, LADO4 = 9;
     public static final int LARG_DEFAULT = 22*LADO;
     public static final int ALT_DEFAULT = 16*LADO;
@@ -40,8 +42,17 @@ public class View extends JPanel implements java.awt.event.MouseListener {
     int[] inicial = {0,0};
     Controller cont;
     {
-        MouseTracker tracker = new MouseTracker();
+        //MouseTracker tracker = new MouseTracker();
         addMouseListener(this);
+    }
+
+    private View() {
+
+    }
+
+    public static View create() {
+        if (singleton == null) singleton = new View();
+        return singleton;
     }
 
     public void updateCont (Controller c) {
@@ -50,13 +61,13 @@ public class View extends JPanel implements java.awt.event.MouseListener {
     public void updatePioes (int[][] novoArray) {
         for (int i = 0; i < 4; i++) for (int j = 0; j < 4; j++) pioesPos[i][j] = novoArray[i][j];
     }
-
+/*
     public void updateVez (Cor c) {
-        corVez = c;
+        cont.getVez() = c;
     }
-
+*/
     public void updateVez(){
-        corVez = Cor.values()[(corVez.ordinal()+1)%4];
+        corVez = cont.getVez();
     }
 
     public void updateDado (int i) {
@@ -212,6 +223,9 @@ public class View extends JPanel implements java.awt.event.MouseListener {
         Graphics2D g2d = (Graphics2D) g;
         Image dado;
         switch(resultado){
+            case 1:
+                dado = Toolkit.getDefaultToolkit().getImage("imagens/Dado1.png");
+                break;
             case 2: 
                 dado = Toolkit.getDefaultToolkit().getImage("imagens/Dado2.png");
                 break;
@@ -228,10 +242,14 @@ public class View extends JPanel implements java.awt.event.MouseListener {
                 dado = Toolkit.getDefaultToolkit().getImage("imagens/Dado6.png");
                 break;  
             default:
-                dado = Toolkit.getDefaultToolkit().getImage("imagens/Dado1.png");
-                break;       
+                Rectangle2D dadoEmBranco = new Rectangle2D.Double(16*LADO, 12*LADO, 2*LADO, 2*LADO);
+                g2d.setPaint(getCor(cor));
+                g2d.fill(dadoEmBranco);
+                BasicStroke stroke = new BasicStroke(6.0f);
+                g2d.setStroke(stroke);
+                g2d.draw(dadoEmBranco);
+                return;
         }
-
         g2d.drawImage(dado, 16*LADO, 12*LADO, 2*LADO, 2*LADO, this);
         BasicStroke stroke = new BasicStroke(6.0f);
         g2d.setStroke(stroke);
@@ -250,14 +268,27 @@ public class View extends JPanel implements java.awt.event.MouseListener {
 
         desenhaTabuleiro(g);
         // teste
-        // if (cont.movePiao(corVez, 1, dadoVez)) pioesPos[corVez.ordinal()][0]+=dadoVez;
+        // if (cont.movePiao(cont.getVez(), 1, dadoVez)) pioesPos[cont.getVez().ordinal()][0]+=dadoVez;
         // [mc] precisa de jeito de inicializar peao a andar, metodo de clicar nao funciona...
-        if (qtdPeaos[corVez.ordinal()] == 0){
-            pioesPos[corVez.ordinal()][0] += dadoVez;
-            qtdPeaos[corVez.ordinal()] += 1;
+        /*
+        if (qtdPeaos[cont.getVez().ordinal()] == 0) {
+            pioesPos[cont.getVez().ordinal()][0] += dadoVez;
+            qtdPeaos[cont.getVez().ordinal()] += 1;
         } 
-        // else if (qtdPeaos[corVez.ordinal()] == 1){
-        //     pioesPos[corVez.ordinal()][0] += dadoVez;
+        System.out.printf("\nVersão MC:\n");
+        for (Cor clr: Cor.values()) {
+            System.out.printf("%8s:\t%d, %d, %d, %d\n", clr.toString(), pioesPos[clr.ordinal()][0], pioesPos[clr.ordinal()][1], pioesPos[clr.ordinal()][2], pioesPos[clr.ordinal()][3]);
+        }
+        System.out.printf("\nVersão Tom:\n");
+        */
+        pioesPos = cont.getPosPioes();
+        /*
+        for (Cor clr: Cor.values()) {
+            System.out.printf("%8s:\t%d, %d, %d, %d\n", clr.toString(), pioesPos[clr.ordinal()][0], pioesPos[clr.ordinal()][1], pioesPos[clr.ordinal()][2], pioesPos[clr.ordinal()][3]);
+        }
+        */
+        // else if (qtdPeaos[cont.getVez().ordinal()] == 1){
+        //     pioesPos[cont.getVez().ordinal()][0] += dadoVez;
         // } else { addMouseListener(this);}
         //
         for (Cor cor: Cor.values()) {
@@ -278,12 +309,12 @@ public class View extends JPanel implements java.awt.event.MouseListener {
             }
             desenhaPioesInicial(g, cor, qtdInicio);
         }
-        desenhaDado(g, dadoVez, corVez);
+        desenhaDado(g, dadoVez, cont.getVez());
     }
 
     public void mousePressed(MouseEvent m) {
         System.out.printf("Mouse Pressed: %d,\t%d\n",m.getX(), m.getY());
-        System.out.println("Vez do " + corVez);
+        System.out.println("Vez do " + cont.getVez());
 
     }
 
@@ -292,28 +323,34 @@ public class View extends JPanel implements java.awt.event.MouseListener {
        System.out.printf("Mouse Released: %d,\t%d\n",m.getX(), m.getY());
        for (int i = 0; i<57; i++) {
            // acha a posicao que apertei
-           if (LADO*lutX[corVez.ordinal()][i] <= m.getX() && m.getX() <= LADO*lutX[corVez.ordinal()][i] + LADO &&
-           LADO*lutY[corVez.ordinal()][i] <= m.getY() && m.getY() <= LADO*lutY[corVez.ordinal()][i] + LADO) {
-                   System.out.printf("CLIQUEI NA CASA! posicao %d", i);
+           if (LADO*lutX[cont.getVez().ordinal()][i] <= m.getX() && m.getX() <= LADO*lutX[cont.getVez().ordinal()][i] + LADO &&
+           LADO*lutY[cont.getVez().ordinal()][i] <= m.getY() && m.getY() <= LADO*lutY[cont.getVez().ordinal()][i] + LADO) {
+                   System.out.printf("View: CLIQUEI NA CASA: %s[%d]\n", cont.getVez().toString(), i);
                    for (int j=0; j<4; j++){
-                        if (pioesPos[corVez.ordinal()][j] == i){
+                        if (pioesPos[cont.getVez().ordinal()][j] == i){
                             // tem um peao da cor nessa posicao
-                            System.out.printf("\n cor peao %s! ",  corVez.toString());
-                            System.out.printf("\n velha pos %d", pioesPos[corVez.ordinal()][j]);
-                            System.out.println("corVez: " + corVez + ", peao: " + j + ", posicao: " + i + ", dadoVez: " + dadoVez);
-                            boolean moveSuccessful = cont.movePiao(corVez, j, i, dadoVez);
-                            System.out.println("Move sucesso: " + moveSuccessful);
-                            System.out.printf("\n nova pos %d, cor %s", pioesPos[corVez.ordinal()][j], corVez.toString());
-                            if (moveSuccessful) pioesPos[corVez.ordinal()][j]+=dadoVez;
-                            
+                            System.out.printf("View: peão %s encontrado na posição %s[%d]!\n", cont.getVez().toString(), cont.getVez().toString(), i);
+                            cont.movePiao(cont.getVez(), j, i, dadoVez);
+                            /*
+//                            System.out.printf("\n cor peao %s! ",  cont.getVez().toString());
+ //                           System.out.printf("\n velha pos %d", pioesPos[cont.getVez().ordinal()][j]);
+   //                         System.out.println("cont.getVez(): " + cont.getVez() + ", peao: " + j + ", posicao: " + i + ", dadoVez: " + dadoVez);
+                            boolean moveSuccessful = cont.movePiao(cont.getVez(), j, i, dadoVez);
+     //                       System.out.println("Move sucesso: " + moveSuccessful);
+       //                     System.out.printf("\n nova pos %d, cor %s", pioesPos[cont.getVez().ordinal()][j], cont.getVez().toString());
+                            if (moveSuccessful) pioesPos[cont.getVez().ordinal()][j]+=dadoVez;
+                            System.out.printf("View: %s -- ", cont.getVez().toString());
+                            System.out.printf("%s -- ", moveSuccessful?"OK":"Bloqueado");
+                            System.out.printf("%d, %d, %d, %d\n", pioesPos[cont.getVez().ordinal()][0],pioesPos[cont.getVez().ordinal()][1],pioesPos[cont.getVez().ordinal()][2],pioesPos[cont.getVez().ordinal()][3]);
+                        */
                         }
                    }
                    
-                   //System.out.println(cont.movePiao(corVez, i, dadoVez));
+                   //System.out.println(cont.movePiao(cont.getVez(), i, dadoVez));
 
                }
        }
-       //System.out.printf("peao: %d", pioesPos[corVez.ordinal()][0]);
+       //System.out.printf("peao: %d", pioesPos[cont.getVez().ordinal()][0]);
        this.repaint();
     }
 
