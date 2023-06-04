@@ -7,6 +7,7 @@ import model.Model;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import controller.*;
 
 public class Frame extends JFrame {
     public static final int LADO = 36;
@@ -19,13 +20,20 @@ public class Frame extends JFrame {
 
     //private Panel panel;
 
-    public Frame(Model model){
+    public Frame (Model model){
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setTitle("Super Ludo");
 
+        /*
         Panel p = new Panel();
         p.setModel(model);
-        getContentPane().add(p);
+        
+        */
+        //View view = new View();
+        Controller controller = new Controller();
+        View view = controller.view;
+
+        getContentPane().add(view);
 
         JButton novoJogoButton = new JButton("Novo Jogo");
         JButton carregarJogoButton = new JButton("Carregar Jogo");
@@ -53,32 +61,14 @@ public class Frame extends JFrame {
        
         lancarDadoButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                int dado = model.lancaDado(); 
-                boolean jogou = false;
-                p.setResultadoDado(dado);
-                if (model.podeJogar(model.vez, dado)) { //true 
-                    // [mc] precisa atualizar peao
-                    if (model.qtdPeaos[model.vez.ordinal()] <= 1){
-                        //unico peao possivel para mover
-                        model.movePiao(model.vez, 0, dado); //[mc] precisa atualizar posicao do peao1
-                        jogou = true;
-                        p.repaint();
-                    }
-                    else{
-                        //precisa do botao do mouse
-                        // enquanto botao do mouse nao faz algo valido, espera
-                        // quando mover, jogou = true
-                    }
-                }
-                if (jogou) {
-                    model.updateVez();
-                    p.repaint();
-                }
-              
+                int dado = model.lancaDado();
+                view.updateDado(dado);
+                view.repaint();
             }
         });
         
         JPanel buttonsPanel = new JPanel();
+
         buttonsPanel.setLayout(new BoxLayout(buttonsPanel, BoxLayout.Y_AXIS));
         buttonsPanel.add(novoJogoButton);
         buttonsPanel.add(Box.createVerticalStrut(10)); // adiciona espacamento vertical de 10 pixels

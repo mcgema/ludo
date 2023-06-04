@@ -1,35 +1,45 @@
 package model;
 
 import cores.*;
+import java.util.*;
+import observer.*;
+import controller.*;
 
 // Model é a fachada das regras, e é a única classe pública da 1a iteração.
-public class Model {
+public class Model implements ObservableIF {
     public Tabuleiro tabuleiro = new Tabuleiro();
     public Cor vez = Cor.valueOf("vermelho");
     boolean jogoAcabou = false;
     public int qtdPeaos[] = {0, 0, 0, 0};
     private int qtdSeisRolados = 0;
-    private Piao ultimoPiaoMovido = null;
+    private Piao ultimoPiaoMovido = tabuleiro.arrayPioes[0][0];
+    private int dadoAtual = 0;
+    List<ObserverTom> lob = new ArrayList<ObserverTom>();
     {
     	System.out.printf("\n\n\n");
     }
     // movePiao(corPiao, idPiao, casas) tenta mover o "idPiao-ésimo" Pião de cor "corPiao" "casas" casas para a frente. retorna TRUE em caso de sucesso e FALSE em caso de falha.
-    public boolean movePiao (Cor corPiao, int idPiao, int casas) {
+    private boolean movePiao (Cor corPiao, int idPiao, int casas) {
     	Piao p = tabuleiro.getPiao(corPiao, idPiao);
 		//System.out.printf("\n>>> move(%s, %d) = ", p.dumpString(),casas);
-    	boolean retorno = tabuleiro.move(p, casas);
+    	boolean retorno = tabuleiro.move(p, dadoAtual);
 		//System.out.printf("%s\t",retorno?"permitido (T):":"proibido (F):");
 		//tabuleiro.search(p).dump();
 		//System.out.printf("%s\n",(tabuleiro.barreiras.get(p.getCor().ordinal()).toString()));
 		
 		jogoAcabou = !tabuleiro.getStatus();
-        if (retorno) ultimoPiaoMovido = p;
+        if (retorno) {
+            ultimoPiaoMovido = p;
+            this.atualiza();
+        }
         return retorno;
     }
     
     // lancaDado() lanca um dado virtual de 6 lados, retornando um inteiro dentre {1, 2, 3, 4, 5, 6} com chance pseudo-aleatória.
+    // também realiza jogadas forçadas, retornando 0 caso ocorram.
     public int lancaDado () {
         int resultado = Dado.rolar();
+        dadoAtual = resultado;
         if (resultado == 6) {
             qtdSeisRolados++;
             if (qtdSeisRolados > 2) {
@@ -38,21 +48,45 @@ public class Model {
                 updateVez();
                 return 0;
             }
-            if (tabuleiro.barreiras.get(vez.ordinal()).size() > 1) {
-                System.out.println("incompleto");
+            int qtdBarreiras = tabuleiro.barreiras.get(vez.ordinal()).size();
+            if (qtdBarreiras > 0) {
+                Piao piaoQuebrado = null;
+                Iterator<Casa> iterator = tabuleiro.barreiras.get(vez.ordinal()).iterator();
+                if (qtdBarreiras == 2) {    
+                    Piao piaoBarreira1 = iterator.next().getPiao();
+                    Piao piaoBarreira2 = iterator.next().getPiao();
+                    if (!tabuleiro.podeMover(piaoBarreira1, resultado)) {
+                        if (tabuleiro.podeMover(piaoBarreira2, resultado)) piaoQuebrado = piaoBarreira2;
+                    }
+                    else {
+                        if (tabuleiro.podeMover(piaoBarreira2, resultado)) {
+                            if (piaoBarreira2.getPosicao() > piaoBarreira1.getPosicao()) piaoQuebrado = piaoBarreira2;
+                            else piaoQuebrado = piaoBarreira1;
+                        }
+                        else piaoQuebrado = piaoBarreira1;
+                    }
+                }
+                else if (qtdBarreiras == 1) {
+                    Piao piaoBarreira = iterator.next().getPiao();
+                    if (tabuleiro.isLivreParaMover(piaoBarreira, resultado)) piaoQuebrado = piaoBarreira;
+                }
+                if (piaoQuebrado != null) {
+                    tabuleiro.move(piaoQuebrado, resultado);
+                    ultimoPiaoMovido = piaoQuebrado;
+                    updateVez();
+                    return 0;
+                }
             }
         }
         else if (resultado == 5) {
-            if (tabuleiro.getInicial(vez).getQtdPioes() > 0 && tabuleiro.move(tabuleiro.getInicial(vez).getPiao(),1)) {
+            Piao p = tabuleiro.getInicial(vez).getPiao();
+            if (tabuleiro.getInicial(vez).getQtdPioes() > 0 && tabuleiro.move(p,1)) {
+                ultimoPiaoMovido = p;
                 updateVez();
                 return 0;
             }
         }
-        return 99;
-    }
-
-    public boolean podeJogar (Cor corDoJogador, int resultadoDado) {
-    	return tabuleiro.jogadorPodeJogar(corDoJogador, resultadoDado);
+        return resultado;
     }
     
     public boolean fimDoJogo() {
@@ -60,8 +94,8 @@ public class Model {
     	return jogoAcabou;
     }
 
-    public boolean tentaMoverPiao (Cor corPiao, int idPiao, int casas) {
-        return movePiao(corPiao,idPiao,casas);
+    public boolean tentaMoverPiao (Cor corPiao, int pos, int casas) {
+        return movePiao(corPiao,tabuleiro.search(pos, corPiao).getIndice(),casas);
     }
 
     // comunicacao com graphics
@@ -73,6 +107,7 @@ public class Model {
 
     public Cor updateVez(){
         vez = Cor.values()[(vez.ordinal()+1)%4];
+        this.atualiza();
         return vez;
     }
 
@@ -80,6 +115,32 @@ public class Model {
         return vez;
     }
 
+	public void addObserver(ObserverTom o) {
+		lob.add(o);
+	}
+	
+	public void removeObserver(ObserverTom o) {
+		lob.remove(o);
+	}
+
+    private void atualiza() {
+        ListIterator<ObserverTom> li = lob.listIterator();
+        while(li.hasNext()) li.next().notify(this);
+    }
+
+    public Object getPioes() {
+        Object listaPioes[][] = new Object[4][4];
+
+        for (Cor cor: Cor.values()) {
+            for (int i = 0; i < 4; i++) {
+                listaPioes[cor.ordinal()][i] = tabuleiro.arrayPioes[cor.ordinal()][i].getPosicao();
+            }
+        }
+        return listaPioes;
+    }
+
+    
+/*
     public Casa[][] getTabuleiros(){
         return tabuleiro.getTabuleiro();
     }
@@ -135,4 +196,6 @@ public class Model {
         }
     }
     
+}
+*/
 }
