@@ -8,18 +8,26 @@ import controller.*;
 // Model é a fachada das regras, e é a única classe pública da 1a iteração.
 public class Model implements ObservableIF {
     public Tabuleiro tabuleiro = new Tabuleiro();
-    public Cor vez = Cor.valueOf("vermelho");
+    public Cor corVez = Cor.vermelho;
     boolean jogoAcabou = false;
     public int qtdPeaos[] = {0, 0, 0, 0};
     private int qtdSeisRolados = 0;
     private Piao ultimoPiaoMovido = tabuleiro.arrayPioes[0][0];
-    private int dadoAtual = 0;
+    //public int[][] pioesPos = {{0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}};
+    public int dadoAtual = 0;
     List<ObserverTom> lob = new ArrayList<ObserverTom>();
     {
     	System.out.printf("\n\n\n");
     }
+
+    // public void novoJogo(){
+    //     pioesPos = {{0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}};
+    //     corVez = Cor.vermelho;
+    //     dadoAtual = 5;
+    // }
+
     // movePiao(corPiao, idPiao, casas) tenta mover o "idPiao-ésimo" Pião de cor "corPiao" "casas" casas para a frente. retorna TRUE em caso de sucesso e FALSE em caso de falha.
-    private boolean movePiao (Cor corPiao, int idPiao, int casas) {
+    public boolean movePiao (Cor corPiao, int idPiao, int casas) {
     	Piao p = tabuleiro.getPiao(corPiao, idPiao);
 		//System.out.printf("\n>>> move(%s, %d) = ", p.dumpString(),casas);
     	boolean retorno = tabuleiro.move(p, dadoAtual);
@@ -48,10 +56,10 @@ public class Model implements ObservableIF {
                 updateVez();
                 return 0;
             }
-            int qtdBarreiras = tabuleiro.barreiras.get(vez.ordinal()).size();
+            int qtdBarreiras = tabuleiro.barreiras.get(corVez.ordinal()).size();
             if (qtdBarreiras > 0) {
                 Piao piaoQuebrado = null;
-                Iterator<Casa> iterator = tabuleiro.barreiras.get(vez.ordinal()).iterator();
+                Iterator<Casa> iterator = tabuleiro.barreiras.get(corVez.ordinal()).iterator();
                 if (qtdBarreiras == 2) {    
                     Piao piaoBarreira1 = iterator.next().getPiao();
                     Piao piaoBarreira2 = iterator.next().getPiao();
@@ -79,8 +87,8 @@ public class Model implements ObservableIF {
             }
         }
         else if (resultado == 5) {
-            Piao p = tabuleiro.getInicial(vez).getPiao();
-            if (tabuleiro.getInicial(vez).getQtdPioes() > 0 && tabuleiro.move(p,1)) {
+            Piao p = tabuleiro.getInicial(corVez).getPiao();
+            if (tabuleiro.getInicial(corVez).getQtdPioes() > 0 && tabuleiro.move(p,1)) {
                 ultimoPiaoMovido = p;
                 updateVez();
                 return 0;
@@ -96,6 +104,7 @@ public class Model implements ObservableIF {
 
     public boolean tentaMoverPiao (Cor corPiao, int pos, int casas) {
         return movePiao(corPiao,tabuleiro.search(pos, corPiao).getIndice(),casas);
+        // duvida 
     }
 
     // comunicacao com graphics
@@ -106,13 +115,13 @@ public class Model implements ObservableIF {
 
 
     public Cor updateVez(){
-        vez = Cor.values()[(vez.ordinal()+1)%4];
+        corVez = Cor.values()[(corVez.ordinal()+1)%4];
         this.atualiza();
-        return vez;
+        return corVez;
     }
 
     public Cor getVez(){
-        return vez;
+        return corVez;
     }
 
 	public void addObserver(ObserverTom o) {

@@ -20,7 +20,7 @@ public class Controller implements ObserverTom{
         view.updateVez(model.getVez());
     }
 
-    public void movePiao(Cor c, int pos, int dado) {
-        model.tentaMoverPiao(c, pos, dado);
+    public boolean movePiao(Cor c, int pos, int dado) {
+        return model.tentaMoverPiao(c, pos, dado);
     }
 }

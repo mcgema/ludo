@@ -63,6 +63,7 @@ public class Frame extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 int dado = model.lancaDado();
                 view.updateDado(dado);
+                view.updateVez();
                 view.repaint();
             }
         });

@@ -34,6 +34,7 @@ public class View extends JPanel implements java.awt.event.MouseListener {
     };
 
     int[][] pioesPos = {{0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}};
+    int[] qtdPeaos = {0, 0, 0, 0};
     Cor corVez = Cor.vermelho;
     int dadoVez = 5;
     int[] inicial = {0,0};
@@ -52,6 +53,10 @@ public class View extends JPanel implements java.awt.event.MouseListener {
 
     public void updateVez (Cor c) {
         corVez = c;
+    }
+
+    public void updateVez(){
+        corVez = Cor.values()[(corVez.ordinal()+1)%4];
     }
 
     public void updateDado (int i) {
@@ -203,7 +208,7 @@ public class View extends JPanel implements java.awt.event.MouseListener {
         g2d.rotate(-1.57079632679, 270, 270);
     }
 
-    public void desenhaDado(Graphics g, int resultado, Cor vez){
+    public void desenhaDado(Graphics g, int resultado, Cor cor){
         Graphics2D g2d = (Graphics2D) g;
         Image dado;
         switch(resultado){
@@ -227,7 +232,12 @@ public class View extends JPanel implements java.awt.event.MouseListener {
                 break;       
         }
 
-        g2d.drawImage(dado, 15*LADO, 12*LADO, 72, 2*LADO, this);
+        g2d.drawImage(dado, 16*LADO, 12*LADO, 2*LADO, 2*LADO, this);
+        BasicStroke stroke = new BasicStroke(6.0f);
+        g2d.setStroke(stroke);
+        Rectangle2D rect1 = new Rectangle2D.Double(16*LADO, 12*LADO, 2*LADO, 2*LADO);
+        g2d.setPaint(getCor(cor));
+        g2d.draw(rect1); 
 
     }
 
@@ -239,12 +249,23 @@ public class View extends JPanel implements java.awt.event.MouseListener {
         g2d.draw(rect);
 
         desenhaTabuleiro(g);
+        // teste
+       if (cont.movePiao(corVez, 1, dadoVez)) pioesPos[corVez.ordinal()][0]+=dadoVez;
+
+        if (qtdPeaos[corVez.ordinal()] == 0){
+            pioesPos[corVez.ordinal()][0] += dadoVez;
+            qtdPeaos[corVez.ordinal()] += 1;
+        } 
+        else if (qtdPeaos[corVez.ordinal()] == 1){
+            pioesPos[corVez.ordinal()][0] += dadoVez;
+        } else { addMouseListener(this);}
+        //
         for (Cor cor: Cor.values()) {
             int qtdInicio = 0;
             for (int i = 0; i < 4; i++) {
                 if (pioesPos[cor.ordinal()][i] == 0) qtdInicio++;
                 boolean piaoSozinho = true;
-                for (Cor c1: cor.values()) {
+                for (Cor c1: Cor.values()) {
                     for (int c2 = 0; c2 < i; c2++) {
                         if (pioesPos[c1.ordinal()][c2] == pioesPos[cor.ordinal()][i]) {
                             desenhaPiao(g, cor, pioesPos[cor.ordinal()][i], c1);
@@ -257,11 +278,6 @@ public class View extends JPanel implements java.awt.event.MouseListener {
             }
             desenhaPioesInicial(g, cor, qtdInicio);
         }
-
-        BasicStroke stroke = new BasicStroke(6.0f);
-        g2d.setStroke(stroke);
-        Rectangle2D rect1 = new Rectangle2D.Double(15*LADO, 12*LADO, 2*LADO, 2*LADO);
-        g2d.draw(rect1); 
         desenhaDado(g, dadoVez, corVez);
     }
 
@@ -273,6 +289,19 @@ public class View extends JPanel implements java.awt.event.MouseListener {
 
     public void mouseClicked(MouseEvent m) {
        // System.out.printf("Mouse Clicked: %d,\t%d\n",m.getX(), m.getY());
+       System.out.printf("Mouse Released: %d,\t%d\n",m.getX(), m.getY());
+       for (int i = 0; i<57; i++) {
+           // acha a posicao que apertei
+           if (LADO*lutX[corVez.ordinal()][i] <= m.getX() && m.getX() <= LADO*lutX[corVez.ordinal()][i] + LADO &&
+           LADO*lutY[corVez.ordinal()][i] <= m.getY() && m.getY() <= LADO*lutY[corVez.ordinal()][i] + LADO) {
+                   System.out.println("CLIQUEI NO PIAO!");
+                   //if (cont.movePiao(corVez, i, dadoVez)) pioesPos[corVez.ordinal()][0]+=dadoVez;
+                   System.out.println(cont.movePiao(corVez, i, dadoVez));
+
+               }
+       }
+       System.out.printf("peao: %d", pioesPos[corVez.ordinal()][0]);
+       this.repaint();
     }
 
     public void mouseEntered(MouseEvent m) {
@@ -281,15 +310,19 @@ public class View extends JPanel implements java.awt.event.MouseListener {
     }
 
     public void mouseReleased(MouseEvent m) {
-        System.out.printf("Mouse Released: %d,\t%d\n",m.getX(), m.getY());
-        for (int i = 0; i<57; i++) {
-            if (LADO*lutX[corVez.ordinal()][i] <= m.getX() && m.getX() <= LADO*lutX[corVez.ordinal()][i] + LADO &&
-            LADO*lutY[corVez.ordinal()][i] <= m.getY() && m.getY() <= LADO*lutY[corVez.ordinal()][i] + LADO) {
-                    System.out.println("CLIQUEI NO PIAO!");
-                    cont.movePiao(corVez, i, dadoVez);
-                }
-        }
-        this.repaint();
+        // System.out.printf("Mouse Released: %d,\t%d\n",m.getX(), m.getY());
+        // for (int i = 0; i<57; i++) {
+        //     // acha a posicao que apertei
+        //     if (LADO*lutX[corVez.ordinal()][i] <= m.getX() && m.getX() <= LADO*lutX[corVez.ordinal()][i] + LADO &&
+        //     LADO*lutY[corVez.ordinal()][i] <= m.getY() && m.getY() <= LADO*lutY[corVez.ordinal()][i] + LADO) {
+        //             System.out.println("CLIQUEI NO PIAO!");
+        //             if (cont.movePiao(corVez, i, dadoVez)) pioesPos[corVez.ordinal()][0]+=dadoVez;
+        //             System.out.println(cont.movePiao(corVez, i, dadoVez));
+
+        //         }
+        // }
+        // System.out.printf("peao: %d", pioesPos[corVez.ordinal()][0]);
+        // this.repaint();
 
     }
 
