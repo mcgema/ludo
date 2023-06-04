@@ -23,16 +23,9 @@ public class Controller implements ObserverTom {
     }
 
     public void notify(ObservableIF o) {
-        //[mc] nao entendi e funciona sem
-       // int[][] listaPioes = (int[][]) o.getPioes();
-       // view.updatePioes(listaPioes);
-        //System.out.printf("\n Controller.model.corVez=%s\n", model.getVez().toString());
-
-        //view.updateVez(model.getVez());
     }
 
     public boolean movePiao(Cor c, int indice, int pos, int dado) {
-        //System.out.printf("Controller.movePiao(%s)\n", c.toString());
         return model.tentaMoverPiao(c, indice, pos, dado);
     }
 
@@ -42,5 +35,9 @@ public class Controller implements ObserverTom {
 
     public Cor getVez () {
         return model.getVez();
+    }
+
+    public int getDado () {
+        return model.lancaDado();
     }
 }

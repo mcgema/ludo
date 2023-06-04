@@ -59,7 +59,7 @@ class Tabuleiro {
     }
 
     private Tabuleiro () {
-
+        // construtor bloqueado por Singleton
     }
 
     public static Tabuleiro create() {
@@ -137,8 +137,6 @@ class Tabuleiro {
         if (destino.isBarreira()) barreiras.get(p.getCorNum()).add(destino);    // caso isso crie uma barreira ela é salva no conjunto
         if (destino.getQtdPioes() == 4) {
         	fimDeJogo = true;
-        	//this.termina();
-        	//System.out.println("move() chamou termina");
         }
 
         ultimoPiaoMovimentado = p;
@@ -238,23 +236,6 @@ class Tabuleiro {
                 }
                 // se rolou 6 mas não tem barreiras e rolou menos de dois 6, nada dos dados impede de mover:
                 return false;
-            
-            /*
-            case 5:
-                // se o jogador não tiver piões para iniciar, nada dos dados impede o pião de mover:
-                if (this.getInicial(p.getCor()).getQtdPioes() == 0) return false;
-
-                // se o jogador tiver piões para iniciar, mas eles estão bloqueados, nada dos dados impede os piões de mover (move() vai bloquear esse pião):
-                if (this.isLivreParaMover(this.getInicial(p.getCor()).getPiao(), 1)) return false;
-
-                // caso o jogador tenha piões para iniciar e esses piões possam ser iniciados só eles podedm se mover:
-                if (p.getPosicao() == 0) return false;
-
-                // ...ou seja: se o jogador pode iniciar piões e esse pião já está iniciado, ele não move (código F-07):
-                System.out.printf("F-07\n");
-                return true;
-            */
-
             default:
                 // se o dado rolou 1, 2, 3 ou 4, ele não influencia na possibilidade de movimentação:
                 return false; 
@@ -288,31 +269,5 @@ class Tabuleiro {
         for (int j=3; j>-1; j--){
             System.out.printf("Jogador %s: %d pontos\n",Cor.values()[distanciasTotais[j][0]].toString(),distanciasTotais[j][1]);
         }
-    }
-    
-    // jogadorPodeJogar (Cor corDoJogador, int resultadoDado) retorna TRUE se o jogador pode jogar e FALSE caso sua rodada deva ser pulada.
-    protected boolean jogadorPodeJogar (Cor corDoJogador, int resultadoDado) {
-        /*
-        if (resultadoDado == 6 && corDoJogador == ultimoPiaoMovimentado.getCor()) qtdSeisRolados++;
-        else qtdSeisRolados = 0;
-    	System.out.println(qtdSeisRolados);
-
-        if (qtdSeisRolados == 3) {
-            // caso três 6 consecutivos sejam tirados no dado, o jogador não tem rodada (movimento forçado do pião):
-            if (ultimoPiaoMovimentado.distFinal() > 5) ultimoPiaoMovimentado.reset();
-
-            System.out.printf("Vo-seis-agerou...\n");
-            return false;
-        }
-        
-        boolean piaoPodeMover = false;
-        for (Piao p: arrayPioes[corDoJogador.ordinal()]) {
-        	if (podeMover(p,resultadoDado)) piaoPodeMover = true;
-        }
-        
-        // se nenhum pião pode se mover, o jogador não tem rodada:
-        return piaoPodeMover;
-        */
-        return true;
     }
 }

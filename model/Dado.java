@@ -13,4 +13,3 @@ class Dado {
         return resultado;
     } 
 }
-//teste - chamar ate retornar tds numeros de 1 a 6 , parar se devolver outro
