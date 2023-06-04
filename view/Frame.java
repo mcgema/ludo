@@ -1,4 +1,4 @@
-package graphic;
+package view;
 
 import javax.swing.*;
 

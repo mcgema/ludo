@@ -1,9 +1,9 @@
-import graphic.*;
 import model.*;
+import graphic.*;
 // A Main serve para testar.
 public class Main {
     public static void main(String[] args) {
-	Frame f=new Frame(new Model());
+	Frame f = new Frame(new Model());
     f.setVisible(true);
     }
 }

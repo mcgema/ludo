@@ -1,4 +1,4 @@
-package graphic;
+package view;
 
 public interface Command 
 {
