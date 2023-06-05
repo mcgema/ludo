@@ -36,9 +36,9 @@ public class View extends JPanel implements java.awt.event.MouseListener {
 
     int[][] pioesPos = {{0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}};
     int[] qtdPeaos = {0, 0, 0, 0};
-    Cor corVez = Cor.vermelho;
-    int dadoVez = 5;
-    int[] inicial = {0,0};
+    Cor corVez = Cor.azul; //para que jogador vermelho comece
+    int dadoVez = 0;
+    static int[] inicial = {0,0};
     Controller cont;
     boolean Jogou = false;
     {
@@ -81,6 +81,14 @@ public class View extends JPanel implements java.awt.event.MouseListener {
             default:
                 return colorB;
         }
+    }
+    //[mc] deveria ser de model!!!!
+    void novoJogo(){
+        int[][] pioes = {{0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}};
+        updatePioes(pioes);
+        updateDado(0);        
+        updateVez(Cor.azul);
+        //repaint();    
     }
 
     void desenhaCasa (Graphics g, Cor c, int pos) {
