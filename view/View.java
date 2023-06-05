@@ -303,23 +303,23 @@ public class View extends JPanel implements java.awt.event.MouseListener {
     public void mouseClicked(MouseEvent m) {
        // System.out.printf("Mouse Clicked: %d,\t%d\n",m.getX(), m.getY());
        System.out.printf("Mouse Released: %d,\t%d\n",m.getX(), m.getY());
-       for (int i = 0; i<57; i++) {
-           // acha a posicao que apertei
-           if (LADO*lutX[corVez.ordinal()][i] <= m.getX() && m.getX() <= LADO*lutX[corVez.ordinal()][i] + LADO &&
-           LADO*lutY[corVez.ordinal()][i] <= m.getY() && m.getY() <= LADO*lutY[corVez.ordinal()][i] + LADO) {
-                   System.out.printf("CLIQUEI NA CASA! posicao %d", i);
-                   for (int j=0; j<4; j++){
+       if (!Jogou){
+        for (int i = 0; i<57; i++) {
+            // acha a posicao que apertei
+            if (LADO*lutX[corVez.ordinal()][i] <= m.getX() && m.getX() <= LADO*lutX[corVez.ordinal()][i] + LADO &&
+            LADO*lutY[corVez.ordinal()][i] <= m.getY() && m.getY() <= LADO*lutY[corVez.ordinal()][i] + LADO) {
+                    System.out.printf("CLIQUEI NA CASA! posicao %d", i);
+                    for (int j=0; j<4; j++){
                         if (pioesPos[corVez.ordinal()][j] == i){
                             // tem um peao da cor nessa posicao
                             boolean moveSuccessful = cont.movePiao(corVez, j, dadoVez);
                             if (moveSuccessful) pioesPos[corVez.ordinal()][j]+=dadoVez;
+                            Jogou = true;
                         }
-                   }
-                   
-                   //System.out.println(cont.movePiao(corVez, i, dadoVez));
-
-               }
-       }
+                    }
+                } 
+            }
+        }
        //System.out.printf("peao: %d", pioesPos[corVez.ordinal()][0]);
        this.repaint();
     }
