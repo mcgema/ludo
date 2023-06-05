@@ -6,20 +6,15 @@ import observer.*;
 import cores.*;
 
 
-public class Controller implements ObserverTom{
-    public View view = new View();
-    Model model = new Model();
+public class Controller implements ObserverTom {
+    private static Controller singleton;
+    public View view = View.create();
+    Model model = Model.create();
     {
         model.addObserver(this);
         view.updateCont(this);
     }
-
-    public void notify(ObservableIF o) {
-        //[mc] nao entendi e funciona sem
-       // int[][] listaPioes = (int[][]) o.getPioes();
-       // view.updatePioes(listaPioes);
-        //model.updateVez();
-    }
+    private Controller() {
 
     public boolean movePiao(Cor c, int indice,  int dado) {
         // System.out.printf("cor movePiao: %s", c.toString());
@@ -28,5 +23,41 @@ public class Controller implements ObserverTom{
 
     public int tentaIniciarMover (Cor c, int dado){
         return model.tentaIniciarMover (c, dado);
+    }
+    
+    public static Controller create() {
+        if (singleton == null) singleton = new Controller();
+        return singleton;
+    }
+
+    public void notify(ObservableIF o) {
+    }
+
+    public boolean movePiao(Cor c, int indice, int pos, int dado) {
+        return model.tentaMoverPiao(c, indice, pos, dado);
+    }
+
+    public int[][] getPosPioes () {
+        return model.getPosPioes();
+    }
+
+    public Cor getVez () {
+        return model.getVez();
+    }
+
+    public int getDado () {
+        return model.dadoAtual;
+    }
+
+    public int lancaDado () {
+        return model.lancaDado();
+    }
+
+    public void refresh() {
+        view.repaint();
+    }
+
+    public Cor procuraNaCasa(Cor c, int pos) {
+        return model.procuraNaCasa(c, pos);
     }
 }

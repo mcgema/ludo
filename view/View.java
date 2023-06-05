@@ -2,16 +2,16 @@ package view;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.geom.*;
+import java.awt.geom.*;/*
 import java.util.Map;
 import java.util.HashMap;
+import model.Model;*/
 import cores.Cor;
-import model.Model;
 import java.awt.event.MouseEvent;
 import controller.*;
 
 public class View extends JPanel implements java.awt.event.MouseListener {
-    Model model;
+    private static View singleton;
     public static final int LADO = 36, LADO2 = 18, LADO3 = 12, LADO4 = 9;
     public static final int LARG_DEFAULT = 22*LADO;
     public static final int ALT_DEFAULT = 16*LADO;
@@ -42,28 +42,24 @@ public class View extends JPanel implements java.awt.event.MouseListener {
     Controller cont;
     boolean Jogou = false;
     {
-        MouseTracker tracker = new MouseTracker();
         addMouseListener(this);
+    }
+
+    private View() {
+        // construtor bloqueado pelo Singleton
+    }
+  
+    public static View create() {
+        if (singleton == null) singleton = new View();
+        return singleton;
     }
 
     public void updateCont (Controller c) {
         cont = c;
     }
 
-    public void setModel(Model m){
-        model = m;
-    }
-
     public void updatePioes (int[][] novoArray) {
         for (int i = 0; i < 4; i++) for (int j = 0; j < 4; j++) pioesPos[i][j] = novoArray[i][j];
-    }
-
-    public void updateVez (Cor c) {
-        corVez = c;
-    }
-
-    public void updateVez(){
-        corVez = Cor.values()[(corVez.ordinal()+1)%4];
     }
 
     public void updateDado (int i) {
@@ -224,9 +220,14 @@ public class View extends JPanel implements java.awt.event.MouseListener {
     }
 
     public void desenhaDado(Graphics g, int resultado, Cor cor){
+        System.out.println("View.desenhaDado("+resultado+") -- getDado deu "+cont.getDado());
         Graphics2D g2d = (Graphics2D) g;
         Image dado;
+        resultado = cont.getDado();
         switch(resultado){
+            case 1:
+                dado = Toolkit.getDefaultToolkit().getImage("imagens/Dado1.png");
+                break;
             case 2: 
                 dado = Toolkit.getDefaultToolkit().getImage("imagens/Dado2.png");
                 break;
@@ -243,10 +244,16 @@ public class View extends JPanel implements java.awt.event.MouseListener {
                 dado = Toolkit.getDefaultToolkit().getImage("imagens/Dado6.png");
                 break;  
             default:
-                dado = Toolkit.getDefaultToolkit().getImage("imagens/Dado1.png");
-                break;       
+            // [mc] tirar um deles!!!
+                Rectangle2D dadoEmBranco = new Rectangle2D.Double(16*LADO, 12*LADO, 2*LADO, 2*LADO);
+                g2d.setPaint(getCor(cor));
+                g2d.fill(dadoEmBranco);
+                BasicStroke stroke = new BasicStroke(6.0f);
+                g2d.setStroke(stroke);
+                g2d.draw(dadoEmBranco);
+                return;
         }
-
+      // [mc] tirar um deles!!!
         g2d.drawImage(dado, 16*LADO, 12*LADO, 2*LADO, 2*LADO, this);
         BasicStroke stroke = new BasicStroke(6.0f);
         g2d.setStroke(stroke);
@@ -257,6 +264,7 @@ public class View extends JPanel implements java.awt.event.MouseListener {
     }
 
     public void paintComponent(Graphics g) {
+        System.out.println("View: Refresh!");
         super.paintComponent(g);
         Graphics2D g2d = (Graphics2D) g;
         Rectangle2D rect = new Rectangle2D.Double(0, 0, 15*LADO, 15*LADO);
@@ -264,30 +272,22 @@ public class View extends JPanel implements java.awt.event.MouseListener {
         g2d.draw(rect);
 
         desenhaTabuleiro(g);
-        // teste
-        // [mc] precisa de jeito de inicializar peao a andar, metodo de clicar nao funciona...
        
+        pioesPos = cont.getPosPioes();
         for (Cor cor: Cor.values()) {
             int qtdInicio = 0;
             for (int i = 0; i < 4; i++) {
                 if (pioesPos[cor.ordinal()][i] == 0) qtdInicio++;
-                boolean piaoSozinho = true;
-                for (Cor c1: Cor.values()) {
-                    for (int c2 = 0; c2 < i; c2++) {
-                        if (pioesPos[c1.ordinal()][c2] == pioesPos[cor.ordinal()][i]) {
-                            desenhaPiao(g, cor, pioesPos[cor.ordinal()][i], c1);
-                            piaoSozinho = false;
-                            break;
-                        }
-                    }
+                Cor corOutroPiao = peaoNaMesmaCasa(cor, pioesPos[cor.ordinal()][i]);
+                if (corOutroPiao != null) {
+                    desenhaPiao(g, cor, pioesPos[cor.ordinal()][i], corOutroPiao);
+                    System.out.println("Encontrei "+cor.toString()+"["+pioesPos[cor.ordinal()][i]+"] = "+corOutroPiao.toString());
                 }
-                if (piaoSozinho) desenhaPiao(g, cor, pioesPos[cor.ordinal()][i]);
+                else desenhaPiao(g, cor, pioesPos[cor.ordinal()][i]);
             }
             desenhaPioesInicial(g, cor, qtdInicio);
         }
-        desenhaDado(g, dadoVez, corVez);
-        if (!Jogou)
-            Jogou = jogouCor();
+        desenhaDado(g, dadoVez, cont.getVez());
 
     }
 
@@ -303,33 +303,27 @@ public class View extends JPanel implements java.awt.event.MouseListener {
     }
 
     public void mousePressed(MouseEvent m) {
-        System.out.printf("Mouse Pressed: %d,\t%d\n",m.getX(), m.getY());
-        System.out.println("Vez do " + corVez);
-
+        //System.out.printf("Mouse Pressed: %d,\t%d\n",m.getX(), m.getY());
+        //System.out.println("Vez do " + cont.getVez());
     }
 
     public void mouseClicked(MouseEvent m) {
-       // System.out.printf("Mouse Clicked: %d,\t%d\n",m.getX(), m.getY());
-       System.out.printf("Mouse Released: %d,\t%d\n",m.getX(), m.getY());
-       if (!Jogou){
-        for (int i = 0; i<57; i++) {
-            // acha a posicao que apertei
-            if (LADO*lutX[corVez.ordinal()][i] <= m.getX() && m.getX() <= LADO*lutX[corVez.ordinal()][i] + LADO &&
-            LADO*lutY[corVez.ordinal()][i] <= m.getY() && m.getY() <= LADO*lutY[corVez.ordinal()][i] + LADO) {
-                    System.out.printf("CLIQUEI NA CASA! posicao %d", i);
-                    for (int j=0; j<4; j++){
-                        if (pioesPos[corVez.ordinal()][j] == i){
-                            // tem um peao da cor nessa posicao
-                            boolean moveSuccessful = cont.movePiao(corVez, j, dadoVez);
-                            if (moveSuccessful) pioesPos[corVez.ordinal()][j]+=dadoVez;
-                            Jogou = true;
-                        }
+       //System.out.printf("Mouse Released: %d,\t%d\n",m.getX(), m.getY());
+       for (int i = 0; i<57; i++) {
+           // acha a posicao que apertei
+           if (LADO*lutX[cont.getVez().ordinal()][i] <= m.getX() && m.getX() <= LADO*lutX[cont.getVez().ordinal()][i] + LADO &&
+               LADO*lutY[cont.getVez().ordinal()][i] <= m.getY() && m.getY() <= LADO*lutY[cont.getVez().ordinal()][i] + LADO) {
+                System.out.printf("View: CLIQUEI NA CASA: %s[%d]\n", cont.getVez().toString(), i);
+                for (int j=0; j<4; j++) {
+                    if (pioesPos[cont.getVez().ordinal()][j] == i){
+                        // tem um peao da cor nessa posicao
+                        System.out.printf("View: peão %s encontrado na posição %s[%d]!\n", cont.getVez().toString(), cont.getVez().toString(), i);
+                        cont.movePiao(cont.getVez(), j, i, dadoVez);
                     }
-                } 
+                }
             }
-        }
-       //System.out.printf("peao: %d", pioesPos[corVez.ordinal()][0]);
-       this.repaint();
+       }
+    this.repaint();
     }
 
     public void mouseEntered(MouseEvent m) {
@@ -344,5 +338,9 @@ public class View extends JPanel implements java.awt.event.MouseListener {
     public void mouseExited(MouseEvent m) {
        // System.out.printf("Mouse Exited: %d,\t%d\n",m.getX(), m.getY());
 
+    }
+    
+    Cor peaoNaMesmaCasa (Cor cor, int pos) {
+        return cont.procuraNaCasa(cor, pos);
     }
 }

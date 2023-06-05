@@ -99,4 +99,8 @@ class Casa {
         }
         System.out.printf("\t\t Barreiras = ");
     }
+
+    protected Set<Piao> getSet() {
+        return set;
+    }
 }

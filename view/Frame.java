@@ -2,8 +2,6 @@ package view;
 
 import javax.swing.*;
 
-import model.Model;
-
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -18,21 +16,12 @@ public class Frame extends JFrame {
     public static final int ALT_DEFAULT = 16*LADO;
     int[] inicial = {0,0};
 
-    //private Panel panel;
-
-    public Frame (Model model){
+    public Frame (){
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setTitle("Super Ludo");
 
-        /*
-        Panel p = new Panel();
-        p.setModel(model);
-        
-        */
-        //View view = new View();
-        Controller controller = new Controller();
+        Controller controller = Controller.create();
         View view = controller.view;
-        //view.setModel(model);
 
         getContentPane().add(view);
 
@@ -63,9 +52,8 @@ public class Frame extends JFrame {
        
         lancarDadoButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                int dado = model.lancaDado();
+                int dado = controller.lancaDado();
                 view.updateDado(dado);
-                view.updateVez();
                 view.repaint();
                 view.Jogou = false;
             }
