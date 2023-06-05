@@ -266,24 +266,11 @@ public class View extends JPanel implements java.awt.event.MouseListener {
             int qtdInicio = 0;
             for (int i = 0; i < 4; i++) {
                 if (pioesPos[cor.ordinal()][i] == 0) qtdInicio++;
-                Cor corOutroPiao = peaoNaMesmaCasa(cor, i);
+                Cor corOutroPiao = peaoNaMesmaCasa(cor, pioesPos[cor.ordinal()][i]);
                 if (corOutroPiao != null) {
                     desenhaPiao(g, cor, pioesPos[cor.ordinal()][i], corOutroPiao);
-                    System.out.println("Encontrei "+cor.toString()+"["+i+"] = "+corOutroPiao.toString());
+                    System.out.println("Encontrei "+cor.toString()+"["+pioesPos[cor.ordinal()][i]+"] = "+corOutroPiao.toString());
                 }
-                /*
-                boolean piaoSozinho = true;
-                for (Cor c1: Cor.values()) {
-                    for (int c2 = 0; c2 < i; c2++) {
-                        if (pioesPos[c1.ordinal()][c2] == pioesPos[cor.ordinal()][i]) {
-                            desenhaPiao(g, cor, pioesPos[cor.ordinal()][i], c1);
-                            System.out.println("Encontrei "+cor.toString()+"["+i+"] = "+c1.toString()+"["+c2+"]");
-                            piaoSozinho = false;
-                            break;
-                        }
-                    }
-                }
-                */
                 else desenhaPiao(g, cor, pioesPos[cor.ordinal()][i]);
             }
             desenhaPioesInicial(g, cor, qtdInicio);
