@@ -32,7 +32,8 @@ public class Frame extends JFrame {
 
         novoJogoButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                // Handle Novo Jogo button click
+                view.novoJogo();
+                view.repaint();
             }
         });
 

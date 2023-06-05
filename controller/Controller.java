@@ -52,4 +52,7 @@ public class Controller implements ObserverTom {
     public Cor procuraNaCasa(Cor c, int pos) {
         return model.procuraNaCasa(c, pos);
     }
+    public void novoJogo() {
+        model.reset();
+    }
 }

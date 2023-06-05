@@ -29,6 +29,21 @@ public class Model implements ObservableIF {
         return singleton;
     }
 
+    public void reset() {
+        for (Cor c: Cor.values()) for (int i = 0; i < 4; i++) {
+            tabuleiro.arrayPioes[c.ordinal()][i].reset();
+            corVez = Cor.vermelho;
+            jogoAcabou = false;
+            qtdPeaos[0] = 0;
+            qtdPeaos[1] = 0;
+            qtdPeaos[2] = 0;
+            qtdPeaos[3] = 0;
+            qtdSeisRolados = 0;
+            ultimoPiaoMovido = tabuleiro.arrayPioes[0][0];
+            dadoAtual = 0;
+        }
+    }
+
     // movePiao(corPiao, idPiao, casas) tenta mover o "idPiao-ésimo" Pião de cor "corPiao" "casas" casas para a frente. retorna TRUE em caso de sucesso e FALSE em caso de falha.
     public boolean movePiao (Cor corPiao, int idPiao,  int posicao, int casas) {
         Piao p = tabuleiro.getPiao(corPiao, idPiao);

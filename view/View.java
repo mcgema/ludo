@@ -48,6 +48,11 @@ public class View extends JPanel implements java.awt.event.MouseListener {
         // construtor bloqueado pelo Singleton
     }
 
+    public void novoJogo() {
+        cont.novoJogo();
+        repaint();
+    }
+
     public static View create() {
         if (singleton == null) singleton = new View();
         return singleton;
