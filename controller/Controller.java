@@ -9,7 +9,7 @@ import cores.*;
 public class Controller implements ObserverTom {
     private static Controller singleton;
     public View view = View.create();
-    Model model = Model.iniciaModel();
+    Model model = Model.create();
     {
         model.addObserver(this);
         view.updateCont(this);
@@ -38,6 +38,18 @@ public class Controller implements ObserverTom {
     }
 
     public int getDado () {
+        return model.dadoAtual;
+    }
+
+    public int lancaDado () {
         return model.lancaDado();
+    }
+
+    public void refresh() {
+        view.repaint();
+    }
+
+    public Cor procuraNaCasa(Cor c, int pos) {
+        return model.procuraNaCasa(c, pos);
     }
 }

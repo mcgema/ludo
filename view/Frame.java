@@ -51,9 +51,8 @@ public class Frame extends JFrame {
        
         lancarDadoButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                int dado = controller.getDado();
+                int dado = controller.lancaDado();
                 view.updateDado(dado);
-                view.updateVez();
                 view.repaint();
             }
         });
