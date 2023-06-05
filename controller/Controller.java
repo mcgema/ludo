@@ -18,13 +18,15 @@ public class Controller implements ObserverTom{
         //[mc] nao entendi e funciona sem
        // int[][] listaPioes = (int[][]) o.getPioes();
        // view.updatePioes(listaPioes);
-        System.out.printf("\n CONTROLLER cor %s", model.getVez().toString());
-
-        //view.updateVez(model.getVez());
+        //model.updateVez();
     }
 
-    public boolean movePiao(Cor c, int indice, int pos, int dado) {
-        System.out.printf("cor movePiao: %s", c.toString());
-        return model.tentaMoverPiao(c, indice, pos, dado);
+    public boolean movePiao(Cor c, int indice,  int dado) {
+        // System.out.printf("cor movePiao: %s", c.toString());
+        return model.tentaMoverPiao(c, indice, dado);
+    }
+
+    public int tentaIniciarMover (Cor c, int dado){
+        return model.tentaIniciarMover (c, dado);
     }
 }

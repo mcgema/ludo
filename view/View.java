@@ -11,6 +11,7 @@ import java.awt.event.MouseEvent;
 import controller.*;
 
 public class View extends JPanel implements java.awt.event.MouseListener {
+    Model model;
     public static final int LADO = 36, LADO2 = 18, LADO3 = 12, LADO4 = 9;
     public static final int LARG_DEFAULT = 22*LADO;
     public static final int ALT_DEFAULT = 16*LADO;
@@ -39,6 +40,7 @@ public class View extends JPanel implements java.awt.event.MouseListener {
     int dadoVez = 5;
     int[] inicial = {0,0};
     Controller cont;
+    boolean Jogou = false;
     {
         MouseTracker tracker = new MouseTracker();
         addMouseListener(this);
@@ -47,6 +49,11 @@ public class View extends JPanel implements java.awt.event.MouseListener {
     public void updateCont (Controller c) {
         cont = c;
     }
+
+    public void setModel(Model m){
+        model = m;
+    }
+
     public void updatePioes (int[][] novoArray) {
         for (int i = 0; i < 4; i++) for (int j = 0; j < 4; j++) pioesPos[i][j] = novoArray[i][j];
     }
@@ -250,16 +257,8 @@ public class View extends JPanel implements java.awt.event.MouseListener {
 
         desenhaTabuleiro(g);
         // teste
-        // if (cont.movePiao(corVez, 1, dadoVez)) pioesPos[corVez.ordinal()][0]+=dadoVez;
         // [mc] precisa de jeito de inicializar peao a andar, metodo de clicar nao funciona...
-        if (qtdPeaos[corVez.ordinal()] == 0){
-            pioesPos[corVez.ordinal()][0] += dadoVez;
-            qtdPeaos[corVez.ordinal()] += 1;
-        } 
-        // else if (qtdPeaos[corVez.ordinal()] == 1){
-        //     pioesPos[corVez.ordinal()][0] += dadoVez;
-        // } else { addMouseListener(this);}
-        //
+       
         for (Cor cor: Cor.values()) {
             int qtdInicio = 0;
             for (int i = 0; i < 4; i++) {
@@ -279,6 +278,20 @@ public class View extends JPanel implements java.awt.event.MouseListener {
             desenhaPioesInicial(g, cor, qtdInicio);
         }
         desenhaDado(g, dadoVez, corVez);
+        if (!Jogou)
+            Jogou = jogouCor();
+
+    }
+
+    public boolean jogouCor(){
+        int inicioMove = cont.tentaIniciarMover (corVez, dadoVez);
+        if (inicioMove != -1){
+            pioesPos[corVez.ordinal()][inicioMove] += 1;
+            qtdPeaos[corVez.ordinal()] += 1;
+            this.repaint();
+            return true;
+        } 
+        return false;
     }
 
     public void mousePressed(MouseEvent m) {
@@ -298,14 +311,8 @@ public class View extends JPanel implements java.awt.event.MouseListener {
                    for (int j=0; j<4; j++){
                         if (pioesPos[corVez.ordinal()][j] == i){
                             // tem um peao da cor nessa posicao
-                            System.out.printf("\n cor peao %s! ",  corVez.toString());
-                            System.out.printf("\n velha pos %d", pioesPos[corVez.ordinal()][j]);
-                            System.out.println("corVez: " + corVez + ", peao: " + j + ", posicao: " + i + ", dadoVez: " + dadoVez);
-                            boolean moveSuccessful = cont.movePiao(corVez, j, i, dadoVez);
-                            System.out.println("Move sucesso: " + moveSuccessful);
-                            System.out.printf("\n nova pos %d, cor %s", pioesPos[corVez.ordinal()][j], corVez.toString());
+                            boolean moveSuccessful = cont.movePiao(corVez, j, dadoVez);
                             if (moveSuccessful) pioesPos[corVez.ordinal()][j]+=dadoVez;
-                            
                         }
                    }
                    

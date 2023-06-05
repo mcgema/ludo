@@ -66,6 +66,7 @@ public class Frame extends JFrame {
                 view.updateDado(dado);
                 view.updateVez();
                 view.repaint();
+                view.Jogou = false;
             }
         });
         

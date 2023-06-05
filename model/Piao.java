@@ -45,8 +45,7 @@ class Piao {
     // move() altera a posição do Pião no SEU TRAJETO por uma quantidade de casas.
     // isso não move o pião de Casa, apenas muda o valor que ele guarda de quanto já completou do trajeto!!
     protected void move (int casas) {
-        if (posicao == 0) posicao ++;
-        else posicao += casas;
+        posicao += casas;
     }
     
     // dumpString() é uma função de teste que retorna a referência do pião (cor e índice) como String. É uma função de TESTE que deve ser APAGADA na entrega final.

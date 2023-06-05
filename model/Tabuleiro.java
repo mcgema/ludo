@@ -103,13 +103,12 @@ class Tabuleiro {
     // move(Piao p, int resultadoDado) move o Pião p em resultadoDado Casas.
     protected boolean move (Piao p, int resultadoDado) {
     	int qtdCasas = resultadoDado;
-    	if (p.getPosicao() == 0) qtdCasas = 1;
-        
         if (!podeMover(p, qtdCasas)) {
         	System.out.printf("F-00\n");
         	return false;
         }
 
+    	if (p.getPosicao() == 0 && resultadoDado == 5) qtdCasas = 1;
         Casa inicial = this.search(p);
         if (inicial.isBarreira()) barreiras.get(p.getCorNum()).remove(inicial); // caso isso desfaça uma barreira ela é excluída do conjunto
         inicial.removePiao(p);
@@ -132,8 +131,11 @@ class Tabuleiro {
     }   
 
     protected boolean isLivreParaMover (Piao p, int qtdCasas) {
-        // se o pião está para sair, ele só anda uma casa, independente do dado:
-        if (p.getPosicao() == 0) qtdCasas = 1;
+        // se o pião está para sair, mas não saiu 5 (código F-06):
+        if (p.getPosicao() == 0 && qtdCasas != 5) {
+            System.out.printf("F-06\n");
+            return false;
+        }
 
         // se tem uma barreira no caminho, o pião não pode se mover (código F-01):
         if (p.isBarreiraNoCaminho(qtdCasas)) {
@@ -196,7 +198,6 @@ class Tabuleiro {
     protected boolean bloqueadoPeloDado (Piao p, int resultadoDado) {
         switch(resultadoDado) {
             case 6:
-
                 // caso o jogador tenha barreiras...
                 if (barreiras.get(p.getCorNum()).size() > 0) {
                     Iterator<Casa> iterator = barreiras.get(p.getCorNum()).iterator();
