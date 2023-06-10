@@ -2,15 +2,13 @@ package view;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.geom.*;/*
-import java.util.Map;
-import java.util.HashMap;
-import model.Model;*/
+import java.awt.geom.*;
 import cores.Cor;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import controller.*;
 
-public class View extends JPanel implements java.awt.event.MouseListener {
+public class View extends JPanel implements MouseListener {
     private static View singleton;
 
     public static final int LADO = 36, LADO2 = 18, LADO3 = 12, LADO4 = 9;
@@ -81,14 +79,6 @@ public class View extends JPanel implements java.awt.event.MouseListener {
             default:
                 return colorB;
         }
-    }
-
-    void desenhaCasa (Graphics g, Cor c, int pos) {
-        Graphics2D g2d = (Graphics2D) g;
-        Rectangle2D rect = new Rectangle2D.Double(LADO*lutX[c.ordinal()][pos], LADO*lutY[c.ordinal()][pos], LADO, LADO);
-        //Rectangle2D rect = new Rectangle2D.Double(360, 360, LADO, LADO);
-        g2d.setPaint(Color.MAGENTA);
-        g2d.fill(rect);
     }
 
     void desenhaPiao (Graphics g, Cor c, int pos) {
@@ -254,7 +244,6 @@ public class View extends JPanel implements java.awt.event.MouseListener {
         Rectangle2D rect1 = new Rectangle2D.Double(16*LADO, 12*LADO, 2*LADO, 2*LADO);
         g2d.setPaint(getCor(cor));
         g2d.draw(rect1); 
-
     }
 
     public void paintComponent(Graphics g) {
@@ -283,11 +272,6 @@ public class View extends JPanel implements java.awt.event.MouseListener {
         desenhaDado(g, dadoVez, cont.getVez());
     }
 
-    public void mousePressed(MouseEvent m) {
-        //System.out.printf("Mouse Pressed: %d,\t%d\n",m.getX(), m.getY());
-        //System.out.println("Vez do " + cont.getVez());
-    }
-
     public void mouseClicked(MouseEvent m) {
        //System.out.printf("Mouse Released: %d,\t%d\n",m.getX(), m.getY());
        for (int i = 0; i<57; i++) {
@@ -307,6 +291,10 @@ public class View extends JPanel implements java.awt.event.MouseListener {
        this.repaint();
     }
 
+    public void mousePressed(MouseEvent m) {
+        //System.out.printf("Mouse Pressed: %d,\t%d\n",m.getX(), m.getY());
+    }
+
     public void mouseEntered(MouseEvent m) {
        // System.out.printf("Mouse Entered: %d,\t%d\n",m.getX(), m.getY());
 
@@ -321,6 +309,7 @@ public class View extends JPanel implements java.awt.event.MouseListener {
 
     }
     
+    //[mc] deveria estar em outro lugar?
     Cor peaoNaMesmaCasa (Cor cor, int pos) {
         return cont.procuraNaCasa(cor, pos);
     }
