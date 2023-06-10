@@ -21,9 +21,6 @@ class Casa {
         indice = i;
     }
     
-    // metodos
-    
-    
     // inserePiao(Piao p) insere o Piao p na Casa.
     protected void inserePiao (Piao p) {
         set.add(p);
@@ -60,12 +57,6 @@ class Casa {
     // getCor() retorna a Cor da Casa.
     protected Cor getCor () {
         return cor;
-    }
-    
-    // getIndice() retorna o indice da Casa.
-    // nao foi utilizada ainda
-    protected int getIndice () {
-        return indice;
     }
     
     // getQtdPioes() retorna a quantidade de Pioes da Casa.

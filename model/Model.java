@@ -148,9 +148,8 @@ public class Model implements ObservableIF {
     }
 
     public boolean tentaMoverPiao (Cor corPiao, int indice, int pos, int casas) {
-        boolean retorno = movePiao(corPiao, indice, tabuleiro.search(pos, corPiao).getIndice(),casas);
-        if (retorno && casas != 6) updateVez();
-        // possivelmente bugado para o 6 duplo e triplo.
+        boolean retorno = movePiao(corPiao, indice, tabuleiro.search(pos, corPiao).getPiao(corPiao).getPosicao(), casas);
+        if (retorno && casas != 6) updateVez(); // se deu 6 no dado a vez não muda!!
         return retorno;
     }
 
