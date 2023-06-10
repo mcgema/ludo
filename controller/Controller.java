@@ -15,8 +15,9 @@ public class Controller implements ObserverTom {
         view.updateCont(this);
     }
     private Controller() {
-
+        // Singleton
     }
+    
     public static Controller create() {
         if (singleton == null) singleton = new Controller();
         return singleton;

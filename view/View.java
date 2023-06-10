@@ -32,8 +32,10 @@ public class View extends JPanel implements MouseListener {
         {9, 8, 8, 8, 8, 8, 9, 10, 11, 12, 13, 14, 14, 14, 13, 12, 11, 10, 9, 8, 8, 8,  8,  8,  8,  7,  6,  6,  6,  6,  6,  6,  5, 4, 3, 2, 1, 0, 0, 0, 1, 2, 3, 4, 5, 6, 6, 6, 6, 6, 6, 7, 7, 7, 7, 7, 7, 6},
         {9, 13, 12, 11, 10, 9, 8, 8, 8, 8, 8, 8, 7, 6, 6, 6, 6, 6, 6, 5, 4, 3, 2, 1, 0, 0, 0, 1, 2, 3, 4, 5, 6, 6, 6, 6, 6, 6, 7, 8, 8, 8, 8, 8, 8, 9, 10, 11, 12, 13, 14, 14, 13, 12, 11, 10, 9, 6}
     };
+    static int[] lutSize = {
+        6*LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, 3*LADO
+    };
 
-    int[][] pioesPos = {{0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}};
     Cor corVez = Cor.vermelho;
     int dadoVez = 5;
     int[] inicial = {0,0};
@@ -58,10 +60,6 @@ public class View extends JPanel implements MouseListener {
 
     public void updateCont (Controller c) {
         cont = c;
-    }
-
-    public void updatePioes (int[][] novoArray) {
-        for (int i = 0; i < 4; i++) for (int j = 0; j < 4; j++) pioesPos[i][j] = novoArray[i][j];
     }
 
     public void updateDado (int i) {
@@ -255,7 +253,7 @@ public class View extends JPanel implements MouseListener {
         g2d.draw(rect);
 
         desenhaTabuleiro(g);
-        pioesPos = cont.getPosPioes();
+        int[][] pioesPos = cont.getPosPioes();
         for (Cor cor: Cor.values()) {
             int qtdInicio = 0;
             for (int i = 0; i < 4; i++) {
@@ -273,11 +271,12 @@ public class View extends JPanel implements MouseListener {
     }
 
     public void mouseClicked(MouseEvent m) {
+        int[][] pioesPos = cont.getPosPioes();
        //System.out.printf("Mouse Released: %d,\t%d\n",m.getX(), m.getY());
        for (int i = 0; i<57; i++) {
            // acha a posicao que apertei
-           if (LADO*lutX[cont.getVez().ordinal()][i] <= m.getX() && m.getX() <= LADO*lutX[cont.getVez().ordinal()][i] + LADO &&
-               LADO*lutY[cont.getVez().ordinal()][i] <= m.getY() && m.getY() <= LADO*lutY[cont.getVez().ordinal()][i] + LADO) {
+           if (LADO*lutX[cont.getVez().ordinal()][i] <= m.getX() && m.getX() <= LADO*lutX[cont.getVez().ordinal()][i] + lutSize[i] &&
+               LADO*lutY[cont.getVez().ordinal()][i] <= m.getY() && m.getY() <= LADO*lutY[cont.getVez().ordinal()][i] + lutSize[i]) {
                 System.out.printf("View: CLIQUEI NA CASA: %s[%d]\n", cont.getVez().toString(), i);
                 for (int j=0; j<4; j++) {
                     if (pioesPos[cont.getVez().ordinal()][j] == i){
