@@ -36,7 +36,6 @@ public class View extends JPanel implements MouseListener {
         6*LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, 3*LADO
     };
 
-    Cor corVez = Cor.vermelho;
     int dadoVez = 5;
     int[] inicial = {0,0};
     Controller cont;
