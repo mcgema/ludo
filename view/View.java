@@ -36,20 +36,14 @@ public class View extends JPanel implements MouseListener {
         6*LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, 3*LADO
     };
 
-    int dadoVez = 5;
-    int[] inicial = {0,0};
     Controller cont;
+
     {
         addMouseListener(this);
     }
 
     private View() {
         // construtor bloqueado pelo Singleton
-    }
-
-    public void novoJogo() {
-        cont.novoJogo();
-        repaint();
     }
 
     public static View create() {
@@ -61,8 +55,9 @@ public class View extends JPanel implements MouseListener {
         cont = c;
     }
 
-    public void updateDado (int i) {
-        dadoVez = i;
+    //[mc] deveria estar em outro lugar?
+    Cor peaoNaMesmaCasa (Cor cor, int pos) {
+        return cont.procuraNaCasa(cor, pos);
     }
 
     static Color getCor (Cor c) {
@@ -266,7 +261,7 @@ public class View extends JPanel implements MouseListener {
             }
             desenhaPioesInicial(g, cor, qtdInicio);
         }
-        desenhaDado(g, dadoVez, cont.getVez());
+        desenhaDado(g, cont.getDado(), cont.getVez());
     }
 
     public void mouseClicked(MouseEvent m) {
@@ -281,7 +276,7 @@ public class View extends JPanel implements MouseListener {
                     if (pioesPos[cont.getVez().ordinal()][j] == i){
                         // tem um peao da cor nessa posicao
                         System.out.printf("View: peão %s encontrado na posição %s[%d]!\n", cont.getVez().toString(), cont.getVez().toString(), i);
-                        cont.movePiao(cont.getVez(), j, i, dadoVez);
+                        cont.movePiao(cont.getVez(), j, i, cont.getDado());
                     }
                 }
             }
@@ -305,10 +300,5 @@ public class View extends JPanel implements MouseListener {
     public void mouseExited(MouseEvent m) {
        // System.out.printf("Mouse Exited: %d,\t%d\n",m.getX(), m.getY());
 
-    }
-    
-    //[mc] deveria estar em outro lugar?
-    Cor peaoNaMesmaCasa (Cor cor, int pos) {
-        return cont.procuraNaCasa(cor, pos);
     }
 }
