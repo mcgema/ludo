@@ -9,12 +9,8 @@ import controller.*;
 
 public class Frame extends JFrame {
     public static final int LADO = 36;
-    public static final int LADO2 = 18;
-    public static final int LADO3 = 12;
-    public static final int LADO4 = 9;
     public static final int LARG_DEFAULT = 22*LADO;
     public static final int ALT_DEFAULT = 16*LADO;
-    int[] inicial = {0,0};
 
     public Frame (){
         setDefaultCloseOperation(EXIT_ON_CLOSE);
