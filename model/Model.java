@@ -8,7 +8,7 @@ import controller.*;
 // Model é a fachada das regras, e é a única classe pública da 1a iteração.
 public class Model implements ObservableIF {
     public Tabuleiro tabuleiro = Tabuleiro.create();
-    public Cor corVez = Cor.vermelho;
+    public Cor corVez = Cor.azul;
     boolean jogoAcabou = false;
     public int qtdPeaos[] = {0, 0, 0, 0};
     private int qtdSeisRolados = 0;
@@ -71,7 +71,6 @@ public class Model implements ObservableIF {
                 updateVez();
                 System.out.println("Cod1: qtd 6 > 2");
                 dadoAtual = 0;
-                return 0;
             }
             int qtdBarreiras = tabuleiro.barreiras.get(corVez.ordinal()).size();
             if (qtdBarreiras > 0) {
@@ -100,9 +99,7 @@ public class Model implements ObservableIF {
                     ultimoPiaoMovido = piaoQuebrado;
                     updateVez();
                     System.out.println("Cod2: barreira quebrada automaticamente");
-                    
                     dadoAtual = 0;
-                    return 0;
                 }
             }
         }
@@ -114,7 +111,6 @@ public class Model implements ObservableIF {
                 updateVez();
                 System.out.println("Cod3: 5 => inicia piao");
                 dadoAtual = 0;
-                return 0;
             }
         }
         if (!tabuleiro.existeJogadaPermitida(corVez, resultado)) {
@@ -122,7 +118,6 @@ public class Model implements ObservableIF {
             updateVez();
             System.out.println("Cod4: sem jogadas");
             dadoAtual = 0;
-            return 0;
         }
         boolean tudoZerado = true;
         for (int i = 0; i < 4; i++) {
@@ -135,9 +130,7 @@ public class Model implements ObservableIF {
             updateVez();
             System.out.println("Cod5: nada pra iniciar");
             dadoAtual = 0;
-            return 0;
         }
-        
         dadoAtual = resultado;
         return resultado;
     }

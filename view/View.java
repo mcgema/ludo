@@ -236,17 +236,9 @@ public class View extends JPanel implements java.awt.event.MouseListener {
             case 5: 
                 dado = Toolkit.getDefaultToolkit().getImage("imagens/Dado5.png");
                 break;
-            case 6: 
+            default: 
                 dado = Toolkit.getDefaultToolkit().getImage("imagens/Dado6.png");
                 break;  
-            default:
-                Rectangle2D dadoEmBranco = new Rectangle2D.Double(16*LADO, 12*LADO, 2*LADO, 2*LADO);
-                g2d.setPaint(getCor(cor));
-                g2d.fill(dadoEmBranco);
-                BasicStroke stroke = new BasicStroke(6.0f);
-                g2d.setStroke(stroke);
-                g2d.draw(dadoEmBranco);
-                return;
         }
         g2d.drawImage(dado, 16*LADO, 12*LADO, 2*LADO, 2*LADO, this);
         BasicStroke stroke = new BasicStroke(6.0f);
@@ -254,7 +246,6 @@ public class View extends JPanel implements java.awt.event.MouseListener {
         Rectangle2D rect1 = new Rectangle2D.Double(16*LADO, 12*LADO, 2*LADO, 2*LADO);
         g2d.setPaint(getCor(cor));
         g2d.draw(rect1); 
-
     }
 
     public void paintComponent(Graphics g) {
