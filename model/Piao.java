@@ -6,7 +6,7 @@ class Piao {
     private int posicao;
     private Cor cor;
     private int indice;
-    private Tabuleiro tabuleiro;    // (Tomaz) incluí uma referência ao tabuleiro para poder implementar o isBarreiraNoCaminho() como método de Pião. Achei que fazia mais sentido esse método aqui do que em Tabuleiro.
+    private Tabuleiro tabuleiro; 
     
     // construtor
     protected Piao(Cor cor, int indice, Tabuleiro t) {
