@@ -6,7 +6,7 @@ import observer.*;
 import controller.*;
 
 // Model é a fachada das regras, e é a única classe pública da 1a iteração.
-public class Model implements ObservableIF {
+public class Model implements ObservableLudo {
     public Tabuleiro tabuleiro = Tabuleiro.create();
     public Cor corVez = Cor.vermelho;
     boolean jogoAcabou = false;
@@ -15,7 +15,7 @@ public class Model implements ObservableIF {
     private Piao ultimoPiaoMovido = tabuleiro.arrayPioes[0][0];
     public int dadoAtual = 0;
     private static Model singleton;
-    List<ObserverTom> lob = new ArrayList<ObserverTom>();
+    List<ObserverLudo> lob = new ArrayList<ObserverLudo>();
     private Controller cont;
 
     {
@@ -166,17 +166,17 @@ public class Model implements ObservableIF {
         return corVez;
     }
 
-	public void addObserver(ObserverTom o) {
+	public void addObserver(ObserverLudo o) {
 		lob.add(o);
         cont = (Controller) o;
 	}
 	
-	public void removeObserver(ObserverTom o) {
+	public void removeObserver(ObserverLudo o) {
 		lob.remove(o);
 	}
 
     private void atualiza() {
-        ListIterator<ObserverTom> li = lob.listIterator();
+        ListIterator<ObserverLudo> li = lob.listIterator();
         while(li.hasNext()) li.next().notify(this);
     }
 
