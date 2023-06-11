@@ -24,10 +24,11 @@ public class Controller implements ObserverLudo {
     }
 
     public void notify(ObservableLudo o) {
+        
     }
 
-    public boolean movePiao(Cor c, int indice, int pos, int dado) {
-        return model.tentaMoverPiao(c, indice, pos, dado);
+    public boolean movePiao(Cor c, int indice, int dado) {
+        return model.tentaMoverPiao(c, indice, dado);
     }
 
     public int[][] getPosPioes () {

@@ -299,7 +299,7 @@ public class View extends JPanel implements MouseListener {
                     if (pioesPos[cont.getVez().ordinal()][j] == i){
                         // tem um peao da cor nessa posicao
                         System.out.printf("View: peão %s encontrado na posição %s[%d]!\n", cont.getVez().toString(), cont.getVez().toString(), i);
-                        cont.movePiao(cont.getVez(), j, i, cont.getDado());
+                        cont.movePiao(cont.getVez(), j, cont.getDado());
                     }
                 }
             }
