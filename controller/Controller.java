@@ -50,9 +50,6 @@ public class Controller implements ObserverLudo {
         view.repaint();
     }
 
-    public Cor procuraNaCasa(Cor c, int pos) {
-        return model.procuraNaCasa(c, pos);
-    }
     public void novoJogo() {
         model.reset();
     }

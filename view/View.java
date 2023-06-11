@@ -57,7 +57,30 @@ public class View extends JPanel implements MouseListener {
 
     //[mc] deveria estar em outro lugar?
     Cor peaoNaMesmaCasa (Cor cor, int pos) {
-        return cont.procuraNaCasa(cor, pos);
+        if (pos == 0) return null;  // não deve considerar piões na casa inicial
+        int[][] pioesPos = cont.getPosPioes();
+        int idxPiao = -1;
+        for (int i = 0; i < 4; i++) {
+            if (pioesPos[cor.ordinal()][i] == pos) {
+                if (idxPiao < 0) idxPiao = i;
+                else return cor;
+            }
+        }
+        if (pos > 51) return null;  // se pião na reta final e não encontrou da mesma cor, não tem
+
+        for (Cor c: Cor.values()) {
+            if (c == cor) continue;
+            for (int i = 0; i < 4; i++) {
+                if (pioesPos[c.ordinal()][i] == 0) continue;
+
+                int corOrigem = cor.ordinal();
+                int corFim = c.ordinal();
+                int posOrigem = pioesPos[corOrigem][idxPiao];
+                int posFim = (posOrigem+13*((corOrigem-corFim+4)%4))%52;
+                if (pioesPos[c.ordinal()][i] == posFim) return c;
+            }
+        }
+        return null;
     }
 
     static Color getCor (Cor c) {

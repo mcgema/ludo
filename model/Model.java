@@ -21,9 +21,11 @@ public class Model implements ObservableLudo {
     {
     	System.out.printf("Model iniciado!\n\n\n");
     }
+
     private Model() {
         // construtor bloqueado pelo singleton
     }
+
     public static Model create () {
         if (singleton == null) singleton = new Model();
         return singleton;
@@ -195,19 +197,5 @@ public class Model implements ObservableLudo {
         int[][] pos = new int[4][4];
         for (int i = 0; i < 4; i++) for (int j = 0; j < 4; j++) pos[i][j] = tabuleiro.arrayPioes[i][j].getPosicao();
         return pos;
-    }
-
-    public Cor procuraNaCasa(Cor c, int pos) {
-        if (pos == 0) return null;
-        Casa casa = tabuleiro.search(pos, c);
-        if (casa.getQtdPioes() < 2) return null;
-        Piao original = casa.getPiao(c);
-        Iterator<Piao> iterator = casa.getSet().iterator();
-        Piao comparado;
-        while (iterator.hasNext()) {
-            comparado = iterator.next();
-            if (comparado != original) return comparado.getCor();
-        }
-        return null;
     }
 }
