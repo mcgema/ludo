@@ -6,7 +6,7 @@ import observer.*;
 import cores.*;
 
 
-public class Controller implements ObserverTom {
+public class Controller implements ObserverLudo {
     private static Controller singleton;
     public View view = View.create();
     Model model = Model.create();
@@ -15,22 +15,27 @@ public class Controller implements ObserverTom {
         view.updateCont(this);
     }
     private Controller() {
-
+        // Singleton
     }
+    
     public static Controller create() {
         if (singleton == null) singleton = new Controller();
         return singleton;
     }
 
-    public void notify(ObservableIF o) {
+    public void notify(ObservableLudo o) {
+        
     }
 
-    public boolean movePiao(Cor c, int indice, int pos, int dado) {
-        return model.tentaMoverPiao(c, indice, pos, dado);
+    public boolean movePiao(Cor c, int indice, int dado) {
+        return model.tentaMoverPiao(c, indice, dado);
     }
 
     public int[][] getPosPioes () {
-        return model.getPosPioes();
+        Object[][] ob1 = (Object[][]) model.getPioes();
+        int[][] ret = new int[4][4];
+        for (int i = 0; i < 4; i++) for (int j = 0; j < 4; j++) ret[i][j] = (int) ob1[i][j];
+        return ret;
     }
 
     public Cor getVez () {
@@ -49,9 +54,6 @@ public class Controller implements ObserverTom {
         view.repaint();
     }
 
-    public Cor procuraNaCasa(Cor c, int pos) {
-        return model.procuraNaCasa(c, pos);
-    }
     public void novoJogo() {
         model.reset();
     }

@@ -32,23 +32,18 @@ public class View extends JPanel implements MouseListener {
         {9, 8, 8, 8, 8, 8, 9, 10, 11, 12, 13, 14, 14, 14, 13, 12, 11, 10, 9, 8, 8, 8,  8,  8,  8,  7,  6,  6,  6,  6,  6,  6,  5, 4, 3, 2, 1, 0, 0, 0, 1, 2, 3, 4, 5, 6, 6, 6, 6, 6, 6, 7, 7, 7, 7, 7, 7, 6},
         {9, 13, 12, 11, 10, 9, 8, 8, 8, 8, 8, 8, 7, 6, 6, 6, 6, 6, 6, 5, 4, 3, 2, 1, 0, 0, 0, 1, 2, 3, 4, 5, 6, 6, 6, 6, 6, 6, 7, 8, 8, 8, 8, 8, 8, 9, 10, 11, 12, 13, 14, 14, 13, 12, 11, 10, 9, 6}
     };
+    static int[] lutSize = {
+        6*LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, 3*LADO
+    };
 
-    int[][] pioesPos = {{0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}};
-    Cor corVez = Cor.vermelho;
-    int dadoVez = 5;
-    int[] inicial = {0,0};
     Controller cont;
+
     {
         addMouseListener(this);
     }
 
     private View() {
         // construtor bloqueado pelo Singleton
-    }
-
-    public void novoJogo() {
-        cont.novoJogo();
-        repaint();
     }
 
     public static View create() {
@@ -60,12 +55,32 @@ public class View extends JPanel implements MouseListener {
         cont = c;
     }
 
-    public void updatePioes (int[][] novoArray) {
-        for (int i = 0; i < 4; i++) for (int j = 0; j < 4; j++) pioesPos[i][j] = novoArray[i][j];
-    }
+    //[mc] deveria estar em outro lugar?
+    Cor peaoNaMesmaCasa (Cor cor, int pos) {
+        if (pos == 0) return null;  // não deve considerar piões na casa inicial
+        int[][] pioesPos = cont.getPosPioes();
+        int idxPiao = -1;
+        for (int i = 0; i < 4; i++) {
+            if (pioesPos[cor.ordinal()][i] == pos) {
+                if (idxPiao < 0) idxPiao = i;
+                else return cor;
+            }
+        }
+        if (pos > 51) return null;  // se pião na reta final e não encontrou da mesma cor, não tem
 
-    public void updateDado (int i) {
-        dadoVez = i;
+        for (Cor c: Cor.values()) {
+            if (c == cor) continue;
+            for (int i = 0; i < 4; i++) {
+                if (pioesPos[c.ordinal()][i] == 0) continue;
+
+                int corOrigem = cor.ordinal();
+                int corFim = c.ordinal();
+                int posOrigem = pioesPos[corOrigem][idxPiao];
+                int posFim = (posOrigem+13*((corOrigem-corFim+4)%4))%52;
+                if (pioesPos[c.ordinal()][i] == posFim) return c;
+            }
+        }
+        return null;
     }
 
     static Color getCor (Cor c) {
@@ -255,7 +270,7 @@ public class View extends JPanel implements MouseListener {
         g2d.draw(rect);
 
         desenhaTabuleiro(g);
-        pioesPos = cont.getPosPioes();
+        int[][] pioesPos = cont.getPosPioes();
         for (Cor cor: Cor.values()) {
             int qtdInicio = 0;
             for (int i = 0; i < 4; i++) {
@@ -269,21 +284,22 @@ public class View extends JPanel implements MouseListener {
             }
             desenhaPioesInicial(g, cor, qtdInicio);
         }
-        desenhaDado(g, dadoVez, cont.getVez());
+        desenhaDado(g, cont.getDado(), cont.getVez());
     }
 
     public void mouseClicked(MouseEvent m) {
+        int[][] pioesPos = cont.getPosPioes();
        //System.out.printf("Mouse Released: %d,\t%d\n",m.getX(), m.getY());
        for (int i = 0; i<57; i++) {
            // acha a posicao que apertei
-           if (LADO*lutX[cont.getVez().ordinal()][i] <= m.getX() && m.getX() <= LADO*lutX[cont.getVez().ordinal()][i] + LADO &&
-               LADO*lutY[cont.getVez().ordinal()][i] <= m.getY() && m.getY() <= LADO*lutY[cont.getVez().ordinal()][i] + LADO) {
+           if (LADO*lutX[cont.getVez().ordinal()][i] <= m.getX() && m.getX() <= LADO*lutX[cont.getVez().ordinal()][i] + lutSize[i] &&
+               LADO*lutY[cont.getVez().ordinal()][i] <= m.getY() && m.getY() <= LADO*lutY[cont.getVez().ordinal()][i] + lutSize[i]) {
                 System.out.printf("View: CLIQUEI NA CASA: %s[%d]\n", cont.getVez().toString(), i);
                 for (int j=0; j<4; j++) {
                     if (pioesPos[cont.getVez().ordinal()][j] == i){
                         // tem um peao da cor nessa posicao
                         System.out.printf("View: peão %s encontrado na posição %s[%d]!\n", cont.getVez().toString(), cont.getVez().toString(), i);
-                        cont.movePiao(cont.getVez(), j, i, dadoVez);
+                        cont.movePiao(cont.getVez(), j, cont.getDado());
                     }
                 }
             }
@@ -307,10 +323,5 @@ public class View extends JPanel implements MouseListener {
     public void mouseExited(MouseEvent m) {
        // System.out.printf("Mouse Exited: %d,\t%d\n",m.getX(), m.getY());
 
-    }
-    
-    //[mc] deveria estar em outro lugar?
-    Cor peaoNaMesmaCasa (Cor cor, int pos) {
-        return cont.procuraNaCasa(cor, pos);
     }
 }

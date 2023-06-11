@@ -28,7 +28,7 @@ public class Frame extends JFrame {
 
         novoJogoButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                view.novoJogo();
+                controller.novoJogo();
                 view.repaint();
             }
         });
@@ -48,9 +48,9 @@ public class Frame extends JFrame {
        
         lancarDadoButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                int dado = controller.lancaDado();
-                view.updateDado(dado);
-                view.repaint(); //atualiza o dado
+                controller.lancaDado();
+                //view.updateDado(dado);
+                view.repaint();
             }
         });
         

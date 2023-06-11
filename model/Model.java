@@ -6,24 +6,26 @@ import observer.*;
 import controller.*;
 
 // Model é a fachada das regras, e é a única classe pública da 1a iteração.
-public class Model implements ObservableIF {
+public class Model implements ObservableLudo {
     public Tabuleiro tabuleiro = Tabuleiro.create();
     public Cor corVez = Cor.vermelho;
     boolean jogoAcabou = false;
-    public int qtdPeaos[] = {0, 0, 0, 0};
+    public int qtdPioes[] = {0, 0, 0, 0};
     private int qtdSeisRolados = 0;
     private Piao ultimoPiaoMovido = tabuleiro.arrayPioes[0][0];
     public int dadoAtual = 0;
     private static Model singleton;
-    List<ObserverTom> lob = new ArrayList<ObserverTom>();
+    List<ObserverLudo> lob = new ArrayList<ObserverLudo>();
     private Controller cont;
 
     {
     	System.out.printf("Model iniciado!\n\n\n");
     }
+
     private Model() {
         // construtor bloqueado pelo singleton
     }
+
     public static Model create () {
         if (singleton == null) singleton = new Model();
         return singleton;
@@ -34,27 +36,14 @@ public class Model implements ObservableIF {
             tabuleiro.arrayPioes[c.ordinal()][i].reset();
             corVez = Cor.vermelho;
             jogoAcabou = false;
-            qtdPeaos[0] = 0;
-            qtdPeaos[1] = 0;
-            qtdPeaos[2] = 0;
-            qtdPeaos[3] = 0;
+            qtdPioes[0] = 0;
+            qtdPioes[1] = 0;
+            qtdPioes[2] = 0;
+            qtdPioes[3] = 0;
             qtdSeisRolados = 0;
             ultimoPiaoMovido = tabuleiro.arrayPioes[0][0];
             dadoAtual = 0;
         }
-    }
-
-    // movePiao(corPiao, idPiao, casas) tenta mover o "idPiao-ésimo" Pião de cor "corPiao" "casas" casas para a frente. retorna TRUE em caso de sucesso e FALSE em caso de falha.
-    public boolean movePiao (Cor corPiao, int idPiao,  int posicao, int casas) {
-        Piao p = tabuleiro.getPiao(corPiao, idPiao);
-        boolean retorno = tabuleiro.move(p, casas);
-        jogoAcabou = !tabuleiro.getStatus();
-        if (retorno) {
-            ultimoPiaoMovido = p;
-            this.atualiza();
-        }
-
-        return retorno;
     }
     
     // lancaDado() lanca um dado virtual de 6 lados, retornando um inteiro dentre {1, 2, 3, 4, 5, 6} com chance pseudo-aleatória.
@@ -147,9 +136,17 @@ public class Model implements ObservableIF {
     	return jogoAcabou;
     }
 
-    public boolean tentaMoverPiao (Cor corPiao, int indice, int pos, int casas) {
-        boolean retorno = movePiao(corPiao, indice, tabuleiro.search(pos, corPiao).getPiao(corPiao).getPosicao(), casas);
-        if (retorno && casas != 6) updateVez(); // se deu 6 no dado a vez não muda!!
+    
+    // tentamoverPiao(corPiao, idPiao, casas) tenta mover o "idPiao-ésimo" Pião de cor "corPiao" "casas" casas para a frente. retorna TRUE em caso de sucesso e FALSE em caso de falha.
+    public boolean tentaMoverPiao (Cor corPiao, int idPiao, int casas) {
+        Piao p = tabuleiro.getPiao(corPiao, idPiao);
+        boolean retorno = tabuleiro.move(p, casas);
+        jogoAcabou = !tabuleiro.getStatus();
+        if (retorno) {
+            ultimoPiaoMovido = p;
+            this.atualiza();
+            if (casas != 6) updateVez();// se deu 6 no dado a vez não muda!!
+        }
         return retorno;
     }
 
@@ -166,17 +163,17 @@ public class Model implements ObservableIF {
         return corVez;
     }
 
-	public void addObserver(ObserverTom o) {
+	public void addObserver(ObserverLudo o) {
 		lob.add(o);
         cont = (Controller) o;
 	}
 	
-	public void removeObserver(ObserverTom o) {
+	public void removeObserver(ObserverLudo o) {
 		lob.remove(o);
 	}
 
     private void atualiza() {
-        ListIterator<ObserverTom> li = lob.listIterator();
+        ListIterator<ObserverLudo> li = lob.listIterator();
         while(li.hasNext()) li.next().notify(this);
     }
 
@@ -189,25 +186,5 @@ public class Model implements ObservableIF {
             }
         }
         return listaPioes;
-    }
-
-    public int[][] getPosPioes () {
-        int[][] pos = new int[4][4];
-        for (int i = 0; i < 4; i++) for (int j = 0; j < 4; j++) pos[i][j] = tabuleiro.arrayPioes[i][j].getPosicao();
-        return pos;
-    }
-
-    public Cor procuraNaCasa(Cor c, int pos) {
-        if (pos == 0) return null;
-        Casa casa = tabuleiro.search(pos, c);
-        if (casa.getQtdPioes() < 2) return null;
-        Piao original = casa.getPiao(c);
-        Iterator<Piao> iterator = casa.getSet().iterator();
-        Piao comparado;
-        while (iterator.hasNext()) {
-            comparado = iterator.next();
-            if (comparado != original) return comparado.getCor();
-        }
-        return null;
     }
 }
