@@ -21,10 +21,10 @@ public class Frame extends JFrame {
 
         getContentPane().add(view);
 
-        JButton novoJogoButton = new JButton("Novo Jogo");
+        JButton novoJogoButton =     new JButton("Novo Jogo");
         JButton carregarJogoButton = new JButton("Carregar Jogo");
-        JButton salvarJogoButton = new JButton("Salvar Jogo");
-        JButton lancarDadoButton = new JButton("Lançar Dado");
+        JButton salvarJogoButton =   new JButton("Salvar Jogo");
+        JButton lancarDadoButton =   new JButton("Lançar Dado");
 
         novoJogoButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
