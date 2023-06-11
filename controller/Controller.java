@@ -31,7 +31,10 @@ public class Controller implements ObserverLudo {
     }
 
     public int[][] getPosPioes () {
-        return model.getPosPioes();
+        Object[][] ob1 = (Object[][]) model.getPioes();
+        int[][] ret = new int[4][4];
+        for (int i = 0; i < 4; i++) for (int j = 0; j < 4; j++) ret[i][j] = (int) ob1[i][j];
+        return ret;
     }
 
     public Cor getVez () {
