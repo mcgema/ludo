@@ -10,7 +10,7 @@ public class Model implements ObservableLudo {
     public Tabuleiro tabuleiro = Tabuleiro.create();
     public Cor corVez = Cor.vermelho;
     boolean jogoAcabou = false;
-    public int qtdPeaos[] = {0, 0, 0, 0};
+    public int qtdPioes[] = {0, 0, 0, 0};
     private int qtdSeisRolados = 0;
     private Piao ultimoPiaoMovido = tabuleiro.arrayPioes[0][0];
     public int dadoAtual = 0;
@@ -36,10 +36,10 @@ public class Model implements ObservableLudo {
             tabuleiro.arrayPioes[c.ordinal()][i].reset();
             corVez = Cor.vermelho;
             jogoAcabou = false;
-            qtdPeaos[0] = 0;
-            qtdPeaos[1] = 0;
-            qtdPeaos[2] = 0;
-            qtdPeaos[3] = 0;
+            qtdPioes[0] = 0;
+            qtdPioes[1] = 0;
+            qtdPioes[2] = 0;
+            qtdPioes[3] = 0;
             qtdSeisRolados = 0;
             ultimoPiaoMovido = tabuleiro.arrayPioes[0][0];
             dadoAtual = 0;
