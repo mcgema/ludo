@@ -6,7 +6,7 @@ import observer.*;
 import cores.*;
 
 
-public class Controller implements ObserverTom {
+public class Controller implements ObserverLudo {
     private static Controller singleton;
     public View view = View.create();
     Model model = Model.create();
@@ -15,7 +15,7 @@ public class Controller implements ObserverTom {
         view.updateCont(this);
     }
     private Controller() {
-        // Singleton
+        // construtor bloqueado pelo Singleton
     }
     
     public static Controller create() {
@@ -23,7 +23,7 @@ public class Controller implements ObserverTom {
         return singleton;
     }
 
-    public void notify(ObservableIF o) {
+    public void notify(ObservableLudo o) {
     }
 
     public boolean movePiao(Cor c, int indice, int pos, int dado) {

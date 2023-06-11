@@ -57,6 +57,7 @@ public class View extends JPanel implements MouseListener {
 
     //[mc] deveria estar em outro lugar?
     Cor peaoNaMesmaCasa (Cor cor, int pos) {
+
         return cont.procuraNaCasa(cor, pos);
     }
 
@@ -239,7 +240,6 @@ public class View extends JPanel implements MouseListener {
     }
 
     public void paintComponent(Graphics g) {
-        System.out.println("View: Refresh!");
         super.paintComponent(g);
         Graphics2D g2d = (Graphics2D) g;
         Rectangle2D rect = new Rectangle2D.Double(0, 0, 15*LADO, 15*LADO);
