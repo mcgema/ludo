@@ -41,91 +41,105 @@ public class Model implements ObservableLudo {
     // lancaDado() lanca um dado virtual de 6 lados, retornando um inteiro dentre {1, 2, 3, 4, 5, 6} com chance pseudo-aleatória.
     // também realiza jogadas forçadas, retornando 0 caso ocorram.
     public int lancaDado () {
-        System.out.printf("Model.lancaDado(): vez do %s!\n", corVez.toString());
+        System.out.printf("Lançando dado normal: ", corVez.toString());
         int resultado = Dado.rolar();
+        return lancaDado(resultado);
+    }
+
+    public int lancaDado (int forcado) {
+        System.out.printf("Model.lancaDado(): vez do %s!\n", corVez.toString());
+        int resultado = forcado;
         dadoAtual = resultado;
-        if (resultado == 6) {
-            qtdSeisRolados++;
-            if (qtdSeisRolados > 2) {
-                // caso o joagor tenha rolado o 3o 6 seguido...
-                ultimoPiaoMovido.reset();
-                updateVez();
-                System.out.println("Cod1: qtd 6 > 2");
-                dadoAtual = 0;
-                for (ObserverLudo o: lob) o.notify(this);;
-                return 0;
-            }
-            int qtdBarreiras = tabuleiro.barreiras.get(corVez.ordinal()).size();
-            if (qtdBarreiras > 0) {
-                Piao piaoQuebrado = null;
-                Iterator<Casa> iterator = tabuleiro.barreiras.get(corVez.ordinal()).iterator();
-                if (qtdBarreiras == 2) {    
-                    Piao piaoBarreira1 = iterator.next().getPiao();
-                    Piao piaoBarreira2 = iterator.next().getPiao();
-                    if (!tabuleiro.podeMover(piaoBarreira1, resultado)) {
-                        if (tabuleiro.podeMover(piaoBarreira2, resultado)) piaoQuebrado = piaoBarreira2;
-                    }
-                    else {
-                        if (tabuleiro.podeMover(piaoBarreira2, resultado)) {
-                            if (piaoBarreira2.getPosicao() > piaoBarreira1.getPosicao()) piaoQuebrado = piaoBarreira2;
+
+        processo: {
+            if (resultado == 6) {
+                qtdSeisRolados++;
+                if (qtdSeisRolados > 2) { // caso o jogador tenha rolado o 3o 6 seguido...
+                    System.out.println("Cod1: qtd 6 > 2");
+
+                    ultimoPiaoMovido.reset();
+                    updateVez();
+                    dadoAtual = 0;
+                    break processo;
+                }
+
+                int qtdBarreiras = tabuleiro.barreiras.get(corVez.ordinal()).size();
+                if (qtdBarreiras > 0) {
+                    Piao piaoQuebrado = null;
+                    Iterator<Casa> iterator = tabuleiro.barreiras.get(corVez.ordinal()).iterator();
+                    if (qtdBarreiras == 2) {    
+                        Piao piaoBarreira1 = iterator.next().getPiao();
+                        Piao piaoBarreira2 = iterator.next().getPiao();
+                        if (!tabuleiro.podeMover(piaoBarreira1, resultado)) {
+                            if (tabuleiro.podeMover(piaoBarreira2, resultado)) piaoQuebrado = piaoBarreira2;
+                        }
+                        else {
+                            if (tabuleiro.podeMover(piaoBarreira2, resultado)) {
+                                if (piaoBarreira2.getPosicao() > piaoBarreira1.getPosicao()) piaoQuebrado = piaoBarreira2;
+                                else piaoQuebrado = piaoBarreira1;
+                            }
                             else piaoQuebrado = piaoBarreira1;
                         }
-                        else piaoQuebrado = piaoBarreira1;
+                    }
+
+                    else if (qtdBarreiras == 1) {
+                        Piao piaoBarreira = iterator.next().getPiao();
+                        if (tabuleiro.isLivreParaMover(piaoBarreira, resultado)) piaoQuebrado = piaoBarreira;
+                    }
+
+                    if (piaoQuebrado != null) { // se alguma barreira podia ser quebrada...
+                        System.out.println("Cod2: barreira quebrada automaticamente");
+                        tabuleiro.move(piaoQuebrado, resultado);
+
+                        ultimoPiaoMovido = piaoQuebrado;
+                        updateVez();
+                        dadoAtual = 0;
+                        break processo;
                     }
                 }
-                else if (qtdBarreiras == 1) {
-                    Piao piaoBarreira = iterator.next().getPiao();
-                    if (tabuleiro.isLivreParaMover(piaoBarreira, resultado)) piaoQuebrado = piaoBarreira;
-                }
-                if (piaoQuebrado != null) {
-                    tabuleiro.move(piaoQuebrado, resultado);
-                    ultimoPiaoMovido = piaoQuebrado;
+            }
+
+            else if (resultado == 5) {
+                Piao p = tabuleiro.getInicial(corVez).getPiao();
+                if (tabuleiro.getInicial(corVez).getQtdPioes() > 0 && tabuleiro.move(p,1)) { // se um pião pôde ser iniciado...
+                    System.out.println("Cod3: 5 => inicia piao");
+
+                    ultimoPiaoMovido = p;
                     updateVez();
-                    System.out.println("Cod2: barreira quebrada automaticamente");
-                    
                     dadoAtual = 0;
-                    for (ObserverLudo o: lob) o.notify(this);;
                     return 0;
                 }
             }
-        }
-        else if (resultado == 5) {
-            System.out.println("Model.lancaDado: resultado = 5!");
-            Piao p = tabuleiro.getInicial(corVez).getPiao();
-            if (tabuleiro.getInicial(corVez).getQtdPioes() > 0 && tabuleiro.move(p,1)) {
-                ultimoPiaoMovido = p;
+
+            if (!tabuleiro.existeJogadaPermitida(corVez, resultado)) { // se não existe nenhuma jogada possível...
+                System.out.println("Cod4: sem jogadas");
+
                 updateVez();
-                System.out.println("Cod3: 5 => inicia piao");
                 dadoAtual = 0;
-                for (ObserverLudo o: lob) o.notify(this);;
-                return 0;
+                break processo;
             }
-        }
-        if (!tabuleiro.existeJogadaPermitida(corVez, resultado)) {
-            System.out.println("Model.lancaDado: nenhuma jogada possível");
-            updateVez();
-            System.out.println("Cod4: sem jogadas");
-            dadoAtual = 0;
-            for (ObserverLudo o: lob) o.notify(this);;
-            return 0;
-        }
-        boolean tudoZerado = true;
-        for (int i = 0; i < 4; i++) {
-            if (tabuleiro.arrayPioes[corVez.ordinal()][i].getPosicao() != 0) {
-                tudoZerado = false;
-                break;
+
+            boolean tudoZerado = true;
+
+            for (int i = 0; i < 4; i++) {
+                if (tabuleiro.arrayPioes[corVez.ordinal()][i].getPosicao() != 0) {
+                    tudoZerado = false;
+                    break;
+                }
             }
+
+            if (tudoZerado && resultado != 5) {
+                System.out.println("Cod5: nada pra iniciar");
+
+                updateVez();
+                dadoAtual = 0;
+                break processo;
+            }
+
+            dadoAtual = resultado;
         }
-        if (tudoZerado && resultado != 5) {
-            updateVez();
-            System.out.println("Cod5: nada pra iniciar");
-            dadoAtual = 0;
-            for (ObserverLudo o: lob) o.notify(this);;
-            return 0;
-        }
-        dadoAtual = resultado;
-        for (ObserverLudo o: lob) o.notify(this);;
-        return resultado;
+        for (ObserverLudo o: lob) o.notify(this);
+        return dadoAtual;
     }
     
     public boolean fimDoJogo() {
