@@ -6,6 +6,11 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import controller.*;
+import javax.swing.filechooser.*;
+import java.io.*;
+import java.awt.event.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
+
 
 public class Frame extends JFrame {
     public static final int LADO = 36;
@@ -36,6 +41,15 @@ public class Frame extends JFrame {
         carregarJogoButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 // Handle Carregar Jogo button click
+                JFileChooser chooser = new JFileChooser();
+                FileNameExtensionFilter filter = new FileNameExtensionFilter(
+                    "JPG & GIF Images", "jpg", "gif");
+                chooser.setFileFilter(filter);
+                int returnVal = chooser.showOpenDialog(null);
+                if(returnVal == JFileChooser.APPROVE_OPTION) {
+                System.out.println("You chose to open this file: " +
+                        chooser.getSelectedFile().getName());
+                }
             }
         });
 
