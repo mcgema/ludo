@@ -131,7 +131,9 @@ class Tabuleiro {
         Casa destino = this.search(p);
 
         // captura pião
-        if (destino.getQtdPioes() == 1) if (destino.getTipo() == Tipo.padrao && destino.getPiao().getCor() != p.getCor()) destino.getPiao().reset();
+        if (destino.getQtdPioes() == 1)
+            if ((destino.getTipo() == Tipo.padrao && destino.getPiao().getCor() != p.getCor()) ||
+                (inicial.getTipo() == Tipo.inicial && destino.getPiao().getCor() != p.getCor())) destino.getPiao().reset();
 
         destino.inserePiao(p);
         if (destino.isBarreira()) barreiras.get(p.getCorNum()).add(destino);    // caso isso crie uma barreira ela é salva no conjunto
@@ -274,7 +276,7 @@ class Tabuleiro {
 
         return piaoQuebrado;
     }
-    
+
     protected boolean existeJogadaPermitida(Cor c, int dado) {
         for (int i = 0; i < 4; i++) if (this.podeMover(arrayPioes[c.ordinal()][i], dado)) return true;
         return false;
