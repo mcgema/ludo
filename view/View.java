@@ -303,21 +303,19 @@ public class View extends JPanel implements MouseListener, ObserverLudo {
     }
 
     public void mouseClicked(MouseEvent m) {
-        for (int i = 1; i<57; i++) { // começa do 1 já que o jogador nunca escolhe sair com um piao
-            // acha a posicao que apertei
+        // começa do 1 já que o jogador nunca escolhe sair com um piao
+        for (int i = 1; i<57; i++) { // acha a posicao que apertei
             if (LADO*lutX[corVez.ordinal()][i] <= m.getX() && m.getX() <= LADO*lutX[corVez.ordinal()][i] + lutSize[i] &&
                 LADO*lutY[corVez.ordinal()][i] <= m.getY() && m.getY() <= LADO*lutY[corVez.ordinal()][i] + lutSize[i]) {
                 System.out.printf("View: CLIQUEI NA CASA: %s[%d]\n", corVez.toString(), i);
                 for (int j=0; j<4; j++) {
-                    if (posPioes[corVez.ordinal()][j] == i){
-                        // tem um peao da cor nessa posicao
+                    if (posPioes[corVez.ordinal()][j] == i){ // tem um peao da cor nessa posicao
                         System.out.printf("View: peão %s encontrado na posição %s[%d]!\n", corVez.toString(), corVez.toString(), i);
                         cont.movePiao(corVez, j, dadoAtual);
                     }
                 }
             }
        }
-       this.repaint();
     }
 
     public void mousePressed(MouseEvent m) {}
