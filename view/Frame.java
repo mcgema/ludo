@@ -52,7 +52,7 @@ public class Frame extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 controller.lancaDado();
                 //view.updateDado(dado);
-                view.repaint();
+                //view.repaint();
             }
         });
         
