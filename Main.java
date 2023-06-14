@@ -12,7 +12,15 @@ public class Main {
         Model model = Model.create();
         int dadoForcado = sc.nextInt();
         while (dadoForcado != 0) {
-            model.lancaDado(dadoForcado);
+            if (dadoForcado == 10) {
+                System.out.println("View:");
+                View.create().dump();
+                System.out.println("\nModel:");
+                Model.create().dump();
+            }
+            else {
+                model.lancaDado(dadoForcado);
+            }
             dadoForcado = sc.nextInt();
         }
     }
