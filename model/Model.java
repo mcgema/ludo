@@ -1,6 +1,9 @@
 package model;
 
 import cores.*;
+
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.*;
 import observer.*;
 import controller.*;
@@ -46,6 +49,28 @@ public class Model implements ObservableLudo {
         }
     }
     
+    public void escreverJogo() {
+        try{
+            FileWriter saidaTxt = new FileWriter("saida.txt");
+            saidaTxt.write(corVez.toString());
+            saidaTxt.write(String.valueOf(qtdPioes[0]));
+            saidaTxt.write(String.valueOf(qtdPioes[1]));
+            saidaTxt.write(String.valueOf(qtdPioes[2]));
+            saidaTxt.write(String.valueOf(qtdPioes[3]));
+
+            for (Cor c: Cor.values()) {
+                saidaTxt.write(c.toString());
+                for (int i = 0; i < 4; i++) {
+                    saidaTxt.write(tabuleiro.arrayPioes[c.ordinal()][i].getPosicao());
+                    saidaTxt.write(tabuleiro.arrayPioes[c.ordinal()][i].getIndice());
+                }
+            }
+            saidaTxt.flush();
+            saidaTxt.close();
+        }  catch (IOException error) {
+            error.printStackTrace();
+        }
+    }
     // lancaDado() lanca um dado virtual de 6 lados, retornando um inteiro dentre {1, 2, 3, 4, 5, 6} com chance pseudo-aleatória.
     // também realiza jogadas forçadas, retornando 0 caso ocorram.
     public int lancaDado () {

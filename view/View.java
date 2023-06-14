@@ -320,7 +320,6 @@ public class View extends JPanel implements MouseListener {
 
     public void mouseEntered(MouseEvent m) {
        // System.out.printf("Mouse Entered: %d,\t%d\n",m.getX(), m.getY());
-
     }
 
     public void mouseReleased(MouseEvent m) {
@@ -329,7 +328,6 @@ public class View extends JPanel implements MouseListener {
 
     public void mouseExited(MouseEvent m) {
        // System.out.printf("Mouse Exited: %d,\t%d\n",m.getX(), m.getY());
-
     }
 
     public void carregarJogo() {
@@ -354,5 +352,9 @@ public class View extends JPanel implements MouseListener {
             System.out.println("You chose to open this file: " + selectedFile.getName());
         }
     }
+
+    // mudar de lugar essa info
+   
+
 
 }

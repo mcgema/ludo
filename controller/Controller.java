@@ -61,4 +61,14 @@ public class Controller implements ObserverLudo {
     public void carregarJogo() {
         view.carregarJogo();
     }
+
+    public void escreverJogo() {
+        model.escreverJogo();
+    }
+
+    public void salvarJogo() {
+        model.escreverJogo();
+    }
+
+
 }
