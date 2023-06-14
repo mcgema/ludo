@@ -57,7 +57,7 @@ public class Model implements ObservableLudo {
                 if (qtdSeisRolados > 2) { // caso o jogador tenha rolado o 3o 6 seguido...
                     System.out.println("Cod1: qtd 6 > 2");
 
-                    ultimoPiaoMovido.reset();
+                    if (ultimoPiaoMovido.getPosicao() < 52) ultimoPiaoMovido.reset();
                     updateVez();
                     dadoAtual = 0;
                     break processo;
