@@ -3,7 +3,6 @@ package model;
 import cores.*;
 import java.util.*;
 import observer.*;
-import controller.*;
 
 // Model é a fachada das regras, e é a única classe pública da 1a iteração.
 public class Model implements ObservableLudo {
@@ -16,11 +15,6 @@ public class Model implements ObservableLudo {
     public int dadoAtual = 0;
     private static Model singleton;
     List<ObserverLudo> lob = new ArrayList<ObserverLudo>();
-    private Controller cont;
-
-    {
-    	System.out.printf("Model iniciado!\n\n\n");
-    }
 
     private Model() {
         // construtor bloqueado pelo singleton
@@ -34,16 +28,14 @@ public class Model implements ObservableLudo {
     public void reset() {
         for (Cor c: Cor.values()) for (int i = 0; i < 4; i++) {
             tabuleiro.arrayPioes[c.ordinal()][i].reset();
-            corVez = Cor.vermelho;
-            jogoAcabou = false;
-            qtdPioes[0] = 0;
-            qtdPioes[1] = 0;
-            qtdPioes[2] = 0;
-            qtdPioes[3] = 0;
-            qtdSeisRolados = 0;
-            ultimoPiaoMovido = tabuleiro.arrayPioes[0][0];
-            dadoAtual = 0;
+            qtdPioes[i] = 0;
         }
+        corVez = Cor.vermelho;
+        jogoAcabou = false;
+        qtdSeisRolados = 0;
+        ultimoPiaoMovido = tabuleiro.arrayPioes[0][0];
+        dadoAtual = 0;
+        for (ObserverLudo o: lob) o.notify(this);
     }
     
     // lancaDado() lanca um dado virtual de 6 lados, retornando um inteiro dentre {1, 2, 3, 4, 5, 6} com chance pseudo-aleatória.
@@ -60,6 +52,7 @@ public class Model implements ObservableLudo {
                 updateVez();
                 System.out.println("Cod1: qtd 6 > 2");
                 dadoAtual = 0;
+                for (ObserverLudo o: lob) o.notify(this);;
                 return 0;
             }
             int qtdBarreiras = tabuleiro.barreiras.get(corVez.ordinal()).size();
@@ -91,6 +84,7 @@ public class Model implements ObservableLudo {
                     System.out.println("Cod2: barreira quebrada automaticamente");
                     
                     dadoAtual = 0;
+                    for (ObserverLudo o: lob) o.notify(this);;
                     return 0;
                 }
             }
@@ -103,6 +97,7 @@ public class Model implements ObservableLudo {
                 updateVez();
                 System.out.println("Cod3: 5 => inicia piao");
                 dadoAtual = 0;
+                for (ObserverLudo o: lob) o.notify(this);;
                 return 0;
             }
         }
@@ -111,6 +106,7 @@ public class Model implements ObservableLudo {
             updateVez();
             System.out.println("Cod4: sem jogadas");
             dadoAtual = 0;
+            for (ObserverLudo o: lob) o.notify(this);;
             return 0;
         }
         boolean tudoZerado = true;
@@ -124,10 +120,11 @@ public class Model implements ObservableLudo {
             updateVez();
             System.out.println("Cod5: nada pra iniciar");
             dadoAtual = 0;
+            for (ObserverLudo o: lob) o.notify(this);;
             return 0;
         }
-        
         dadoAtual = resultado;
+        for (ObserverLudo o: lob) o.notify(this);;
         return resultado;
     }
     
@@ -135,16 +132,15 @@ public class Model implements ObservableLudo {
     	if (jogoAcabou) tabuleiro.termina();
     	return jogoAcabou;
     }
-
     
     // tentamoverPiao(corPiao, idPiao, casas) tenta mover o "idPiao-ésimo" Pião de cor "corPiao" "casas" casas para a frente. retorna TRUE em caso de sucesso e FALSE em caso de falha.
     public boolean tentaMoverPiao (Cor corPiao, int idPiao, int casas) {
         Piao p = tabuleiro.getPiao(corPiao, idPiao);
-        boolean retorno = tabuleiro.move(p, casas);
+        boolean retorno = tabuleiro.move(p, dadoAtual);
         jogoAcabou = !tabuleiro.getStatus();
         if (retorno) {
             ultimoPiaoMovido = p;
-            this.atualiza();
+            for (ObserverLudo o: lob) o.notify(this);;
             if (casas != 6) updateVez();// se deu 6 no dado a vez não muda!!
         }
         return retorno;
@@ -153,38 +149,40 @@ public class Model implements ObservableLudo {
     public void updateVez(){
         corVez = Cor.values()[(corVez.ordinal()+1)%4];
         System.out.println("Vez passada para o "+corVez.toString());
-        this.atualiza();
+        for (ObserverLudo o: lob) o.notify(this);;
         qtdSeisRolados = 0;
         dadoAtual = 0;
-        cont.refresh();
+        for (ObserverLudo o: lob) o.notify(this);;
+
     }
 
-    public Cor getVez(){
-        return corVez;
-    }
+    // interface Observable
 
 	public void addObserver(ObserverLudo o) {
 		lob.add(o);
-        cont = (Controller) o;
 	}
 	
 	public void removeObserver(ObserverLudo o) {
 		lob.remove(o);
 	}
 
-    private void atualiza() {
-        ListIterator<ObserverLudo> li = lob.listIterator();
-        while(li.hasNext()) li.next().notify(this);
-    }
+    public Object get() {
+        Object[] data = new Object[3];
 
-    public Object getPioes() {
         Object listaPioes[][] = new Object[4][4];
-
         for (Cor cor: Cor.values()) {
             for (int i = 0; i < 4; i++) {
                 listaPioes[cor.ordinal()][i] = tabuleiro.arrayPioes[cor.ordinal()][i].getPosicao();
             }
         }
-        return listaPioes;
+
+        Object vez = corVez;
+        Object dado = dadoAtual;
+
+        data[0] = listaPioes;
+        data[1] = vez;
+        data[2] = dado;
+
+        return data;
     }
 }

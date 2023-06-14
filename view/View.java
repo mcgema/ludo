@@ -1,15 +1,17 @@
 package view;
 
-import javax.swing.*;
-import java.awt.*;
-import java.awt.geom.*;
-import cores.Cor;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import controller.*;
+import java.awt.*;
+import java.awt.geom.*;
+import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
-public class View extends JPanel implements MouseListener {
+import cores.*;
+import observer.*;
+import controller.*;
+
+public class View extends JPanel implements MouseListener, ObserverLudo {
     private static View singleton;
 
     public static final int LADO = 36, LADO2 = 18, LADO3 = 12, LADO4 = 9;
@@ -38,6 +40,9 @@ public class View extends JPanel implements MouseListener {
     };
 
     Controller cont;
+    int[][] posPioes = new int[4][4];
+    Cor corVez = Cor.vermelho;
+    int dadoAtual = 0;
 
     {
         addMouseListener(this);
@@ -52,17 +57,27 @@ public class View extends JPanel implements MouseListener {
         return singleton;
     }
 
+    public void notify(ObservableLudo model) {
+        Object[] data = (Object[]) model.get();
+        Object[][] dataPosPioes = (Object[][]) data[0];
+        corVez = (Cor) data[1];
+        dadoAtual = (int) data[2];
+
+        for (int i = 0; i < 4; i++) for (int j = 0; j < 4; j++) posPioes[i][j] = (int) dataPosPioes[i][j];
+        
+
+        this.repaint();
+    }
+    
     public void updateCont (Controller c) {
         cont = c;
     }
+    
 
-    //[mc] deveria estar em outro lugar?
     Cor peaoNaMesmaCasa (Cor cor, int pos) {
-        if (pos == 0) return null;  // não deve considerar piões na casa inicial
-        int[][] pioesPos = cont.getPosPioes();
         int idxPiao = -1;
         for (int i = 0; i < 4; i++) {
-            if (pioesPos[cor.ordinal()][i] == pos) {
+            if (posPioes[cor.ordinal()][i] == pos) {
                 if (idxPiao < 0) idxPiao = i;
                 else return cor;
             }
@@ -72,13 +87,13 @@ public class View extends JPanel implements MouseListener {
         for (Cor c: Cor.values()) {
             if (c == cor) continue;
             for (int i = 0; i < 4; i++) {
-                if (pioesPos[c.ordinal()][i] == 0) continue;
+                if (posPioes[c.ordinal()][i] == 0) continue;
 
                 int corOrigem = cor.ordinal();
                 int corFim = c.ordinal();
-                int posOrigem = pioesPos[corOrigem][idxPiao];
+                int posOrigem = posPioes[corOrigem][idxPiao];
                 int posFim = (posOrigem+13*((corOrigem-corFim+4)%4))%52;
-                if (pioesPos[c.ordinal()][i] == posFim) return c;
+                if (posPioes[c.ordinal()][i] == posFim) return c;
             }
         }
         return null;
@@ -143,12 +158,13 @@ public class View extends JPanel implements MouseListener {
         }
     }
 
-    static private void parteTabuleiro(Graphics g, Cor cor1, Cor cor2){
+    static private void parteTabuleiro(Graphics g, Cor cor1, Cor cor2) {
         int x = 0, y = 0;
         Graphics2D g2d = (Graphics2D) g;
         Rectangle2D rect1=new Rectangle2D.Double(x, y, LADO*6, LADO*6);
         g2d.setPaint(getCor(cor1));
         g2d.fill(rect1);
+
         //circulos dos peoes e peoes
         Ellipse2D e1 = new Ellipse2D.Double();
         for (int i=0; i<2; i++){
@@ -204,7 +220,7 @@ public class View extends JPanel implements MouseListener {
         }
         // triangulo central
         int[] xPoints = {x + LADO*6, x + LADO*6, x + LADO*7 + LADO2}; // X coordenadas dos vérticecs de triangulo
-        int[] yPoints = {y,          y + LADO*3, y + LADO + LADO2}; // Y coordenadas dos vérticecs de triangulo
+        int[] yPoints = {y,          y + LADO*3, y + LADO   + LADO2}; // Y coordenadas dos vérticecs de triangulo
         g2d.setPaint(getCor(cor1));
         g2d.fillPolygon(xPoints, yPoints, 3);
     }
@@ -222,10 +238,10 @@ public class View extends JPanel implements MouseListener {
     }
 
     public void desenhaDado(Graphics g, int resultado, Cor cor){
-        System.out.println("View.desenhaDado("+resultado+") -- getDado deu "+cont.getDado());
+        System.out.println("View.desenhaDado("+resultado+") -- getDado deu "+dadoAtual);
         Graphics2D g2d = (Graphics2D) g;
         Image dado;
-        resultado = cont.getDado();
+        resultado = dadoAtual;
         switch(resultado){
             case 1:
                 dado = Toolkit.getDefaultToolkit().getImage("imagens/Dado1.png");
@@ -263,7 +279,6 @@ public class View extends JPanel implements MouseListener {
     }
 
     public void paintComponent(Graphics g) {
-        System.out.println("View: Refresh!");
         super.paintComponent(g);
         Graphics2D g2d = (Graphics2D) g;
         Rectangle2D rect = new Rectangle2D.Double(0, 0, 15*LADO, 15*LADO);
@@ -271,36 +286,33 @@ public class View extends JPanel implements MouseListener {
         g2d.draw(rect);
 
         desenhaTabuleiro(g);
-        int[][] pioesPos = cont.getPosPioes();
         for (Cor cor: Cor.values()) {
             int qtdInicio = 0;
             for (int i = 0; i < 4; i++) {
-                if (pioesPos[cor.ordinal()][i] == 0) qtdInicio++;
-                Cor corOutroPiao = peaoNaMesmaCasa(cor, pioesPos[cor.ordinal()][i]);
+                if (posPioes[cor.ordinal()][i] == 0) qtdInicio++;
+                Cor corOutroPiao = peaoNaMesmaCasa(cor, posPioes[cor.ordinal()][i]);
                 if (corOutroPiao != null) {
-                    desenhaPiao(g, cor, pioesPos[cor.ordinal()][i], corOutroPiao);
-                    System.out.println("Encontrei "+cor.toString()+"["+pioesPos[cor.ordinal()][i]+"] = "+corOutroPiao.toString());
+                    desenhaPiao(g, cor, posPioes[cor.ordinal()][i], corOutroPiao);
+                    System.out.println("Encontrei "+cor.toString()+"["+posPioes[cor.ordinal()][i]+"] = "+corOutroPiao.toString());
                 }
-                else desenhaPiao(g, cor, pioesPos[cor.ordinal()][i]);
+                else desenhaPiao(g, cor, posPioes[cor.ordinal()][i]);
             }
             desenhaPioesInicial(g, cor, qtdInicio);
         }
-        desenhaDado(g, cont.getDado(), cont.getVez());
+        desenhaDado(g, dadoAtual, corVez);
     }
 
     public void mouseClicked(MouseEvent m) {
-        int[][] pioesPos = cont.getPosPioes();
-       //System.out.printf("Mouse Released: %d,\t%d\n",m.getX(), m.getY());
-       for (int i = 0; i<57; i++) {
-           // acha a posicao que apertei
-           if (LADO*lutX[cont.getVez().ordinal()][i] <= m.getX() && m.getX() <= LADO*lutX[cont.getVez().ordinal()][i] + lutSize[i] &&
-               LADO*lutY[cont.getVez().ordinal()][i] <= m.getY() && m.getY() <= LADO*lutY[cont.getVez().ordinal()][i] + lutSize[i]) {
-                System.out.printf("View: CLIQUEI NA CASA: %s[%d]\n", cont.getVez().toString(), i);
+        for (int i = 0; i<57; i++) {
+            // acha a posicao que apertei
+            if (LADO*lutX[corVez.ordinal()][i] <= m.getX() && m.getX() <= LADO*lutX[corVez.ordinal()][i] + lutSize[i] &&
+                LADO*lutY[corVez.ordinal()][i] <= m.getY() && m.getY() <= LADO*lutY[corVez.ordinal()][i] + lutSize[i]) {
+                System.out.printf("View: CLIQUEI NA CASA: %s[%d]\n", corVez.toString(), i);
                 for (int j=0; j<4; j++) {
-                    if (pioesPos[cont.getVez().ordinal()][j] == i){
+                    if (posPioes[corVez.ordinal()][j] == i){
                         // tem um peao da cor nessa posicao
-                        System.out.printf("View: peão %s encontrado na posição %s[%d]!\n", cont.getVez().toString(), cont.getVez().toString(), i);
-                        cont.movePiao(cont.getVez(), j, cont.getDado());
+                        System.out.printf("View: peão %s encontrado na posição %s[%d]!\n", corVez.toString(), corVez.toString(), i);
+                        cont.movePiao(corVez, j, dadoAtual);
                     }
                 }
             }
@@ -308,24 +320,12 @@ public class View extends JPanel implements MouseListener {
        this.repaint();
     }
 
-    public void mousePressed(MouseEvent m) {
-        //System.out.printf("Mouse Pressed: %d,\t%d\n",m.getX(), m.getY());
-    }
+    public void mousePressed(MouseEvent m) {}
+    public void mouseEntered(MouseEvent m) {}
+    public void mouseReleased(MouseEvent m) {}
+    public void mouseExited(MouseEvent m) {}
 
-    public void mouseEntered(MouseEvent m) {
-       // System.out.printf("Mouse Entered: %d,\t%d\n",m.getX(), m.getY());
-
-    }
-
-    public void mouseReleased(MouseEvent m) {
-        // System.out.printf("Mouse Released: %d,\t%d\n",m.getX(), m.getY());
-    }
-
-    public void mouseExited(MouseEvent m) {
-       // System.out.printf("Mouse Exited: %d,\t%d\n",m.getX(), m.getY());
-
-    }
-
+    // [tom] deveria estar no controller, não?
     public void carregarJogo(){
         JFileChooser chooser = new JFileChooser();
         FileNameExtensionFilter filter = new FileNameExtensionFilter(
