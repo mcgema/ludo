@@ -31,7 +31,6 @@ public class Frame extends JFrame {
         novoJogoButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 controller.novoJogo();
-                view.repaint();
             }
         });
 
@@ -51,8 +50,6 @@ public class Frame extends JFrame {
         lancarDadoButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 controller.lancaDado();
-                //view.updateDado(dado);
-                //view.repaint();
             }
         });
         

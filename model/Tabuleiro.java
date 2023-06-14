@@ -24,14 +24,14 @@ class Tabuleiro {
     private Casa casasNormais[] = new Casa [52];
     // bloco de inicialização
     {
-        System.out.println("Tabuleiro inicializado!");
+        System.out.println("Model.Tabuleiro: Tabuleiro inicializado!");
         int j = 0;
         for (int i = 0; i < 52; i++) {
             // casas de saída:
             if (i%13 == 0) casasNormais[i] = new Casa(i+1, Tipo.saida, Cor.values()[i/13]);
 
             // abrigos:
-            else if (this.abrigos[j] == i) casasNormais[abrigos[j++]] = new Casa(i+1,Tipo.abrigo);
+            else if ((i+13)%13 == 9) casasNormais[i] = new Casa(i+1,Tipo.abrigo);
             
             // casas padrão:
             else casasNormais[i] = new Casa(i+1,Tipo.padrao);
@@ -112,17 +112,22 @@ class Tabuleiro {
     }
     
     // move(Piao p, int resultadoDado) move o Pião p em resultadoDado Casas.
-    protected boolean move (Piao p, int resultadoDado) {
+    protected int move (Piao p, int resultadoDado, boolean bonusDeCaptura) {
+        if (bonusDeCaptura) {
+            if (resultadoDado > p.distFinal()) resultadoDado = p.distFinal();
+        }
+        System.out.println("Tabuleiro.move(["+p.getCor()+p.getIndice()+"],"+resultadoDado+"): fui chamada!");
     	int qtdCasas = resultadoDado;
-    	if (p.getPosicao() == 0) qtdCasas = 1;
+        boolean houveCaptura = false;
         
-        if (!podeMover(p, qtdCasas)) {
-        	System.out.printf("F-00: MOVIMENTO BLOQUEADO\n");
-            System.out.printf("model.Tabuleiro: Posições dos %ss: ", p.getCor().toString());
+        if (!podeMover(p, qtdCasas, bonusDeCaptura)) {
+        	System.out.printf("Tabuleiro.move(["+p.getCor()+p.getIndice()+"],"+resultadoDado+"): "+p.getCor()+" "+p.getIndice()+" NAO PODE MOVER - COD. 0: MOVIMENTO BLOQUEADO\n");
+            System.out.printf("Tabuleiro.move(["+p.getCor()+p.getIndice()+"],"+resultadoDado+"):  Posições dos %ss: ", p.getCor().toString());
             for (int dor = 0; dor < 4; dor++) System.out.printf("%d, ", arrayPioes[p.getCorNum()][dor].getPosicao());
             System.out.printf("\n");
-        	return false;
+        	return 0;
         }
+    	if (p.getPosicao() == 0) qtdCasas = 1;
 
         Casa inicial = this.search(p);
         if (inicial.isBarreira()) barreiras.get(p.getCorNum()).remove(inicial); // caso isso desfaça uma barreira ela é excluída do conjunto
@@ -131,7 +136,12 @@ class Tabuleiro {
         Casa destino = this.search(p);
 
         // captura pião
-        if (destino.getQtdPioes() == 1) if (destino.getTipo() == Tipo.padrao && destino.getPiao().getCor() != p.getCor()) destino.getPiao().reset();
+        if (destino.getQtdPioes() == 1)
+            if ((destino.getTipo() == Tipo.padrao && destino.getPiao().getCor() != p.getCor()) ||
+                (inicial.getTipo() == Tipo.inicial && destino.getPiao().getCor() != p.getCor())) {
+                    destino.getPiao().reset();
+                    houveCaptura = true;
+                }
 
         destino.inserePiao(p);
         if (destino.isBarreira()) barreiras.get(p.getCorNum()).add(destino);    // caso isso crie uma barreira ela é salva no conjunto
@@ -140,27 +150,35 @@ class Tabuleiro {
         }
 
         ultimoPiaoMovimentado = p;
-        System.out.printf("S-00: MOVIMENTO PERMITIDO\n");
-        System.out.printf("model.Tabuleiro: Posições dos %ss: ", p.getCor().toString());
+        System.out.printf("Tabuleiro.move(["+p.getCor()+p.getIndice()+"],"+resultadoDado+"): "+p.getCor()+" "+p.getIndice()+" PODE MOVER - COD. 0: MOVIMENTO PERMITIDO\n");
+        System.out.printf("Tabuleiro.move(["+p.getCor()+p.getIndice()+"],"+resultadoDado+"): Posições dos %ss: ", p.getCor().toString());
         for (int dor = 0; dor < 4; dor++) System.out.printf("%d, ", arrayPioes[p.getCorNum()][dor].getPosicao());
         System.out.printf("\n");
 
-        return true;
+        if (houveCaptura) return 2;
+        return 1;
     }   
 
-    protected boolean isLivreParaMover (Piao p, int qtdCasas) {
+    protected boolean isLivreParaMover (Piao p, int qtdCasas, boolean bonusDeCaptura) {
+        System.out.println("Tabuleiro.isLivreParaMover(["+p.getCor()+p.getIndice()+"],"+qtdCasas+"): fui chamada!");
+        // se o pião está na casa inicial e o dado não foi 5, ele não pode se mover:
+        if (p.getPosicao() == 0 && qtdCasas != 5) {
+            System.out.printf("Tabuleiro.isLivreParaMover(["+p.getCor()+p.getIndice()+"],"+qtdCasas+"): "+p.getCor()+" "+p.getIndice()+" NAO PODE MOVER - COD. 6: SÓ SAI COM 5\n");
+            return false;
+        }
+
         // se o pião está para sair, ele só anda uma casa, independente do dado:
         if (p.getPosicao() == 0) qtdCasas = 1;
 
         // se tem uma barreira no caminho, o pião não pode se mover (código F-01):
         if (p.isBarreiraNoCaminho(qtdCasas)) {
-            System.out.printf("F-01: BARREIRA NO CAMINHO\n");
+            System.out.printf("Tabuleiro.isLivreParaMover(["+p.getCor()+p.getIndice()+"],"+qtdCasas+"): "+p.getCor()+" "+p.getIndice()+" NAO PODE MOVER - COD. 1: BARREIRA NO CAMINHO\n");
             return false;
         }
 
         // se o valor rolado no dado for maior que a quantidade de casas até o final, o pião não pode se mover (código F-02):
-        if (p.distFinal() < qtdCasas) {
-            System.out.printf("F-02: PASSA DO FINAL\n");
+        if (p.distFinal() < qtdCasas && !bonusDeCaptura) {
+            System.out.printf("Tabuleiro.isLivreParaMover(["+p.getCor()+p.getIndice()+"],"+qtdCasas+"): "+p.getCor()+" "+p.getIndice()+" NAO PODE MOVER - COD. 2: PASSA DO FINAL\n");
             return false;
         }
 
@@ -168,27 +186,27 @@ class Tabuleiro {
         if (p.distFinal() == qtdCasas) return true;
 
         Casa destino = this.search(p.getPosicao()+qtdCasas, p.getCor());
-        System.out.printf("\ndestino:\t");
+        System.out.printf("Tabuleiro.isLivre...: destino:\t");
         destino.dump();
         System.out.printf("\n");
         switch (destino.getQtdPioes()) {
 
             // se tiverem dois piões na casa de destino do movimento (e ela não é o final -- esse caso já foi analisado!), o pião não se move (código F-03):
             case 2:
-                System.out.printf("F-03: DESTINO LOTADO\n");
+                System.out.printf("Tabuleiro.isLivreParaMover(["+p.getCor()+p.getIndice()+"],"+qtdCasas+"): "+p.getCor()+" "+p.getIndice()+" NAO PODE MOVER - COD. 3: DESTINO LOTADO\n");
                 return false;
             
             case 1:
                 Piao piaoDestino = destino.getPiao();
                 if (piaoDestino.getCor() == p.getCor()) {
 
-                    // se tiver 1 pião no destino e ele for da mesma cor que o seu e ele estiver em uma casa de saída (que impede barreiras), ele não pode se mover (código F-04):
-                    if (destino.getTipo() == Tipo.saida) {
-                        System.out.printf("F-04: BARREIRA IMPOSSÍVEL\n");
+                    // se tiver 1 pião no destino e ele for da mesma cor que o seu e ele estiver em uma casa de saída OU ABRIGO (que impede barreiras), ele não pode se mover (código F-04):
+                    if (destino.getTipo() == Tipo.saida || destino.getTipo() == Tipo.abrigo) {
+                        System.out.printf("Tabuleiro.isLivreParaMover(["+p.getCor()+p.getIndice()+"],"+qtdCasas+"): "+p.getCor()+" "+p.getIndice()+" NAO PODE MOVER - COD. 4: BARREIRA IMPOSSÍVEL\n");
                         return false;
                     }
 
-                    // ...mas se ele não estiver em uma casa de saída, ele se move (e forma uma barreira):
+                    // ...mas se ele não estiver em uma casa de saída OU ABRIGO, ele se move (e forma uma barreira):
                     else return true; // forma barreira: delegado à move()
                 }
                 else {
@@ -200,7 +218,7 @@ class Tabuleiro {
                     if (destino.getCor() == p.getCor() || destino.getCor() == piaoDestino.getCor()) return true;
 
                     // ...mas, se tiver um pião e ele for de uma cor diferente e o destino for uma casa de saída de uma cor diferente das dos dois, ele não pode mover (código F-05):
-                    System.out.printf("F-05: ABRIGO EM SAÍDA DE COR ERRADA\n");
+                    System.out.printf("Tabuleiro.isLivreParaMover(["+p.getCor()+p.getIndice()+"],"+qtdCasas+"): "+p.getCor()+" "+p.getIndice()+" NAO PODE MOVER - COD. 5: ABRIGO EM SAÍDA DE COR ERRADA\n");
                     return false;
                 }
             
@@ -210,7 +228,8 @@ class Tabuleiro {
         }
     }
 
-    protected boolean bloqueadoPeloDado (Piao p, int resultadoDado) {
+    protected boolean bloqueadoPeloDado (Piao p, int resultadoDado, boolean bonusDeCaptura) {
+        System.out.println("Tabuleiro.bloqueadoPeloDado(["+p.getCor()+p.getIndice()+"],"+resultadoDado+"): fui chamada!");
         switch(resultadoDado) {
             case 6:
 
@@ -222,7 +241,7 @@ class Tabuleiro {
                         Casa casaComBarreira = iterator.next();
                         
                         // ...e a barreira possa ser quebrada...
-                        if (this.isLivreParaMover(casaComBarreira.getPiao(),resultadoDado)) {
+                        if (this.isLivreParaMover(casaComBarreira.getPiao(),resultadoDado, bonusDeCaptura)) {
                             existeBarreiraQuebravel = true;
 
                             // ...e o pião em questão é dessa barreira, ele pode se mover:
@@ -242,11 +261,13 @@ class Tabuleiro {
         }
     }
 
-    protected boolean podeMover (Piao p, int resultadoDado) {
-        return this.isLivreParaMover(p, resultadoDado) && !bloqueadoPeloDado(p, resultadoDado);
+    protected boolean podeMover (Piao p, int resultadoDado, boolean bonusDeCaptura) {
+        System.out.println("Tabuleiro.podeMover(["+p.getCor()+p.getIndice()+"],"+resultadoDado+"): fui chamada!");
+        return this.isLivreParaMover(p, resultadoDado, bonusDeCaptura) && !bloqueadoPeloDado(p, resultadoDado, bonusDeCaptura);
     }
 
-    protected Piao getPiaoBarreiraQuebravel (Cor corVez, int resultado) {
+    protected Piao getPiaoBarreiraQuebravel (Cor corVez, int resultado, boolean bonusDeCaptura) {
+        System.out.println("Tabuleiro.getPiaoBarreiraQuebravel("+corVez.toString()+","+resultado+"): fui chamada!");
         int qtdBarreiras = this.barreiras.get(corVez.ordinal()).size();
         if (qtdBarreiras == 0) return null;
     
@@ -255,11 +276,11 @@ class Tabuleiro {
         if (qtdBarreiras == 2) {    
             Piao piaoBarreira1 = iterator.next().getPiao();
             Piao piaoBarreira2 = iterator.next().getPiao();
-            if (!this.podeMover(piaoBarreira1, resultado)) {
-                if (this.podeMover(piaoBarreira2, resultado)) piaoQuebrado = piaoBarreira2;
+            if (!this.podeMover(piaoBarreira1, resultado, bonusDeCaptura)) {
+                if (this.podeMover(piaoBarreira2, resultado, bonusDeCaptura)) piaoQuebrado = piaoBarreira2;
             }
             else {
-                if (this.podeMover(piaoBarreira2, resultado)) {
+                if (this.podeMover(piaoBarreira2, resultado, bonusDeCaptura)) {
                     if (piaoBarreira2.getPosicao() > piaoBarreira1.getPosicao()) piaoQuebrado = piaoBarreira2;
                     else piaoQuebrado = piaoBarreira1;
                 }
@@ -269,19 +290,21 @@ class Tabuleiro {
 
         else if (qtdBarreiras == 1) {
             Piao piaoBarreira = iterator.next().getPiao();
-            if (this.isLivreParaMover(piaoBarreira, resultado)) piaoQuebrado = piaoBarreira;
+            if (this.isLivreParaMover(piaoBarreira, resultado, bonusDeCaptura)) piaoQuebrado = piaoBarreira;
         }
 
         return piaoQuebrado;
     }
-    
-    protected boolean existeJogadaPermitida(Cor c, int dado) {
-        for (int i = 0; i < 4; i++) if (this.podeMover(arrayPioes[c.ordinal()][i], dado)) return true;
+
+    protected boolean existeJogadaPermitida(Cor c, int dado, boolean bonusDeCaptura) {
+        System.out.println("Tabuleiro.existeJogadaPermitida("+c.toString()+","+dado+"): fui chamada!");
+        for (int i = 0; i < 4; i++) if (this.podeMover(arrayPioes[c.ordinal()][i], dado, bonusDeCaptura)) return true;
         return false;
     }
 
     // termina() termina o jogo.
     protected void termina () {
+        System.out.println("Tabuleiro.termina(): fui chamada!");
         int distanciasTotais[][] = new int[4][2];
         for (int i=0; i<4; i++){
             distanciasTotais[i][0] = i;
@@ -296,7 +319,18 @@ class Tabuleiro {
         // ordena pontuacao
         Arrays.sort(distanciasTotais, Comparator.comparingDouble(o -> o[1]));
         for (int j=3; j>-1; j--){
-            System.out.printf("Jogador %s: %d pontos\n",Cor.values()[distanciasTotais[j][0]].toString(),distanciasTotais[j][1]);
+            System.out.printf("Tabuleiro.termina(): Jogador %s: %d pontos\n",Cor.values()[distanciasTotais[j][0]].toString(),distanciasTotais[j][1]);
+        }
+    }
+
+    public void tabudump() {
+        for (Cor c: Cor.values()) {
+            System.out.printf("%s:\t|\n",c.toString());
+            int i = 0;
+            for (Casa k: tabuleiro[c.ordinal()]) {
+                System.out.printf("\t| %2d:%9s |\n",i++,k.getTipo().toString());
+            }
+            System.out.println(";");
         }
     }
 }

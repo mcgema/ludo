@@ -65,7 +65,6 @@ public class View extends JPanel implements MouseListener, ObserverLudo {
 
         for (int i = 0; i < 4; i++) for (int j = 0; j < 4; j++) posPioes[i][j] = (int) dataPosPioes[i][j];
         
-
         this.repaint();
     }
     
@@ -73,7 +72,6 @@ public class View extends JPanel implements MouseListener, ObserverLudo {
         cont = c;
     }
     
-
     Cor peaoNaMesmaCasa (Cor cor, int pos) {
         int idxPiao = -1;
         for (int i = 0; i < 4; i++) {
@@ -238,7 +236,7 @@ public class View extends JPanel implements MouseListener, ObserverLudo {
     }
 
     public void desenhaDado(Graphics g, int resultado, Cor cor){
-        System.out.println("View.desenhaDado("+resultado+") -- getDado deu "+dadoAtual);
+        System.out.println("View.desenhaDado("+resultado+"): View.dadoAtual é "+dadoAtual);
         Graphics2D g2d = (Graphics2D) g;
         Image dado;
         resultado = dadoAtual;
@@ -279,6 +277,7 @@ public class View extends JPanel implements MouseListener, ObserverLudo {
     }
 
     public void paintComponent(Graphics g) {
+        System.out.println("View.paintComponent(g): fui chamada!");
         super.paintComponent(g);
         Graphics2D g2d = (Graphics2D) g;
         Rectangle2D rect = new Rectangle2D.Double(0, 0, 15*LADO, 15*LADO);
@@ -293,7 +292,7 @@ public class View extends JPanel implements MouseListener, ObserverLudo {
                 Cor corOutroPiao = peaoNaMesmaCasa(cor, posPioes[cor.ordinal()][i]);
                 if (corOutroPiao != null) {
                     desenhaPiao(g, cor, posPioes[cor.ordinal()][i], corOutroPiao);
-                    System.out.println("Encontrei "+cor.toString()+"["+posPioes[cor.ordinal()][i]+"] = "+corOutroPiao.toString());
+                    //System.out.println("Encontrei "+cor.toString()+"["+posPioes[cor.ordinal()][i]+"] = "+corOutroPiao.toString());
                 }
                 else desenhaPiao(g, cor, posPioes[cor.ordinal()][i]);
             }
@@ -303,21 +302,19 @@ public class View extends JPanel implements MouseListener, ObserverLudo {
     }
 
     public void mouseClicked(MouseEvent m) {
-        for (int i = 0; i<57; i++) {
-            // acha a posicao que apertei
+        // começa do 1 já que o jogador nunca escolhe sair com um piao
+        for (int i = 1; i<57; i++) { // acha a posicao que apertei
             if (LADO*lutX[corVez.ordinal()][i] <= m.getX() && m.getX() <= LADO*lutX[corVez.ordinal()][i] + lutSize[i] &&
                 LADO*lutY[corVez.ordinal()][i] <= m.getY() && m.getY() <= LADO*lutY[corVez.ordinal()][i] + lutSize[i]) {
-                System.out.printf("View: CLIQUEI NA CASA: %s[%d]\n", corVez.toString(), i);
+                System.out.printf("View.mouseClicked(): CLIQUEI NA CASA: %s[%d]\n", corVez.toString(), i);
                 for (int j=0; j<4; j++) {
-                    if (posPioes[corVez.ordinal()][j] == i){
-                        // tem um peao da cor nessa posicao
-                        System.out.printf("View: peão %s encontrado na posição %s[%d]!\n", corVez.toString(), corVez.toString(), i);
+                    if (posPioes[corVez.ordinal()][j] == i){ // tem um peao da cor nessa posicao
+                        System.out.printf("View.mouseClicked(): peão %s encontrado na posição %s[%d]!\n", corVez.toString(), corVez.toString(), i);
                         cont.movePiao(corVez, j, dadoAtual);
                     }
                 }
             }
        }
-       this.repaint();
     }
 
     public void mousePressed(MouseEvent m) {}
@@ -335,6 +332,16 @@ public class View extends JPanel implements MouseListener, ObserverLudo {
         if(returnVal == JFileChooser.APPROVE_OPTION) {
         System.out.println("You chose to open this file: " +
                 chooser.getSelectedFile().getName());
+        }
+    }
+
+    public void dump () {
+        for (Cor c: Cor.values()) {
+            System.out.printf("%s: ",c.toString());
+            for (int i = 0; i < 4; i++) {
+                System.out.printf("%d, ", posPioes[c.ordinal()][i]);
+            }
+            System.out.println(";");
         }
     }
 }
