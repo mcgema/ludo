@@ -303,7 +303,7 @@ public class View extends JPanel implements MouseListener, ObserverLudo {
     }
 
     public void mouseClicked(MouseEvent m) {
-        for (int i = 0; i<57; i++) {
+        for (int i = 1; i<57; i++) { // começa do 1 já que o jogador nunca escolhe sair com um piao
             // acha a posicao que apertei
             if (LADO*lutX[corVez.ordinal()][i] <= m.getX() && m.getX() <= LADO*lutX[corVez.ordinal()][i] + lutSize[i] &&
                 LADO*lutY[corVez.ordinal()][i] <= m.getY() && m.getY() <= LADO*lutY[corVez.ordinal()][i] + lutSize[i]) {
