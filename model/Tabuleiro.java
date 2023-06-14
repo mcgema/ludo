@@ -246,6 +246,35 @@ class Tabuleiro {
         return this.isLivreParaMover(p, resultadoDado) && !bloqueadoPeloDado(p, resultadoDado);
     }
 
+    protected Piao getPiaoBarreiraQuebravel (Cor corVez, int resultado) {
+        int qtdBarreiras = this.barreiras.get(corVez.ordinal()).size();
+        if (qtdBarreiras == 0) return null;
+    
+        Piao piaoQuebrado = null;
+        Iterator<Casa> iterator = this.barreiras.get(corVez.ordinal()).iterator();
+        if (qtdBarreiras == 2) {    
+            Piao piaoBarreira1 = iterator.next().getPiao();
+            Piao piaoBarreira2 = iterator.next().getPiao();
+            if (!this.podeMover(piaoBarreira1, resultado)) {
+                if (this.podeMover(piaoBarreira2, resultado)) piaoQuebrado = piaoBarreira2;
+            }
+            else {
+                if (this.podeMover(piaoBarreira2, resultado)) {
+                    if (piaoBarreira2.getPosicao() > piaoBarreira1.getPosicao()) piaoQuebrado = piaoBarreira2;
+                    else piaoQuebrado = piaoBarreira1;
+                }
+                else piaoQuebrado = piaoBarreira1;
+            }
+        }
+
+        else if (qtdBarreiras == 1) {
+            Piao piaoBarreira = iterator.next().getPiao();
+            if (this.isLivreParaMover(piaoBarreira, resultado)) piaoQuebrado = piaoBarreira;
+        }
+
+        return piaoQuebrado;
+    }
+    
     protected boolean existeJogadaPermitida(Cor c, int dado) {
         for (int i = 0; i < 4; i++) if (this.podeMover(arrayPioes[c.ordinal()][i], dado)) return true;
         return false;

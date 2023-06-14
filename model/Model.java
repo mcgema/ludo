@@ -62,40 +62,16 @@ public class Model implements ObservableLudo {
                     dadoAtual = 0;
                     break processo;
                 }
+                
+                Piao piaoBarreiraQuebravel = tabuleiro.getPiaoBarreiraQuebravel(corVez, resultado);
+                if (piaoBarreiraQuebravel != null) {
+                    System.out.println("Cod2: barreira quebrada automaticamente");
+                    tabuleiro.move(piaoBarreiraQuebravel, resultado);
 
-                int qtdBarreiras = tabuleiro.barreiras.get(corVez.ordinal()).size();
-                if (qtdBarreiras > 0) {
-                    Piao piaoQuebrado = null;
-                    Iterator<Casa> iterator = tabuleiro.barreiras.get(corVez.ordinal()).iterator();
-                    if (qtdBarreiras == 2) {    
-                        Piao piaoBarreira1 = iterator.next().getPiao();
-                        Piao piaoBarreira2 = iterator.next().getPiao();
-                        if (!tabuleiro.podeMover(piaoBarreira1, resultado)) {
-                            if (tabuleiro.podeMover(piaoBarreira2, resultado)) piaoQuebrado = piaoBarreira2;
-                        }
-                        else {
-                            if (tabuleiro.podeMover(piaoBarreira2, resultado)) {
-                                if (piaoBarreira2.getPosicao() > piaoBarreira1.getPosicao()) piaoQuebrado = piaoBarreira2;
-                                else piaoQuebrado = piaoBarreira1;
-                            }
-                            else piaoQuebrado = piaoBarreira1;
-                        }
-                    }
-
-                    else if (qtdBarreiras == 1) {
-                        Piao piaoBarreira = iterator.next().getPiao();
-                        if (tabuleiro.isLivreParaMover(piaoBarreira, resultado)) piaoQuebrado = piaoBarreira;
-                    }
-
-                    if (piaoQuebrado != null) { // se alguma barreira podia ser quebrada...
-                        System.out.println("Cod2: barreira quebrada automaticamente");
-                        tabuleiro.move(piaoQuebrado, resultado);
-
-                        ultimoPiaoMovido = piaoQuebrado;
-                        updateVez();
-                        dadoAtual = 0;
-                        break processo;
-                    }
+                    ultimoPiaoMovido = piaoBarreiraQuebravel;
+                    updateVez();
+                    dadoAtual = 0;
+                    break processo;
                 }
             }
 
