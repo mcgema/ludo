@@ -9,7 +9,7 @@ public class Model implements ObservableLudo {
     public Tabuleiro tabuleiro = Tabuleiro.create();
     public Cor corVez = Cor.vermelho;
     boolean jogoAcabou = false;
-    public int qtdPioes[] = {0, 0, 0, 0};
+    //public int qtdPioes[] = {0, 0, 0, 0}; // [tom] não sei o que isso era...
     private int qtdSeisRolados = 0;
     private Piao ultimoPiaoMovido = tabuleiro.arrayPioes[0][0];
     public int dadoAtual = 0;
@@ -28,7 +28,7 @@ public class Model implements ObservableLudo {
     public void reset() {
         for (Cor c: Cor.values()) for (int i = 0; i < 4; i++) {
             tabuleiro.arrayPioes[c.ordinal()][i].reset();
-            qtdPioes[i] = 0;
+            //qtdPioes[i] = 0;
         }
         corVez = Cor.vermelho;
         jogoAcabou = false;
