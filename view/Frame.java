@@ -7,6 +7,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import controller.*;
 
+
+
 public class Frame extends JFrame {
     public static final int LADO = 36;
     public static final int LARG_DEFAULT = 22*LADO;
@@ -35,7 +37,7 @@ public class Frame extends JFrame {
 
         carregarJogoButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                // Handle Carregar Jogo button click
+                controller.carregarJogo();
             }
         });
 

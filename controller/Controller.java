@@ -57,4 +57,8 @@ public class Controller implements ObserverLudo {
     public void novoJogo() {
         model.reset();
     }
+
+    public void carregarJogo() {
+        view.carregarJogo();
+    }
 }

@@ -7,6 +7,7 @@ import cores.Cor;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import controller.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 public class View extends JPanel implements MouseListener {
     private static View singleton;
@@ -323,5 +324,17 @@ public class View extends JPanel implements MouseListener {
     public void mouseExited(MouseEvent m) {
        // System.out.printf("Mouse Exited: %d,\t%d\n",m.getX(), m.getY());
 
+    }
+
+    public void carregarJogo(){
+        JFileChooser chooser = new JFileChooser();
+        FileNameExtensionFilter filter = new FileNameExtensionFilter(
+            "JTexto", "txt");
+        chooser.setFileFilter(filter);
+        int returnVal = chooser.showOpenDialog(null);
+        if(returnVal == JFileChooser.APPROVE_OPTION) {
+        System.out.println("You chose to open this file: " +
+                chooser.getSelectedFile().getName());
+        }
     }
 }
