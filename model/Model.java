@@ -42,12 +42,14 @@ public class Model implements ObservableLudo {
     // lancaDado() lanca um dado virtual de 6 lados, retornando um inteiro dentre {1, 2, 3, 4, 5, 6} com chance pseudo-aleatória.
     // também realiza jogadas forçadas, retornando 0 caso ocorram.
     public int lancaDado () {
+        System.out.println("Model.lancaDado(): fui chamada!");
         System.out.printf("Model.lancaDado(): Lançando dado normal: ", corVez.toString());
         int resultado = Dado.rolar();
         return lancaDado(resultado);
     }
 
     public int lancaDado (int forcado) {
+        System.out.println("Model.lancaDado("+forcado+"): fui chamada!");
         System.out.printf("Model.lancaDado(%d): vez do %s!\n", forcado, corVez.toString());
         int resultado = forcado;
         dadoAtual = resultado;
@@ -67,14 +69,14 @@ public class Model implements ObservableLudo {
                 }
                 
                 // System.out.println("--- point: cod 2 ---");
-                Piao piaoBarreiraQuebravel = tabuleiro.getPiaoBarreiraQuebravel(corVez, resultado);
+                Piao piaoBarreiraQuebravel = tabuleiro.getPiaoBarreiraQuebravel(corVez, resultado, dadoAtual==6 && devePassarVez);
                 if (piaoBarreiraQuebravel != null) {
                     System.out.println("Model.lancaDado("+forcado+"): Cod2: barreira quebrada automaticamente");
-                    tabuleiro.move(piaoBarreiraQuebravel, resultado);
+                    tabuleiro.move(piaoBarreiraQuebravel, resultado, dadoAtual==6 && devePassarVez);
 
                     ultimoPiaoMovido = piaoBarreiraQuebravel;
-                    updateVez();
-                    dadoAtual = 0;
+                    //updateVez();
+                    dadoAtual = 6;
                     break processo;
                 }
             }
@@ -82,11 +84,11 @@ public class Model implements ObservableLudo {
 
             else {
                 devePassarVez = true;
-                if (resultado == 5) {
+                if (resultado == 5 && !tabuleiro.isEmptyInicial(corVez)) {
                     // System.out.println("--- point: cod 3 ---");
                     Piao p = tabuleiro.getInicial(corVez).getPiao();
                     if (tabuleiro.getInicial(corVez).getQtdPioes() > 0) {
-                        int tentativaDeMovimento = tabuleiro.move(p,1);
+                        int tentativaDeMovimento = tabuleiro.move(p,resultado, dadoAtual==6 && devePassarVez);
                         if (tentativaDeMovimento > 0) {
                             ultimoPiaoMovido = p;
                             if (tentativaDeMovimento > 1) {
@@ -105,7 +107,7 @@ public class Model implements ObservableLudo {
             }
             
             // System.out.println("--- point: cod 4 ---");
-            if (!tabuleiro.existeJogadaPermitida(corVez, resultado)) { // se não existe nenhuma jogada possível...
+            if (!tabuleiro.existeJogadaPermitida(corVez, resultado, dadoAtual==6 && devePassarVez)) { // se não existe nenhuma jogada possível...
                 System.out.println("Model.lancaDado("+forcado+"): Cod4: sem jogadas");
 
                 updateVez();
@@ -138,14 +140,16 @@ public class Model implements ObservableLudo {
     }
     
     protected boolean fimDoJogo() {
+        System.out.println("Model.fimDoJogo(): fui chamada!");
     	if (jogoAcabou) tabuleiro.termina();
     	return jogoAcabou;
     }
     
     // tentamoverPiao(corPiao, idPiao, casas) tenta mover o "idPiao-ésimo" Pião de cor "corPiao" "casas" casas para a frente. retorna TRUE em caso de sucesso e FALSE em caso de falha.
     public boolean tentaMoverPiao (Cor corPiao, int idPiao, int casas) {
+        System.out.println("Model.tentaMoverPiao("+corPiao.toString()+","+idPiao+","+casas+"): fui chamada!");
         Piao p = tabuleiro.getPiao(corPiao, idPiao);
-        int retorno = tabuleiro.move(p, dadoAtual);
+        int retorno = tabuleiro.move(p, dadoAtual, dadoAtual==6 && devePassarVez);
         jogoAcabou = !tabuleiro.getStatus();
         if (retorno != 0) {
             ultimoPiaoMovido = p;
@@ -161,6 +165,7 @@ public class Model implements ObservableLudo {
     }
 
     protected void updateVez(){
+        System.out.println("Model.updateVez(): fui chamada!");
         devePassarVez = true;
         corVez = Cor.values()[(corVez.ordinal()+1)%4];
         System.out.println("\n\nModel.updateVez(): Vez passada para o "+corVez.toString());
@@ -208,5 +213,7 @@ public class Model implements ObservableLudo {
             }
             System.out.println(";");
         }
+
+        tabuleiro.tabudump();
     }
 }
