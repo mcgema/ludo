@@ -112,8 +112,9 @@ class Tabuleiro {
     }
     
     // move(Piao p, int resultadoDado) move o Pião p em resultadoDado Casas.
-    protected boolean move (Piao p, int resultadoDado) {
+    protected int move (Piao p, int resultadoDado) {
     	int qtdCasas = resultadoDado;
+        boolean houveCaptura = false;
     	if (p.getPosicao() == 0) qtdCasas = 1;
         
         if (!podeMover(p, qtdCasas)) {
@@ -121,7 +122,7 @@ class Tabuleiro {
             System.out.printf("Tabuleiro.move(["+p.getCor()+p.getIndice()+"],"+resultadoDado+"):  Posições dos %ss: ", p.getCor().toString());
             for (int dor = 0; dor < 4; dor++) System.out.printf("%d, ", arrayPioes[p.getCorNum()][dor].getPosicao());
             System.out.printf("\n");
-        	return false;
+        	return 0;
         }
 
         Casa inicial = this.search(p);
@@ -133,7 +134,10 @@ class Tabuleiro {
         // captura pião
         if (destino.getQtdPioes() == 1)
             if ((destino.getTipo() == Tipo.padrao && destino.getPiao().getCor() != p.getCor()) ||
-                (inicial.getTipo() == Tipo.inicial && destino.getPiao().getCor() != p.getCor())) destino.getPiao().reset();
+                (inicial.getTipo() == Tipo.inicial && destino.getPiao().getCor() != p.getCor())) {
+                    destino.getPiao().reset();
+                    houveCaptura = true;
+                }
 
         destino.inserePiao(p);
         if (destino.isBarreira()) barreiras.get(p.getCorNum()).add(destino);    // caso isso crie uma barreira ela é salva no conjunto
@@ -147,7 +151,8 @@ class Tabuleiro {
         for (int dor = 0; dor < 4; dor++) System.out.printf("%d, ", arrayPioes[p.getCorNum()][dor].getPosicao());
         System.out.printf("\n");
 
-        return true;
+        if (houveCaptura) return 2;
+        return 1;
     }   
 
     protected boolean isLivreParaMover (Piao p, int qtdCasas) {
