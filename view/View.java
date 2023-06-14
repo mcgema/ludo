@@ -1,3 +1,5 @@
+
+
 package view;
 
 import javax.swing.*;
@@ -8,6 +10,10 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import controller.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 
 public class View extends JPanel implements MouseListener {
     private static View singleton;
@@ -326,15 +332,27 @@ public class View extends JPanel implements MouseListener {
 
     }
 
-    public void carregarJogo(){
+    public void carregarJogo() {
         JFileChooser chooser = new JFileChooser();
-        FileNameExtensionFilter filter = new FileNameExtensionFilter(
-            "JTexto", "txt");
+        FileNameExtensionFilter filter = new FileNameExtensionFilter("Texto", "txt");
         chooser.setFileFilter(filter);
         int returnVal = chooser.showOpenDialog(null);
-        if(returnVal == JFileChooser.APPROVE_OPTION) {
-        System.out.println("You chose to open this file: " +
-                chooser.getSelectedFile().getName());
+
+        if (returnVal == JFileChooser.APPROVE_OPTION) {
+            File selectedFile = chooser.getSelectedFile();
+
+            try {
+                BufferedReader reader = new BufferedReader(new FileReader(selectedFile.getAbsolutePath()));
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    System.out.println(line);
+                }
+                reader.close();
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+            System.out.println("You chose to open this file: " + selectedFile.getName());
         }
     }
+
 }
