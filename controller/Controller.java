@@ -3,12 +3,14 @@ package controller;
 import model.Model;
 import view.View;
 import cores.*;
+import javax.swing.*;
 
 
 public class Controller {
     private static Controller singleton;
     public View view = View.create();
     Model model = Model.create();
+    JButton botaoDado = null;
 
     {
         model.addObserver(view);
@@ -25,18 +27,33 @@ public class Controller {
     }
 
     public boolean movePiao(Cor c, int indice, int dado) {
-        return model.tentaMoverPiao(c, indice, dado);
+        int resultado = model.tentaMoverPiao(c, indice, dado);
+        if (resultado == 1) botaoDado.setEnabled(true);
+        return (resultado > 0);
     }
     
     public int lancaDado () {
-        return model.lancaDado();
+        int resultado = model.lancaDado();
+        if (resultado != 0) botaoDado.setEnabled(false);
+        return resultado;
+    }
+
+    public int lancaDado (int forcado) {
+        int resultado = model.lancaDado(forcado);
+        if (resultado != 0) botaoDado.setEnabled(false);
+        return resultado;
     }
 
     public void novoJogo() {
         model.reset();
+        botaoDado.setEnabled(true);
     }
 
     public void carregarJogo() {
         view.carregarJogo();
+    }
+
+    public void setBotaoDado (JButton botao) {
+        botaoDado = botao;
     }
 }

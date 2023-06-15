@@ -14,7 +14,7 @@ public class Frame extends JFrame {
     public static final int LARG_DEFAULT = 22*LADO;
     public static final int ALT_DEFAULT = 16*LADO;
 
-    public Frame (){
+    public Frame () {
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setTitle("Super Ludo");
 
@@ -27,6 +27,8 @@ public class Frame extends JFrame {
         JButton carregarJogoButton = new JButton("Carregar Jogo");
         JButton salvarJogoButton =   new JButton("Salvar Jogo");
         JButton lancarDadoButton =   new JButton("Lançar Dado");
+
+        controller.setBotaoDado(lancarDadoButton);
 
         novoJogoButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
