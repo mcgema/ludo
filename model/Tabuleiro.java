@@ -6,7 +6,6 @@ import java.util.*;
 // Tabuleiro representa o Tabuleiro de Ludo, e implementa 2 dos 3 métodos passados para Model.
 class Tabuleiro {
     private static Tabuleiro singleton;
-    int abrigos[] = {10, 23, 36, 49, 0};
     
     // Tabuleiro é representado por Arrays de Casas.
     Casa tabuleiro [][] = new Casa [4][58]; //[MC] peao percorre 56 casas
@@ -25,7 +24,6 @@ class Tabuleiro {
     // bloco de inicialização
     {
         System.out.println("Model.Tabuleiro: Tabuleiro inicializado!");
-        int j = 0;
         for (int i = 0; i < 52; i++) {
             // casas de saída:
             if (i%13 == 0) casasNormais[i] = new Casa(i+1, Tipo.saida, Cor.values()[i/13]);
