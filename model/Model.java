@@ -37,6 +37,7 @@ public class Model implements ObservableLudo {
         ultimoPiaoMovido = tabuleiro.arrayPioes[0][0];
         dadoAtual = 0;
         for (ObserverLudo o: lob) o.notify(this);
+        for (Cor c: Cor.values()) this.lancaDado(5);
     }
     
     // lancaDado() lanca um dado virtual de 6 lados, retornando um inteiro dentre {1, 2, 3, 4, 5, 6} com chance pseudo-aleatória.
@@ -146,10 +147,11 @@ public class Model implements ObservableLudo {
     }
     
     // tentamoverPiao(corPiao, idPiao, casas) tenta mover o "idPiao-ésimo" Pião de cor "corPiao" "casas" casas para a frente. retorna TRUE em caso de sucesso e FALSE em caso de falha.
-    public boolean tentaMoverPiao (Cor corPiao, int idPiao, int casas) {
+    public int tentaMoverPiao (Cor corPiao, int idPiao, int casas) {
         System.out.println("Model.tentaMoverPiao("+corPiao.toString()+","+idPiao+","+casas+"): fui chamada!");
         Piao p = tabuleiro.getPiao(corPiao, idPiao);
-        int retorno = tabuleiro.move(p, dadoAtual, dadoAtual==6 && devePassarVez);
+        int retorno = tabuleiro.move(p, dadoAtual, dadoAtual == 6 && devePassarVez);
+        if (dadoAtual == 6) dadoAtual = 0;
         jogoAcabou = !tabuleiro.getStatus();
         if (retorno != 0) {
             ultimoPiaoMovido = p;
@@ -159,9 +161,8 @@ public class Model implements ObservableLudo {
             }
             else if (devePassarVez) updateVez(); // se deu 6 no dado a vez não muda!!
             for (ObserverLudo o: lob) o.notify(this);
-            return true;
         }
-        return false;
+        return retorno;
     }
 
     protected void updateVez(){
