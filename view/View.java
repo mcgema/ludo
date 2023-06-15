@@ -111,7 +111,7 @@ public class View extends JPanel implements MouseListener, ObserverLudo {
     }
 
     void desenhaPiao (Graphics g, Cor c, int pos) {
-        if (pos > 57) return;
+        if (pos > 56) return;
         if (pos < 1) return;
         Graphics2D g2d = (Graphics2D) g;
         BasicStroke stroke = new BasicStroke(1.0f);

@@ -37,7 +37,7 @@ public class Model implements ObservableLudo {
         ultimoPiaoMovido = tabuleiro.arrayPioes[0][0];
         dadoAtual = 0;
         for (ObserverLudo o: lob) o.notify(this);
-        for (Cor c: Cor.values()) this.lancaDado(5);
+        for (int i = 0; i < 4; i++) this.lancaDado(5);
     }
     
     // lancaDado() lanca um dado virtual de 6 lados, retornando um inteiro dentre {1, 2, 3, 4, 5, 6} com chance pseudo-aleatória.
