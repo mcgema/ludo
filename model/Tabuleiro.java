@@ -8,7 +8,7 @@ class Tabuleiro {
     private static Tabuleiro singleton;
     
     // Tabuleiro é representado por Arrays de Casas.
-    Casa tabuleiro [][] = new Casa [4][58]; //[MC] peao percorre 56 casas
+    Casa tabuleiro [][] = new Casa [4][58]; //[MC] peao percorre 56 casas -> [Tom] o peao vai da 0 (inicio) até a 57 (vitória). São 58 casas.
     
     // Matriz de Piões guarda os "ponteiros" para todos os Piões, garantido que sempre serão facilmente acessíveis pela sua cor e índice.
     Piao arrayPioes[][] = new Piao[4][4];
@@ -184,9 +184,9 @@ class Tabuleiro {
         if (p.distFinal() == qtdCasas) return true;
 
         Casa destino = this.search(p.getPosicao()+qtdCasas, p.getCor());
-        System.out.printf("Tabuleiro.isLivre...: destino:\t");
-        destino.dump();
-        System.out.printf("\n");
+        //System.out.printf("Tabuleiro.isLivre...: destino:\t");
+        //destino.dump();
+        //System.out.printf("\n");
         switch (destino.getQtdPioes()) {
 
             // se tiverem dois piões na casa de destino do movimento (e ela não é o final -- esse caso já foi analisado!), o pião não se move (código F-03):
