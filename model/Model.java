@@ -4,6 +4,7 @@ import cores.*;
 
 import java.io.FileWriter;
 import java.io.IOException;
+
 import java.util.*;
 import observer.*;
 import controller.*;
@@ -48,21 +49,39 @@ public class Model implements ObservableLudo {
             dadoAtual = 0;
         }
     }
-    
-    public void escreverJogo() {
-        try{
-            FileWriter saidaTxt = new FileWriter("saida.txt");
-            saidaTxt.write(corVez.toString());
-            saidaTxt.write(String.valueOf(qtdPioes[0]));
-            saidaTxt.write(String.valueOf(qtdPioes[1]));
-            saidaTxt.write(String.valueOf(qtdPioes[2]));
-            saidaTxt.write(String.valueOf(qtdPioes[3]));
 
+    public void set(List<String> lread){
+        if (lread.size() == 25){
+            corVez = Cor.valueOf(lread.get(0));
+            for (int i=0; i<4; i++) qtdPioes[i] = Integer.valueOf(lread.get(i+1));
+            for (int i=0; i<4; i++){
+                // ordem obedece cor
+                Cor cor = Cor.valueOf(lread.get(5*(i+1)));
+                for (int j = 0; j < 4; j++) {
+                    tabuleiro.arrayPioes[cor.ordinal()][j].setPosicao(Integer.valueOf(lread.get(5*(i+1)+j+1)));
+                }
+            }
+        }
+    }
+    
+    public void escreverJogo(FileWriter saidaTxt) {
+        try{
+            saidaTxt.write(corVez.toString());
+            saidaTxt.write(System.lineSeparator());
+            saidaTxt.write(String.valueOf(qtdPioes[0]));
+            saidaTxt.write(System.lineSeparator());
+            saidaTxt.write(String.valueOf(qtdPioes[1]));
+            saidaTxt.write(System.lineSeparator());
+            saidaTxt.write(String.valueOf(qtdPioes[2]));
+            saidaTxt.write(System.lineSeparator());
+            saidaTxt.write(String.valueOf(qtdPioes[3]));
+            saidaTxt.write(System.lineSeparator());
             for (Cor c: Cor.values()) {
                 saidaTxt.write(c.toString());
+                saidaTxt.write(System.lineSeparator());
                 for (int i = 0; i < 4; i++) {
-                    saidaTxt.write(tabuleiro.arrayPioes[c.ordinal()][i].getPosicao());
-                    saidaTxt.write(tabuleiro.arrayPioes[c.ordinal()][i].getIndice());
+                    saidaTxt.write(String.valueOf(tabuleiro.arrayPioes[c.ordinal()][i].getPosicao()));
+                    saidaTxt.write(System.lineSeparator());
                 }
             }
             saidaTxt.flush();
