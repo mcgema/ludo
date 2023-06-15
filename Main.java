@@ -10,6 +10,10 @@ public class Main {
         Frame f = new Frame();
         f.setVisible(true);
         Model model = Model.create();
+        model.lancaDado(5);
+        model.lancaDado(5);
+        model.lancaDado(5);
+        model.lancaDado(5);
         int dadoForcado = sc.nextInt();
         while (dadoForcado != 0) {
             if (dadoForcado == 10) {
