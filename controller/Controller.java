@@ -38,6 +38,12 @@ public class Controller {
         return resultado;
     }
 
+    public int lancaDado (int forcado) {
+        int resultado = model.lancaDado(forcado);
+        if (resultado != 0) botaoDado.setEnabled(false);
+        return resultado;
+    }
+
     public void novoJogo() {
         model.reset();
         botaoDado.setEnabled(true);
