@@ -75,8 +75,8 @@ public class Model implements ObservableLudo {
                     tabuleiro.move(piaoBarreiraQuebravel, resultado, dadoAtual==6 && devePassarVez);
 
                     ultimoPiaoMovido = piaoBarreiraQuebravel;
-                    //updateVez();
-                    dadoAtual = 6;
+                    //updateVez();  // essa linha faz com que uma barreira desfeita deixe jogar de novo mesmo assim por ser um 6.
+                    dadoAtual = 0;
                     break processo;
                 }
             }
