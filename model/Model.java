@@ -7,24 +7,19 @@ import java.io.IOException;
 
 import java.util.*;
 import observer.*;
-import controller.*;
 
 // Model é a fachada das regras, e é a única classe pública da 1a iteração.
 public class Model implements ObservableLudo {
     public Tabuleiro tabuleiro = Tabuleiro.create();
     public Cor corVez = Cor.vermelho;
     boolean jogoAcabou = false;
-    public int qtdPioes[] = {0, 0, 0, 0};
+    //public int qtdPioes[] = {0, 0, 0, 0}; // [tom] não sei o que isso era...
     private int qtdSeisRolados = 0;
     private Piao ultimoPiaoMovido = tabuleiro.arrayPioes[0][0];
     public int dadoAtual = 0;
     private static Model singleton;
+    private boolean devePassarVez = true;
     List<ObserverLudo> lob = new ArrayList<ObserverLudo>();
-    private Controller cont;
-
-    {
-    	System.out.printf("Model iniciado!\n\n\n");
-    }
 
     private Model() {
         // construtor bloqueado pelo singleton
@@ -38,16 +33,15 @@ public class Model implements ObservableLudo {
     public void reset() {
         for (Cor c: Cor.values()) for (int i = 0; i < 4; i++) {
             tabuleiro.arrayPioes[c.ordinal()][i].reset();
-            corVez = Cor.vermelho;
-            jogoAcabou = false;
-            qtdPioes[0] = 0;
-            qtdPioes[1] = 0;
-            qtdPioes[2] = 0;
-            qtdPioes[3] = 0;
-            qtdSeisRolados = 0;
-            ultimoPiaoMovido = tabuleiro.arrayPioes[0][0];
-            dadoAtual = 0;
+            //qtdPioes[i] = 0;
         }
+        corVez = Cor.vermelho;
+        jogoAcabou = false;
+        qtdSeisRolados = 0;
+        ultimoPiaoMovido = tabuleiro.arrayPioes[0][0];
+        dadoAtual = 0;
+        for (ObserverLudo o: lob) o.notify(this);
+        for (int i = 0; i < 4; i++) this.lancaDado(5);
     }
 
     public void set(List<String> lread){
@@ -93,142 +87,178 @@ public class Model implements ObservableLudo {
     // lancaDado() lanca um dado virtual de 6 lados, retornando um inteiro dentre {1, 2, 3, 4, 5, 6} com chance pseudo-aleatória.
     // também realiza jogadas forçadas, retornando 0 caso ocorram.
     public int lancaDado () {
-        System.out.printf("Model.lancaDado(): vez do %s!\n", corVez.toString());
+        System.out.println("Model.lancaDado(): fui chamada!");
+        System.out.printf("Model.lancaDado(): Lançando dado normal: ", corVez.toString());
         int resultado = Dado.rolar();
+        return lancaDado(resultado);
+    }
+
+    public int lancaDado (int forcado) {
+        System.out.println("Model.lancaDado("+forcado+"): fui chamada!");
+        System.out.printf("Model.lancaDado(%d): vez do %s!\n", forcado, corVez.toString());
+        int resultado = forcado;
         dadoAtual = resultado;
-        if (resultado == 6) {
-            qtdSeisRolados++;
-            if (qtdSeisRolados > 2) {
-                // caso o joagor tenha rolado o 3o 6 seguido...
-                ultimoPiaoMovido.reset();
-                updateVez();
-                System.out.println("Cod1: qtd 6 > 2");
-                dadoAtual = 0;
-                return 0;
-            }
-            int qtdBarreiras = tabuleiro.barreiras.get(corVez.ordinal()).size();
-            if (qtdBarreiras > 0) {
-                Piao piaoQuebrado = null;
-                Iterator<Casa> iterator = tabuleiro.barreiras.get(corVez.ordinal()).iterator();
-                if (qtdBarreiras == 2) {    
-                    Piao piaoBarreira1 = iterator.next().getPiao();
-                    Piao piaoBarreira2 = iterator.next().getPiao();
-                    if (!tabuleiro.podeMover(piaoBarreira1, resultado)) {
-                        if (tabuleiro.podeMover(piaoBarreira2, resultado)) piaoQuebrado = piaoBarreira2;
-                    }
-                    else {
-                        if (tabuleiro.podeMover(piaoBarreira2, resultado)) {
-                            if (piaoBarreira2.getPosicao() > piaoBarreira1.getPosicao()) piaoQuebrado = piaoBarreira2;
-                            else piaoQuebrado = piaoBarreira1;
-                        }
-                        else piaoQuebrado = piaoBarreira1;
-                    }
-                }
-                else if (qtdBarreiras == 1) {
-                    Piao piaoBarreira = iterator.next().getPiao();
-                    if (tabuleiro.isLivreParaMover(piaoBarreira, resultado)) piaoQuebrado = piaoBarreira;
-                }
-                if (piaoQuebrado != null) {
-                    tabuleiro.move(piaoQuebrado, resultado);
-                    ultimoPiaoMovido = piaoQuebrado;
+
+        processo: {
+            if (resultado == 6) {
+                devePassarVez = false;
+                qtdSeisRolados++;
+                // System.out.println("--- point: cod 1 ---");
+                if (qtdSeisRolados > 2) { // caso o jogador tenha rolado o 3o 6 seguido...
+                    System.out.println("Model.lancaDado("+forcado+"): Cod1: qtd 6 > 2");
+
+                    if (ultimoPiaoMovido.getPosicao() < 52) ultimoPiaoMovido.reset();
                     updateVez();
-                    System.out.println("Cod2: barreira quebrada automaticamente");
-                    
                     dadoAtual = 0;
-                    return 0;
+                    break processo;
+                }
+                
+                // System.out.println("--- point: cod 2 ---");
+                Piao piaoBarreiraQuebravel = tabuleiro.getPiaoBarreiraQuebravel(corVez, resultado, dadoAtual==6 && devePassarVez);
+                if (piaoBarreiraQuebravel != null) {
+                    System.out.println("Model.lancaDado("+forcado+"): Cod2: barreira quebrada automaticamente");
+                    tabuleiro.move(piaoBarreiraQuebravel, resultado, dadoAtual==6 && devePassarVez);
+
+                    ultimoPiaoMovido = piaoBarreiraQuebravel;
+                    //updateVez();  // essa linha faz com que uma barreira desfeita deixe jogar de novo mesmo assim por ser um 6.
+                    dadoAtual = 0;
+                    break processo;
                 }
             }
-        }
-        else if (resultado == 5) {
-            System.out.println("Model.lancaDado: resultado = 5!");
-            Piao p = tabuleiro.getInicial(corVez).getPiao();
-            if (tabuleiro.getInicial(corVez).getQtdPioes() > 0 && tabuleiro.move(p,1)) {
-                ultimoPiaoMovido = p;
+            
+
+            else {
+                devePassarVez = true;
+                if (resultado == 5 && !tabuleiro.isEmptyInicial(corVez)) {
+                    // System.out.println("--- point: cod 3 ---");
+                    Piao p = tabuleiro.getInicial(corVez).getPiao();
+                    if (tabuleiro.getInicial(corVez).getQtdPioes() > 0) {
+                        int tentativaDeMovimento = tabuleiro.move(p,resultado, dadoAtual==6 && devePassarVez);
+                        if (tentativaDeMovimento > 0) {
+                            ultimoPiaoMovido = p;
+                            if (tentativaDeMovimento > 1) {
+                                dadoAtual = 6;
+                                devePassarVez = true;
+                                break processo;
+                            }
+                            else {
+                                dadoAtual = 0;
+                                updateVez();
+                                break processo;
+                            }
+                        }
+                    }
+                }
+            }
+            
+            // System.out.println("--- point: cod 4 ---");
+            if (!tabuleiro.existeJogadaPermitida(corVez, resultado, dadoAtual==6 && devePassarVez)) { // se não existe nenhuma jogada possível...
+                System.out.println("Model.lancaDado("+forcado+"): Cod4: sem jogadas");
+
                 updateVez();
-                System.out.println("Cod3: 5 => inicia piao");
                 dadoAtual = 0;
-                return 0;
+                break processo;
             }
-        }
-        if (!tabuleiro.existeJogadaPermitida(corVez, resultado)) {
-            System.out.println("Model.lancaDado: nenhuma jogada possível");
-            updateVez();
-            System.out.println("Cod4: sem jogadas");
-            dadoAtual = 0;
-            return 0;
-        }
-        boolean tudoZerado = true;
-        for (int i = 0; i < 4; i++) {
-            if (tabuleiro.arrayPioes[corVez.ordinal()][i].getPosicao() != 0) {
-                tudoZerado = false;
-                break;
+
+            boolean tudoZerado = true;
+
+            for (int i = 0; i < 4; i++) {
+                if (tabuleiro.arrayPioes[corVez.ordinal()][i].getPosicao() != 0) {
+                    tudoZerado = false;
+                    break;
+                }
             }
+            
+            // System.out.println("--- point: cod 5 ---");
+            if (tudoZerado && resultado != 5) {
+                System.out.println("Model.lancaDado("+forcado+"): Cod5: nada pra iniciar");
+
+                updateVez();
+                dadoAtual = 0;
+                break processo;
+            }
+
+            dadoAtual = resultado;
         }
-        if (tudoZerado && resultado != 5) {
-            updateVez();
-            System.out.println("Cod5: nada pra iniciar");
-            dadoAtual = 0;
-            return 0;
-        }
-        
-        dadoAtual = resultado;
-        return resultado;
+        for (ObserverLudo o: lob) o.notify(this);
+        return dadoAtual;
     }
     
-    public boolean fimDoJogo() {
+    protected boolean fimDoJogo() {
+        System.out.println("Model.fimDoJogo(): fui chamada!");
     	if (jogoAcabou) tabuleiro.termina();
     	return jogoAcabou;
     }
-
     
     // tentamoverPiao(corPiao, idPiao, casas) tenta mover o "idPiao-ésimo" Pião de cor "corPiao" "casas" casas para a frente. retorna TRUE em caso de sucesso e FALSE em caso de falha.
-    public boolean tentaMoverPiao (Cor corPiao, int idPiao, int casas) {
+    public int tentaMoverPiao (Cor corPiao, int idPiao, int casas) {
+        System.out.println("Model.tentaMoverPiao("+corPiao.toString()+","+idPiao+","+casas+"): fui chamada!");
         Piao p = tabuleiro.getPiao(corPiao, idPiao);
-        boolean retorno = tabuleiro.move(p, casas);
+        int retorno = tabuleiro.move(p, dadoAtual, dadoAtual == 6 && devePassarVez);
+        if (dadoAtual == 6) dadoAtual = 0;
         jogoAcabou = !tabuleiro.getStatus();
-        if (retorno) {
+        if (retorno != 0) {
             ultimoPiaoMovido = p;
-            this.atualiza();
-            if (casas != 6) updateVez();// se deu 6 no dado a vez não muda!!
+            if (retorno == 2) {
+                dadoAtual = 6;
+                devePassarVez = true;
+            }
+            else if (devePassarVez) updateVez(); // se deu 6 no dado a vez não muda!!
+            for (ObserverLudo o: lob) o.notify(this);
         }
         return retorno;
     }
 
-    public void updateVez(){
+    protected void updateVez(){
+        System.out.println("Model.updateVez(): fui chamada!");
+        devePassarVez = true;
         corVez = Cor.values()[(corVez.ordinal()+1)%4];
-        System.out.println("Vez passada para o "+corVez.toString());
-        this.atualiza();
+        System.out.println("\n\nModel.updateVez(): Vez passada para o "+corVez.toString());
+        for (ObserverLudo o: lob) o.notify(this);
         qtdSeisRolados = 0;
         dadoAtual = 0;
-        cont.refresh();
+        for (ObserverLudo o: lob) o.notify(this);
     }
 
-    public Cor getVez(){
-        return corVez;
-    }
+    // interface Observable
 
 	public void addObserver(ObserverLudo o) {
 		lob.add(o);
-        cont = (Controller) o;
 	}
 	
 	public void removeObserver(ObserverLudo o) {
 		lob.remove(o);
 	}
 
-    private void atualiza() {
-        ListIterator<ObserverLudo> li = lob.listIterator();
-        while(li.hasNext()) li.next().notify(this);
-    }
+    public Object get() {
+        Object[] data = new Object[3];
 
-    public Object getPioes() {
         Object listaPioes[][] = new Object[4][4];
-
         for (Cor cor: Cor.values()) {
             for (int i = 0; i < 4; i++) {
                 listaPioes[cor.ordinal()][i] = tabuleiro.arrayPioes[cor.ordinal()][i].getPosicao();
             }
         }
-        return listaPioes;
+
+        Object vez = corVez;
+        Object dado = dadoAtual;
+
+        data[0] = listaPioes;
+        data[1] = vez;
+        data[2] = dado;
+
+        return data;
+    }
+
+    public void dump () {
+        for (Cor c: Cor.values()) {
+            System.out.printf("%s: ",c.toString());
+            for (int i = 0; i < 4; i++) {
+                System.out.printf("%d, ", tabuleiro.arrayPioes[c.ordinal()][i].getPosicao());
+            }
+            System.out.println(";");
+        }
+
+        tabuleiro.tabudump();
     }
 }
