@@ -36,6 +36,10 @@ public class Controller {
         return singleton;
     }
 
+    public boolean jogoAcabou(){
+        return model.checaStatus();
+    }
+
     public boolean movePiao(Cor c, int indice, int dado) {
         int resultado = model.tentaMoverPiao(c, indice, dado);
         if (resultado == 1) botaoDado.setEnabled(true);
@@ -108,7 +112,6 @@ public class Controller {
             }
         }
     }
-
 
     public void setBotaoDado (JButton botao) {
         botaoDado = botao;

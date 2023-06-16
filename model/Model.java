@@ -12,7 +12,7 @@ import observer.*;
 public class Model implements ObservableLudo {
     public Tabuleiro tabuleiro = Tabuleiro.create();
     public Cor corVez = Cor.vermelho;
-    boolean jogoAcabou = false;
+    public boolean jogoAcabou = false;
     private int qtdSeisRolados = 0;
     private Piao ultimoPiaoMovido = tabuleiro.arrayPioes[0][0];
     public int dadoAtual = 0;
@@ -74,6 +74,17 @@ public class Model implements ObservableLudo {
             error.printStackTrace();
         }
     }
+
+    // [mc] perde a funcao do booleano jogoAcabou... nao está sendo utilizado direito para mudar para true
+    public boolean checaStatus(){
+        for (Cor c: Cor.values()) {
+            int sum = 0;
+            for (int i = 0; i < 4; i++) sum += tabuleiro.arrayPioes[c.ordinal()][i].getPosicao(); 
+            if (sum == 4*57) return true;
+        }
+        return false;
+    }
+
     // lancaDado() lanca um dado virtual de 6 lados, retornando um inteiro dentre {1, 2, 3, 4, 5, 6} com chance pseudo-aleatória.
     // também realiza jogadas forçadas, retornando 0 caso ocorram.
     public int lancaDado () {
