@@ -13,7 +13,6 @@ public class Model implements ObservableLudo {
     public Tabuleiro tabuleiro = Tabuleiro.create();
     public Cor corVez = Cor.vermelho;
     boolean jogoAcabou = false;
-    //public int qtdPioes[] = {0, 0, 0, 0}; // [tom] não sei o que isso era...
     private int qtdSeisRolados = 0;
     private Piao ultimoPiaoMovido = tabuleiro.arrayPioes[0][0];
     public int dadoAtual = 0;
@@ -47,12 +46,11 @@ public class Model implements ObservableLudo {
     public void set(List<String> lread){
         if (lread.size() == 25){
             corVez = Cor.valueOf(lread.get(0));
-            for (int i=0; i<4; i++) qtdPioes[i] = Integer.valueOf(lread.get(i+1));
             for (int i=0; i<4; i++){
                 // ordem obedece cor
-                Cor cor = Cor.valueOf(lread.get(5*(i+1)));
+                Cor cor = Cor.valueOf(lread.get(5*i+1));
                 for (int j = 0; j < 4; j++) {
-                    tabuleiro.arrayPioes[cor.ordinal()][j].setPosicao(Integer.valueOf(lread.get(5*(i+1)+j+1)));
+                    tabuleiro.arrayPioes[cor.ordinal()][j].setPosicao(Integer.valueOf(lread.get(5*i+j+2)));
                 }
             }
         }
@@ -61,14 +59,6 @@ public class Model implements ObservableLudo {
     public void escreverJogo(FileWriter saidaTxt) {
         try{
             saidaTxt.write(corVez.toString());
-            saidaTxt.write(System.lineSeparator());
-            saidaTxt.write(String.valueOf(qtdPioes[0]));
-            saidaTxt.write(System.lineSeparator());
-            saidaTxt.write(String.valueOf(qtdPioes[1]));
-            saidaTxt.write(System.lineSeparator());
-            saidaTxt.write(String.valueOf(qtdPioes[2]));
-            saidaTxt.write(System.lineSeparator());
-            saidaTxt.write(String.valueOf(qtdPioes[3]));
             saidaTxt.write(System.lineSeparator());
             for (Cor c: Cor.values()) {
                 saidaTxt.write(c.toString());

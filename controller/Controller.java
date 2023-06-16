@@ -104,9 +104,8 @@ public class Controller {
             }
             if (!listRead.isEmpty()){
                 model.set(listRead);
-                this.refresh();
+                view.repaint(); //[mc] mudar
             }
-            System.out.println("You chose to open this file: " + selectedFile.getName());
         }
     }
 
