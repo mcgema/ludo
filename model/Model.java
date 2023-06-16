@@ -1,6 +1,10 @@
 package model;
 
 import cores.*;
+
+import java.io.FileWriter;
+import java.io.IOException;
+
 import java.util.*;
 import observer.*;
 
@@ -39,7 +43,47 @@ public class Model implements ObservableLudo {
         for (ObserverLudo o: lob) o.notify(this);
         for (int i = 0; i < 4; i++) this.lancaDado(5);
     }
+
+    public void set(List<String> lread){
+        if (lread.size() == 25){
+            corVez = Cor.valueOf(lread.get(0));
+            for (int i=0; i<4; i++) qtdPioes[i] = Integer.valueOf(lread.get(i+1));
+            for (int i=0; i<4; i++){
+                // ordem obedece cor
+                Cor cor = Cor.valueOf(lread.get(5*(i+1)));
+                for (int j = 0; j < 4; j++) {
+                    tabuleiro.arrayPioes[cor.ordinal()][j].setPosicao(Integer.valueOf(lread.get(5*(i+1)+j+1)));
+                }
+            }
+        }
+    }
     
+    public void escreverJogo(FileWriter saidaTxt) {
+        try{
+            saidaTxt.write(corVez.toString());
+            saidaTxt.write(System.lineSeparator());
+            saidaTxt.write(String.valueOf(qtdPioes[0]));
+            saidaTxt.write(System.lineSeparator());
+            saidaTxt.write(String.valueOf(qtdPioes[1]));
+            saidaTxt.write(System.lineSeparator());
+            saidaTxt.write(String.valueOf(qtdPioes[2]));
+            saidaTxt.write(System.lineSeparator());
+            saidaTxt.write(String.valueOf(qtdPioes[3]));
+            saidaTxt.write(System.lineSeparator());
+            for (Cor c: Cor.values()) {
+                saidaTxt.write(c.toString());
+                saidaTxt.write(System.lineSeparator());
+                for (int i = 0; i < 4; i++) {
+                    saidaTxt.write(String.valueOf(tabuleiro.arrayPioes[c.ordinal()][i].getPosicao()));
+                    saidaTxt.write(System.lineSeparator());
+                }
+            }
+            saidaTxt.flush();
+            saidaTxt.close();
+        }  catch (IOException error) {
+            error.printStackTrace();
+        }
+    }
     // lancaDado() lanca um dado virtual de 6 lados, retornando um inteiro dentre {1, 2, 3, 4, 5, 6} com chance pseudo-aleatória.
     // também realiza jogadas forçadas, retornando 0 caso ocorram.
     public int lancaDado () {

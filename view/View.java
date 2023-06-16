@@ -2,6 +2,7 @@ package view;
 
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+
 import java.awt.*;
 import java.awt.geom.*;
 import javax.swing.*;
@@ -321,19 +322,6 @@ public class View extends JPanel implements MouseListener, ObserverLudo {
     public void mouseEntered(MouseEvent m) {}
     public void mouseReleased(MouseEvent m) {}
     public void mouseExited(MouseEvent m) {}
-
-    // [tom] deveria estar no controller, não?
-    public void carregarJogo(){
-        JFileChooser chooser = new JFileChooser();
-        FileNameExtensionFilter filter = new FileNameExtensionFilter(
-            "JTexto", "txt");
-        chooser.setFileFilter(filter);
-        int returnVal = chooser.showOpenDialog(null);
-        if(returnVal == JFileChooser.APPROVE_OPTION) {
-        System.out.println("You chose to open this file: " +
-                chooser.getSelectedFile().getName());
-        }
-    }
 
     public void dump () {
         for (Cor c: Cor.values()) {
