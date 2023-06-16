@@ -44,7 +44,6 @@ public class Frame extends JFrame {
 
         salvarJogoButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                // Handle Salvar Jogo button click
                 controller.salvarJogo();
             }
         });

@@ -44,7 +44,7 @@ public class Model implements ObservableLudo {
     }
 
     public void set(List<String> lread){
-        if (lread.size() == 25){
+        if (lread.size() == 21){
             corVez = Cor.valueOf(lread.get(0));
             for (int i=0; i<4; i++){
                 // ordem obedece cor
