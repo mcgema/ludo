@@ -18,7 +18,7 @@ class Tabuleiro {
 
     Piao ultimoPiaoMovimentado;
     int qtdSeisRolados = 0;
-    boolean fimDeJogo = false;
+
     
     private Casa casasNormais[] = new Casa [52];
     // bloco de inicialização
@@ -89,11 +89,7 @@ class Tabuleiro {
     protected Piao getPiao (Cor c, int i) {
         return arrayPioes[c.ordinal()][i];
     }
-    
-    protected boolean getStatus () {
-    	return !fimDeJogo;
-    }
-    
+
     // isEmptyInicial(Cor cor) retorna TRUE se a casa inicial da Cor cor estiver vazia e FALSE caso ainda tenham Piões nela
     protected boolean isEmptyInicial (Cor cor) {
         return this.getInicial(cor).isEmpty();
@@ -109,6 +105,7 @@ class Tabuleiro {
         return this.search(p.getPosicao(), p.getCor());
     }
 
+    // a função setPiao SOMENTE DEVE SER USADA PARA CARREGAR JOGOS!! NUNCA DURANTE O JOGO!!
     protected void setPiao (Piao p, int casa) {
         if (casa < 0) return;
         if (casa > 57) return;
@@ -119,7 +116,6 @@ class Tabuleiro {
         p.setPosicao(casa);
         Casa destino = tabuleiro[p.getCorNum()][casa];
         if (destino.isBarreira()) barreiras.get(p.getCorNum()).add(destino);    // caso isso crie uma barreira ela é salva no conjunto
-        if (destino.getQtdPioes() == 4) fimDeJogo = true;
     }
     
     // move(Piao p, int resultadoDado) move o Pião p em resultadoDado Casas.
@@ -156,9 +152,6 @@ class Tabuleiro {
 
         destino.inserePiao(p);
         if (destino.isBarreira()) barreiras.get(p.getCorNum()).add(destino);    // caso isso crie uma barreira ela é salva no conjunto
-        if (destino.getQtdPioes() == 4) {
-        	fimDeJogo = true;
-        }
 
         ultimoPiaoMovimentado = p;
         System.out.printf("Tabuleiro.move(["+p.getCor()+p.getIndice()+"],"+resultadoDado+"): "+p.getCor()+" "+p.getIndice()+" PODE MOVER - COD. 0: MOVIMENTO PERMITIDO\n");

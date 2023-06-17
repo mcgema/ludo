@@ -45,10 +45,6 @@ public class Controller {
         model.addObserver(o);
     }
 
-    public boolean jogoAcabou(){
-        return model.checaStatus();
-    }
-
     public boolean movePiao(Cor c, int indice, int dado) {
         if (!jogadorJaJogou) return false;
         int resultado = model.tentaMoverPiao(c, indice, dado);
