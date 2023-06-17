@@ -39,7 +39,9 @@ class Piao {
     // setPosicao() seta a posição do Piao como novaPosicao
     // não foi usado no código ainda
     protected void setPosicao (int novaPosicao) {
+        this.tabuleiro.search(this).removePiao(this);
         posicao = novaPosicao;
+        this.tabuleiro.tabuleiro[this.getCorNum()][novaPosicao].inserePiao(this);
     }
 
     // move() altera a posição do Pião no SEU TRAJETO por uma quantidade de casas.
@@ -62,9 +64,7 @@ class Piao {
     // reset() reseta o INDICE do Pião para 0. Assim como move(), ela NÃO ALTERA A CASA DO PIÃO! ISSO É FEITO EM Tabuleiro !!
     protected void reset () {
         //System.out.printf("Piao %s %d resetado!\n",this.cor.toString(), this.indice);
-        this.tabuleiro.search(this).removePiao(this);
         this.setPosicao(0);
-        this.tabuleiro.getInicial(cor).inserePiao(this);
     }
     
     // isBarreiraNoCaminho() retorna TRUE se tem uma barreira nas próximas 'distancia' casas depois do Pião e FALSE caso contrário.

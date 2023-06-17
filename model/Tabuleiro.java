@@ -115,20 +115,11 @@ class Tabuleiro {
         Casa inicial = this.search(p);
         if (inicial.isBarreira()) barreiras.get(p.getCorNum()).remove(inicial); // caso isso desfaça uma barreira ela é excluída do conjunto
         inicial.removePiao(p);
+
+        p.setPosicao(casa);
         Casa destino = tabuleiro[p.getCorNum()][casa];
-
-        // captura pião
-        if (destino.getQtdPioes() == 1)
-            if ((destino.getTipo() == Tipo.padrao && destino.getPiao().getCor() != p.getCor()) ||
-                (inicial.getTipo() == Tipo.inicial && destino.getPiao().getCor() != p.getCor())) {
-                    destino.getPiao().reset();
-                }
-
-        destino.inserePiao(p);
         if (destino.isBarreira()) barreiras.get(p.getCorNum()).add(destino);    // caso isso crie uma barreira ela é salva no conjunto
-        if (destino.getQtdPioes() == 4) {
-        	fimDeJogo = true;
-        }
+        if (destino.getQtdPioes() == 4) fimDeJogo = true;
     }
     
     // move(Piao p, int resultadoDado) move o Pião p em resultadoDado Casas.
@@ -347,12 +338,12 @@ class Tabuleiro {
 
     public void tabudump() {
         for (Cor c: Cor.values()) {
-            System.out.printf("%s:\t|\n",c.toString());
+            System.out.printf("\tpercurso %s:\n\t+--------------+---------+-----+\n",c.toString());
             int i = 0;
             for (Casa k: tabuleiro[c.ordinal()]) {
-                System.out.printf("\t| %2d:%9s | %d peões |\n",i++,k.getTipo().toString(),k.getQtdPioes());
+                System.out.printf("\t| %2d:%9s | %d peões | %s |\n",i++,k.getTipo().toString(),k.getQtdPioes(),k.isBarreira()?"bar":" - ");
             }
-            System.out.println(";");
+            System.out.println("\t+--------------+---------+-----+\n");
         }
     }
 
