@@ -4,27 +4,28 @@ import model.Model;
 import view.View;
 import cores.*;
 import javax.swing.*;
+import observer.*;
 
 import java.util.List;
 import java.util.ArrayList;
 import javax.swing.filechooser.FileNameExtensionFilter;
+
+import java.awt.Container;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import javax.swing.JFrame;
-import javax.swing.JFileChooser;
 import java.io.FileWriter;
 
 public class Controller {
     private static Controller singleton;
-    public View view = View.create();
+    View view = View.create();
     Model model = Model.create();
     JButton botaoDado = null;
+    private boolean jogadorJaJogou = false;
 
     {
-        model.addObserver(view);
-        view.updateCont(this);
+        view.updateController(this);
     }
 
     private Controller() {
@@ -36,25 +37,39 @@ public class Controller {
         return singleton;
     }
 
+    public void addContentPane (Container c) {
+        c.add(view);
+    }
+
+    public void addObserver (ObserverLudo o) {
+        model.addObserver(o);
+    }
+
     public boolean jogoAcabou(){
         return model.checaStatus();
     }
 
     public boolean movePiao(Cor c, int indice, int dado) {
+        if (!jogadorJaJogou) return false;
         int resultado = model.tentaMoverPiao(c, indice, dado);
-        if (resultado == 1) botaoDado.setEnabled(true);
+        if (resultado == 1) {
+            botaoDado.setEnabled(true);
+            jogadorJaJogou = false;
+        }
         return (resultado > 0);
     }
     
     public int lancaDado () {
         int resultado = model.lancaDado();
         if (resultado != 0) botaoDado.setEnabled(false);
+        jogadorJaJogou = true;
         return resultado;
     }
 
     public int lancaDado (int forcado) {
         int resultado = model.lancaDado(forcado);
         if (resultado != 0) botaoDado.setEnabled(false);
+        jogadorJaJogou = true;
         return resultado;
     }
 
@@ -108,13 +123,19 @@ public class Controller {
             }
             if (!listRead.isEmpty()){
                 model.set(listRead);
-                view.repaint(); //[mc] mudar
             }
         }
     }
 
     public void setBotaoDado (JButton botao) {
         botaoDado = botao;
+    }
+
+    public void debug () {
+        System.out.println("View:");
+        view.dump();
+        System.out.println("\nModel:");
+        model.dump();
     }
 
 }

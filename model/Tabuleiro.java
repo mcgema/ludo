@@ -108,6 +108,28 @@ class Tabuleiro {
     protected Casa search (Piao p) {
         return this.search(p.getPosicao(), p.getCor());
     }
+
+    protected void setPiao (Piao p, int casa) {
+        if (casa < 0) return;
+        if (casa > 57) return;
+        Casa inicial = this.search(p);
+        if (inicial.isBarreira()) barreiras.get(p.getCorNum()).remove(inicial); // caso isso desfaça uma barreira ela é excluída do conjunto
+        inicial.removePiao(p);
+        Casa destino = tabuleiro[p.getCorNum()][casa];
+
+        // captura pião
+        if (destino.getQtdPioes() == 1)
+            if ((destino.getTipo() == Tipo.padrao && destino.getPiao().getCor() != p.getCor()) ||
+                (inicial.getTipo() == Tipo.inicial && destino.getPiao().getCor() != p.getCor())) {
+                    destino.getPiao().reset();
+                }
+
+        destino.inserePiao(p);
+        if (destino.isBarreira()) barreiras.get(p.getCorNum()).add(destino);    // caso isso crie uma barreira ela é salva no conjunto
+        if (destino.getQtdPioes() == 4) {
+        	fimDeJogo = true;
+        }
+    }
     
     // move(Piao p, int resultadoDado) move o Pião p em resultadoDado Casas.
     protected int move (Piao p, int resultadoDado, boolean bonusDeCaptura) {
@@ -158,6 +180,8 @@ class Tabuleiro {
     }   
 
     protected boolean isLivreParaMover (Piao p, int qtdCasas, boolean bonusDeCaptura) {
+        System.out.println("Tabuleiro:");
+        dump();
         System.out.println("Tabuleiro.isLivreParaMover(["+p.getCor()+p.getIndice()+"],"+qtdCasas+"): fui chamada!");
         // se o pião está na casa inicial e o dado não foi 5, ele não pode se mover:
         if (p.getPosicao() == 0 && qtdCasas != 5) {
@@ -326,7 +350,17 @@ class Tabuleiro {
             System.out.printf("%s:\t|\n",c.toString());
             int i = 0;
             for (Casa k: tabuleiro[c.ordinal()]) {
-                System.out.printf("\t| %2d:%9s |\n",i++,k.getTipo().toString());
+                System.out.printf("\t| %2d:%9s | %d peões |\n",i++,k.getTipo().toString(),k.getQtdPioes());
+            }
+            System.out.println(";");
+        }
+    }
+
+    public void dump () {
+        for (Cor c: Cor.values()) {
+            System.out.printf("%8s:\t",c.toString());
+            for (int i = 0; i < 4; i++) {
+                System.out.printf("%2d, ", arrayPioes[c.ordinal()][i].getPosicao());
             }
             System.out.println(";");
         }

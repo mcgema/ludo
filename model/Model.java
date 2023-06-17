@@ -31,14 +31,18 @@ public class Model implements ObservableLudo {
 
     public void reset() {
         for (Cor c: Cor.values()) for (int i = 0; i < 4; i++) {
+            System.out.printf("Casa inicial do %8s: %d -> ",c.toString(),tabuleiro.tabuleiro[c.ordinal()][1].getQtdPioes());
             tabuleiro.arrayPioes[c.ordinal()][i].reset();
+            System.out.printf("%d peões\n",tabuleiro.tabuleiro[c.ordinal()][1].getQtdPioes());
             //qtdPioes[i] = 0;
         }
+        dump();
         corVez = Cor.vermelho;
         jogoAcabou = false;
         qtdSeisRolados = 0;
         ultimoPiaoMovido = tabuleiro.arrayPioes[0][0];
         dadoAtual = 0;
+        devePassarVez = true;
         for (ObserverLudo o: lob) o.notify(this);
         for (int i = 0; i < 4; i++) this.lancaDado(5);
     }
@@ -50,10 +54,11 @@ public class Model implements ObservableLudo {
                 // ordem obedece cor
                 Cor cor = Cor.valueOf(lread.get(5*i+1));
                 for (int j = 0; j < 4; j++) {
-                    tabuleiro.arrayPioes[cor.ordinal()][j].setPosicao(Integer.valueOf(lread.get(5*i+j+2)));
+                    tabuleiro.setPiao(tabuleiro.arrayPioes[cor.ordinal()][j], Integer.valueOf(lread.get(5*i+j+2)));
                 }
             }
         }
+        for (ObserverLudo o: lob) o.notify(this);
     }
     
     public void escreverJogo(FileWriter saidaTxt) {
@@ -95,6 +100,8 @@ public class Model implements ObservableLudo {
     }
 
     public int lancaDado (int forcado) {
+        if (forcado > 6) return 0;
+        if (forcado < 0) return 0;
         System.out.println("Model.lancaDado("+forcado+"): fui chamada!");
         System.out.printf("Model.lancaDado(%d): vez do %s!\n", forcado, corVez.toString());
         int resultado = forcado;
@@ -210,11 +217,11 @@ public class Model implements ObservableLudo {
         return retorno;
     }
 
-    protected void updateVez(){
+    protected void updateVez () {
         System.out.println("Model.updateVez(): fui chamada!");
         devePassarVez = true;
         corVez = Cor.values()[(corVez.ordinal()+1)%4];
-        System.out.println("\n\nModel.updateVez(): Vez passada para o "+corVez.toString());
+        System.out.println("\n\n-------------------------------------------------------\nModel.updateVez(): Vez passada para o "+corVez.toString()+"\n-------------------------------------------------------\n\n");
         for (ObserverLudo o: lob) o.notify(this);
         qtdSeisRolados = 0;
         dadoAtual = 0;
@@ -253,9 +260,9 @@ public class Model implements ObservableLudo {
 
     public void dump () {
         for (Cor c: Cor.values()) {
-            System.out.printf("%s: ",c.toString());
+            System.out.printf("%8s:\t",c.toString());
             for (int i = 0; i < 4; i++) {
-                System.out.printf("%d, ", tabuleiro.arrayPioes[c.ordinal()][i].getPosicao());
+                System.out.printf("%2d, ", tabuleiro.arrayPioes[c.ordinal()][i].getPosicao());
             }
             System.out.println(";");
         }

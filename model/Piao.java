@@ -61,7 +61,7 @@ class Piao {
     
     // reset() reseta o INDICE do Pião para 0. Assim como move(), ela NÃO ALTERA A CASA DO PIÃO! ISSO É FEITO EM Tabuleiro !!
     protected void reset () {
-        System.out.printf("Piao %s %d resetado!\n",this.cor.toString(), this.indice);
+        //System.out.printf("Piao %s %d resetado!\n",this.cor.toString(), this.indice);
         this.tabuleiro.search(this).removePiao(this);
         this.setPosicao(0);
         this.tabuleiro.getInicial(cor).inserePiao(this);

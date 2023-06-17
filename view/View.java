@@ -6,7 +6,6 @@ import java.awt.event.MouseListener;
 import java.awt.*;
 import java.awt.geom.*;
 import javax.swing.*;
-import javax.swing.filechooser.FileNameExtensionFilter;
 
 import cores.*;
 import observer.*;
@@ -40,7 +39,7 @@ public class View extends JPanel implements MouseListener, ObserverLudo {
         6*LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, 3*LADO
     };
 
-    Controller cont;
+    Controller controller;
     int[][] posPioes = new int[4][4];
     Cor corVez = Cor.vermelho;
     int dadoAtual = 0;
@@ -69,8 +68,9 @@ public class View extends JPanel implements MouseListener, ObserverLudo {
         this.repaint();
     }
     
-    public void updateCont (Controller c) {
-        cont = c;
+    public void updateController (Controller c) {
+        controller = c;
+        controller.addObserver(this);
     }
     
     Cor peaoNaMesmaCasa (Cor cor, int pos) {
@@ -125,7 +125,7 @@ public class View extends JPanel implements MouseListener, ObserverLudo {
     }
 
     void desenhaPiao (Graphics g, Cor c, int pos, Cor prev) {
-        if (pos > 57) return;
+        if (pos > 56) return;
         if (pos < 1) return;
         Graphics2D g2d = (Graphics2D) g;
         BasicStroke stroke = new BasicStroke(1.0f);
@@ -311,7 +311,7 @@ public class View extends JPanel implements MouseListener, ObserverLudo {
                 for (int j=0; j<4; j++) {
                     if (posPioes[corVez.ordinal()][j] == i){ // tem um peao da cor nessa posicao
                         System.out.printf("View.mouseClicked(): peão %s encontrado na posição %s[%d]!\n", corVez.toString(), corVez.toString(), i);
-                        cont.movePiao(corVez, j, dadoAtual);
+                        controller.movePiao(corVez, j, dadoAtual);
                     }
                 }
             }
@@ -325,9 +325,9 @@ public class View extends JPanel implements MouseListener, ObserverLudo {
 
     public void dump () {
         for (Cor c: Cor.values()) {
-            System.out.printf("%s: ",c.toString());
+            System.out.printf("%8s:\t",c.toString());
             for (int i = 0; i < 4; i++) {
-                System.out.printf("%d, ", posPioes[c.ordinal()][i]);
+                System.out.printf("%2d, ", posPioes[c.ordinal()][i]);
             }
             System.out.println(";");
         }
