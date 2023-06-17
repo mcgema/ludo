@@ -7,6 +7,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import controller.*;
 import observer.*;
+import cores.*;
 
 
 
@@ -79,41 +80,56 @@ public class Frame extends JFrame implements ObserverLudo {
     public void notify (ObservableLudo model) {
         Object[] data = (Object[]) model.get();
         Object[][] dataPosPioes = (Object[][]) data[0];
-        int[][] posPioes = new int[4][4];
-        for (int i = 0; i < 4; i++) for (int j = 0; j < 4; j++) posPioes[i][j] = (int) dataPosPioes[i][j];
-
+        int[] placar = new int[4];
+        for (int i = 0; i < 4; i++) {
+            placar[i] = 0;
+            for (int j = 0; j < 4; j++) {
+                placar[i] += (int) dataPosPioes[i][j];
+            }
+        }
         boolean jogoAcabou = false;
         for (int i = 0; i < 4; i++) {
-            int sum = 0;
-            for (int j = 0; j < 4; j++) sum += posPioes[i][j];
-            if (sum == 57*4) {
+            if (placar[i] == 57*4) {
                 jogoAcabou = true;
                 break;
             }
         }
-        if (jogoAcabou) {
-            JOptionPane.showMessageDialog(this, "Jogo acabou!\n\nColocação dos jogadores:\n", //+ controller.getColocacaoJogadores(),   // Message text
-                                    "Fim de Jogo", JOptionPane.INFORMATION_MESSAGE);
+        if (!jogoAcabou) return;
 
-            System.out.printf("Jogo acabou!");
-            int opcao = JOptionPane.showOptionDialog (
-                this,
-                "Iniciar novo jogo?", 
-                "Continuar jogando?",
-                JOptionPane.YES_NO_OPTION,JOptionPane.QUESTION_MESSAGE,
-                null,
-                new Object[]{"Novo Jogo", "Encerra"},
-                "Novo Jogo"
-            );
-            
-            System.out.printf("foi: %d", opcao);
-            if (opcao == 0) {
-                // jogadores vao continuar a jogar - botao continua apertado
-                controller.novoJogo();
+        Cor[] podium = new Cor[16];
+        for (Cor c: Cor.values()) {
+            int colocacao = 0;
+            for (int i = 0; i < 4; i++) {
+                if (placar[i] > placar[c.ordinal()]) colocacao = colocacao + 1;
             }
-            else {
-                System.exit(0);
-            }
-        } 
+            podium[4*colocacao + c.ordinal()] = c;
+        }
+
+        String colocacaoString = "";
+        for (int i = 0; i < 16; i++) if (podium[i] != null) colocacaoString = colocacaoString + (1+(i/4)) + "o lugar: " + podium[i].toString() + "\n";
+
+
+        JOptionPane.showMessageDialog(this, "Jogo acabou!\n\nColocação dos jogadores:\n"+ colocacaoString,"Fim de Jogo", JOptionPane.INFORMATION_MESSAGE);
+
+        System.out.printf("Jogo acabou!");
+        int opcao = JOptionPane.showOptionDialog (
+            this,
+            "Iniciar novo jogo?", 
+            "Continuar jogando?",
+            JOptionPane.YES_NO_OPTION,JOptionPane.QUESTION_MESSAGE,
+            null,
+            new Object[]{"Novo Jogo", "Encerra"},
+            "Novo Jogo"
+        );
+        
+        System.out.printf("foi: %d", opcao);
+        if (opcao == 0) {
+            // jogadores vao continuar a jogar - botao continua apertado
+            controller.novoJogo();
+        }
+        else {
+            System.exit(0);
+        }
+        
     }
 }
