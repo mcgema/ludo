@@ -66,31 +66,34 @@ class Controller {
         JFrame parent = new JFrame();
         JFileChooser fileChooser = new JFileChooser();
         fileChooser.setDialogTitle("Especifique arquivo para salvar:");   
-        FileNameExtensionFilter filter = new FileNameExtensionFilter(".txt", "txt");
+        FileNameExtensionFilter filter = new FileNameExtensionFilter("Arquivos de Texto (*.txt)", "txt");
         fileChooser.setFileFilter(filter);
 
         int userSelection = fileChooser.showSaveDialog(parent);
         if (userSelection == JFileChooser.APPROVE_OPTION) {
             File fileToSave = fileChooser.getSelectedFile();
             System.out.println("Salve arquivo: " + fileToSave.getAbsolutePath());
-            try{
-                FileWriter saidaTxt = new FileWriter(String.valueOf(fileToSave.getAbsolutePath()));
-                model.escreverJogo(saidaTxt);
-            } catch (IOException ex) {
-                ex.printStackTrace();
-            }
+            String filePath = fileToSave.getAbsolutePath();
+            String extension = ".txt";
+            if (filePath.endsWith(extension)) {
+                try{
+                    FileWriter saidaTxt = new FileWriter(filePath);
+                    model.escreverJogo(saidaTxt);
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
+            } else {JOptionPane.showMessageDialog(parent, "Jogo não foi salvo, pois extensão de arquivo é inválida. Selecione/Salve arquivo com extensão .txt.", "Aviso", JOptionPane.INFORMATION_MESSAGE); }
         }
     }
 
     protected void carregarJogo() {
         JFileChooser chooser = new JFileChooser();
-        FileNameExtensionFilter filter = new FileNameExtensionFilter(".txt", "txt");
+        FileNameExtensionFilter filter = new FileNameExtensionFilter("Arquivos de Texto (*.txt)", "txt");
         chooser.setFileFilter(filter);
         int returnVal = chooser.showOpenDialog(null);
         List<String> listRead = new ArrayList<String>();
         if (returnVal == JFileChooser.APPROVE_OPTION) {
             File selectedFile = chooser.getSelectedFile();
-
             try {
                 BufferedReader reader = new BufferedReader(new FileReader(selectedFile.getAbsolutePath()));
                 String line;
