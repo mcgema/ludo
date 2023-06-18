@@ -23,6 +23,12 @@ class Frame extends JFrame implements ObserverLudo {
     private JButton carregarJogoButton = new JButton("Carregar Jogo");
     private JButton salvarJogoButton =   new JButton("Salvar Jogo");
     private JButton lancarDadoButton =   new JButton("Lançar Dado");
+    private JButton dado1Button =        new JButton("1");
+    private JButton dado2Button =        new JButton("2");
+    private JButton dado3Button =        new JButton("3");
+    private JButton dado4Button =        new JButton("4");
+    private JButton dado5Button =        new JButton("5");
+    private JButton dado6Button =        new JButton("6");
 
     {
         setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -54,7 +60,43 @@ class Frame extends JFrame implements ObserverLudo {
                 controller.lancaDado();
             }
         });
+
+        dado1Button.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                controller.lancaDado(1);
+            }
+        });
+
+        dado2Button.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                controller.lancaDado(2);
+            }
+        });
+
+        dado3Button.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                controller.lancaDado(3);
+            }
+        });
         
+        dado4Button.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                controller.lancaDado(4);
+            }
+        });
+        
+        dado5Button.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                controller.lancaDado(5);
+            }
+        });
+
+        dado6Button.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                controller.lancaDado(6);
+            }
+        });
+
         JPanel buttonsPanel = new JPanel();
 
         buttonsPanel.setLayout(new BoxLayout(buttonsPanel, BoxLayout.Y_AXIS));
@@ -65,10 +107,22 @@ class Frame extends JFrame implements ObserverLudo {
         buttonsPanel.add(salvarJogoButton);
         buttonsPanel.add(Box.createVerticalStrut(10)); 
         buttonsPanel.add(lancarDadoButton);
+        buttonsPanel.add(Box.createVerticalStrut(10)); 
+        buttonsPanel.add(dado1Button);
+        buttonsPanel.add(Box.createVerticalStrut(10));
+        buttonsPanel.add(dado2Button);
+        buttonsPanel.add(Box.createVerticalStrut(10));
+        buttonsPanel.add(dado3Button);
+        buttonsPanel.add(Box.createVerticalStrut(10));
+        buttonsPanel.add(dado4Button);
+        buttonsPanel.add(Box.createVerticalStrut(10));
+        buttonsPanel.add(dado5Button);
+        buttonsPanel.add(Box.createVerticalStrut(10));
+        buttonsPanel.add(dado6Button);
+        buttonsPanel.add(Box.createVerticalStrut(10));
 
         getContentPane().add(buttonsPanel, BorderLayout.EAST);
 
-        
         setSize(LARG_DEFAULT, ALT_DEFAULT);
         setVisible(true);
     }
@@ -91,6 +145,13 @@ class Frame extends JFrame implements ObserverLudo {
         Object[][] dataPosPioes = (Object[][]) data[0];
         boolean podeDado = ((int) data[2]) == 0;
         lancarDadoButton.setEnabled(podeDado);
+        dado1Button.setEnabled(podeDado);
+        dado2Button.setEnabled(podeDado);
+        dado3Button.setEnabled(podeDado);
+        dado4Button.setEnabled(podeDado);
+        dado5Button.setEnabled(podeDado);
+        dado6Button.setEnabled(podeDado);
+
         int[] placar = new int[4];
         for (int i = 0; i < 4; i++) {
             placar[i] = 0;
