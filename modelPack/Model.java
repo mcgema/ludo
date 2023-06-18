@@ -43,6 +43,7 @@ class Model implements ObservableLudo {
     }
 
     protected void set(List<String> lread){
+        reset();
         if (lread.size() == 21){
             corVez = Cor.valueOf(lread.get(0));
             for (int i=0; i<4; i++){
