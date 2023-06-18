@@ -1,4 +1,4 @@
-package view;
+package viewPack;
 
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -7,9 +7,9 @@ import java.awt.*;
 import java.awt.geom.*;
 import javax.swing.*;
 
+import controllerPack.FacadeC;
 import cores.*;
 import observer.*;
-import controller.*;
 
 public class View extends JPanel implements MouseListener, ObserverLudo {
     private static View singleton;
@@ -39,7 +39,7 @@ public class View extends JPanel implements MouseListener, ObserverLudo {
         6*LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, 3*LADO
     };
 
-    Controller controller;
+    FacadeC controller;
     int[][] posPioes = new int[4][4];
     Cor corVez = Cor.vermelho;
     int dadoAtual = 0;
@@ -68,7 +68,7 @@ public class View extends JPanel implements MouseListener, ObserverLudo {
         this.repaint();
     }
     
-    public void updateController (Controller c) {
+    public void updateController (FacadeC c) {
         controller = c;
         controller.addObserver(this);
     }
@@ -311,7 +311,7 @@ public class View extends JPanel implements MouseListener, ObserverLudo {
                 for (int j=0; j<4; j++) {
                     if (posPioes[corVez.ordinal()][j] == i){ // tem um peao da cor nessa posicao
                         System.out.printf("View.mouseClicked(): peão %s encontrado na posição %s[%d]!\n", corVez.toString(), corVez.toString(), i);
-                        controller.movePiao(corVez, j, dadoAtual);
+                        controller.movePiao(corVez, j);
                     }
                 }
             }

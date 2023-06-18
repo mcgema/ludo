@@ -1,11 +1,13 @@
-package view;
+package viewPack;
 
 import javax.swing.*;
+
+import controllerPack.*;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import controller.*;
+
 import observer.*;
 import cores.*;
 
@@ -15,7 +17,7 @@ public class Frame extends JFrame implements ObserverLudo {
     public static final int LADO = 36;
     public static final int LARG_DEFAULT = 22*LADO;
     public static final int ALT_DEFAULT = 16*LADO;
-    Controller controller = Controller.create();
+    FacadeC controller = FacadeC.getController();
 
     {
         controller.addObserver(this);

@@ -1,4 +1,4 @@
-package model;
+package modelPack;
 
 import cores.*;
 
@@ -132,22 +132,6 @@ public class Model implements ObservableLudo {
                     if (tabuleiro.getInicial(corVez).getQtdPioes() > 0) {
                         tentaMoverPiao(p.getCor(), p.getIndice(), dadoAtual);
                         break processo;
-                        /*
-                        int tentativaDeMovimento = tabuleiro.move(p,resultado, false);
-                        if (tentativaDeMovimento > 0) {
-                            ultimoPiaoMovido = p;
-                            if (tentativaDeMovimento > 1) {
-                                dadoAtual = 6;
-                                bonusDeCaptura = true;
-                                break processo;
-                            }
-                            else {
-                                dadoAtual = 0;
-                                updateVez();
-                                break processo;
-                            }
-                        }
-                         */
                     }
                 }
             }
@@ -180,9 +164,13 @@ public class Model implements ObservableLudo {
 
     }
     
-    // tentamoverPiao(corPiao, idPiao, casas) tenta mover o "idPiao-ésimo" Pião de cor "corPiao" "casas" casas para a frente. retorna TRUE em caso de sucesso e FALSE em caso de falha.
     public int tentaMoverPiao (Cor corPiao, int idPiao, int casas) {
-        System.out.println("Model.tentaMoverPiao("+corPiao.toString()+","+idPiao+","+casas+"): fui chamada!");
+        return tentaMoverPiao (corPiao, idPiao);
+    }
+
+    // tentamoverPiao(corPiao, idPiao, casas) tenta mover o "idPiao-ésimo" Pião de cor "corPiao" "casas" casas para a frente. retorna TRUE em caso de sucesso e FALSE em caso de falha.
+    public int tentaMoverPiao (Cor corPiao, int idPiao) {
+        System.out.println("Model.tentaMoverPiao("+corPiao.toString()+","+idPiao+","+dadoAtual+"): fui chamada!");
         Piao p = tabuleiro.getPiao(corPiao, idPiao);
         int retorno = tabuleiro.move(p, dadoAtual, bonusDeCaptura);
         if (retorno != 0) {

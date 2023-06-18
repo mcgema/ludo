@@ -1,10 +1,11 @@
-package controller;
+package controllerPack;
 
-import model.Model;
-import view.View;
 import cores.*;
+import modelPack.Model;
+
 import javax.swing.*;
 import observer.*;
+import viewPack.View;
 
 import java.util.List;
 import java.util.ArrayList;
@@ -17,37 +18,33 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.FileWriter;
 
-public class Controller {
-    private static Controller singleton;
-    View view = View.create();
-    Model model = Model.create();
-    JButton botaoDado = null;
-    private boolean jogadorJaJogou = false;
-
-    {
-        view.updateController(this);
-    }
+class Controller {
+    protected static Controller singleton;
+    protected View view = View.create();
+    protected Model model = Model.create();
+    protected JButton botaoDado = null;
+    protected boolean jogadorJaJogou = false;
 
     private Controller() {
         // Construtor bloqueado pelo Singleton
     }
     
-    public static Controller create() {
+    protected static Controller create() {
         if (singleton == null) singleton = new Controller();
         return singleton;
     }
 
-    public void addContentPane (Container c) {
+    protected void addContentPane (Container c) {
         c.add(view);
     }
 
-    public void addObserver (ObserverLudo o) {
+    protected void addObserver (ObserverLudo o) {
         model.addObserver(o);
     }
 
-    public boolean movePiao(Cor c, int indice, int dado) {
+    protected boolean movePiao(Cor c, int indice) {
         if (!jogadorJaJogou) return false;
-        int resultado = model.tentaMoverPiao(c, indice, dado);
+        int resultado = model.tentaMoverPiao(c, indice);
         if (resultado == 1) {
             botaoDado.setEnabled(true);
             jogadorJaJogou = false;
@@ -55,30 +52,26 @@ public class Controller {
         return (resultado > 0);
     }
     
-    public int lancaDado () {
+    protected int lancaDado () {
         int resultado = model.lancaDado();
         if (resultado != 0) botaoDado.setEnabled(false);
         jogadorJaJogou = true;
         return resultado;
     }
 
-    public int lancaDado (int forcado) {
+    protected int lancaDado (int forcado) {
         int resultado = model.lancaDado(forcado);
         if (resultado != 0) botaoDado.setEnabled(false);
         jogadorJaJogou = true;
         return resultado;
     }
 
-    public void novoJogo() {
+    protected void novoJogo() {
         model.reset();
         botaoDado.setEnabled(true);
     }
 
-    public void escreverJogo(FileWriter file) {
-        model.escreverJogo(file);
-    }
-
-    public void salvarJogo() {
+    protected void salvarJogo() {
         JFrame parent = new JFrame();
         JFileChooser fileChooser = new JFileChooser();
         fileChooser.setDialogTitle("Especifique arquivo para salvar:");   
@@ -98,7 +91,7 @@ public class Controller {
         }
     }
 
-    public void carregarJogo() {
+    protected void carregarJogo() {
         JFileChooser chooser = new JFileChooser();
         FileNameExtensionFilter filter = new FileNameExtensionFilter(".txt", "txt");
         chooser.setFileFilter(filter);
@@ -123,7 +116,7 @@ public class Controller {
         }
     }
 
-    public void setBotaoDado (JButton botao) {
+    protected void setBotaoDado (JButton botao) {
         botaoDado = botao;
     }
 

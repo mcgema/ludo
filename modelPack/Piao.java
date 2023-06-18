@@ -1,4 +1,4 @@
-package model;
+package modelPack;
 
 import cores.*;
 // Piao representa um Pião colorido.

@@ -1,6 +1,7 @@
-import view.*;
-import controller.*;
 import java.util.*;
+
+import controllerPack.FacadeC;
+import viewPack.*;
 
 // A Main serve para testar.
 public class Main {
@@ -9,7 +10,7 @@ public class Main {
         Scanner sc = new Scanner(System.in);
         Frame f = new Frame();
         f.setVisible(true);
-        Controller controller = Controller.create();
+        FacadeC controller = FacadeC.getController();
         controller.novoJogo();
         int dadoForcado = sc.nextInt();
         while (dadoForcado > 0) {
