@@ -8,19 +8,19 @@ class Tabuleiro {
     private static Tabuleiro singleton;
     
     // Tabuleiro é representado por Arrays de Casas.
-    Casa tabuleiro [][] = new Casa [4][58]; //[MC] peao percorre 56 casas -> [Tom] o peao vai da 0 (inicio) até a 57 (vitória). São 58 casas.
+    protected Casa tabuleiro [][] = new Casa [4][58]; //[MC] peao percorre 56 casas -> [Tom] o peao vai da 0 (inicio) até a 57 (vitória). São 58 casas.
     
     // Matriz de Piões guarda os "ponteiros" para todos os Piões, garantido que sempre serão facilmente acessíveis pela sua cor e índice.
-    Piao arrayPioes[][] = new Piao[4][4];
+    protected Piao arrayPioes[][] = new Piao[4][4];
     
     // Conjunto de Casas guarda quais são as casas que tem barreiras.
-    ArrayList<HashSet<Casa>> barreiras = new ArrayList<HashSet<Casa>>();
+    protected ArrayList<HashSet<Casa>> barreiras = new ArrayList<HashSet<Casa>>();
 
-    Piao ultimoPiaoMovimentado;
-    int qtdSeisRolados = 0;
+    protected Piao ultimoPiaoMovimentado;
+    protected int qtdSeisRolados = 0;
 
     
-    private Casa casasNormais[] = new Casa [52];
+    protected Casa casasNormais[] = new Casa [52];
     // bloco de inicialização
     {
         System.out.println("Model.Tabuleiro: Tabuleiro inicializado!");

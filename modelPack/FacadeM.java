@@ -1,11 +1,10 @@
 package modelPack;
 
-import observer.ObservableLudo;
-import observer.ObserverLudo;
+import observer.*;
 
 import java.io.FileWriter;
 import java.util.*;
-import cores.Cor;
+import cores.*;
 
 public class FacadeM implements ObservableLudo{
     private static FacadeM singleton;

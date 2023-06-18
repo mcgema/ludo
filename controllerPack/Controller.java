@@ -15,9 +15,6 @@ class Controller {
     private static Controller singleton;
     private FacadeM model = FacadeM.getModel();
     private boolean jogadorJaJogou = false;
-    {
-        novoJogo();
-    }
 
     private Controller() {
         // Construtor bloqueado pelo Singleton
