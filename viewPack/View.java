@@ -11,38 +11,36 @@ import controllerPack.FacadeC;
 import cores.*;
 import observer.*;
 
-public class View extends JPanel implements MouseListener, ObserverLudo {
+class View extends JPanel implements MouseListener, ObserverLudo {
     private static View singleton;
 
-    public static final int LADO = 36, LADO2 = 18, LADO3 = 12, LADO4 = 9;
-    public static final int LARG_DEFAULT = 22*LADO;
-    public static final int ALT_DEFAULT = 16*LADO;
+    private static final int LADO = 36, LADO2 = 18, LADO3 = 12;
 
-    static Color colorG = new Color(34, 139, 34); 
-    static Color colorY = new Color(255, 239, 0);
-    static Color colorB = new Color(13, 101, 189);
-    static Color colorR = new Color(218, 0, 0);
+    private static Color colorG = new Color(34, 139, 34); 
+    private static Color colorY = new Color(255, 239, 0);
+    private static Color colorB = new Color(13, 101, 189);
+    private static Color colorR = new Color(218, 0, 0);
 
-    static int[][] lutX = {
+    private static int[][] lutX = {
         {0, 1, 2, 3, 4, 5, 6,  6,  6,  6,  6,  6,  7,  8,  8,  8,  8,  8, 8, 9, 10, 11, 12, 13, 14, 14, 14, 13, 12, 11, 10, 9, 8, 8, 8, 8, 8, 8, 7, 6, 6, 6, 6, 6, 6, 5, 4, 3, 2, 1, 0, 0, 1, 2, 3, 4, 5, 6},
         {9, 8, 8, 8, 8, 8, 9, 10, 11, 12, 13, 14, 14, 14, 13, 12, 11, 10, 9, 8, 8, 8,  8,  8,  8,  7,  6,  6,  6,  6,  6,  6,  5, 4, 3, 2, 1, 0, 0, 0, 1, 2, 3, 4, 5, 6, 6, 6, 6, 6, 6, 7, 7, 7, 7, 7, 7, 6},
         {9, 13, 12, 11, 10, 9, 8, 8, 8, 8, 8, 8, 7, 6, 6, 6, 6, 6, 6, 5, 4, 3, 2, 1, 0, 0, 0, 1, 2, 3, 4, 5, 6, 6, 6, 6, 6, 6, 7, 8, 8, 8, 8, 8, 8, 9, 10, 11, 12, 13, 14, 14, 13, 12, 11, 10, 9, 6},
         {0, 6, 6, 6, 6, 6, 5, 4, 3, 2, 1, 0, 0, 0, 1, 2, 3, 4, 5, 6, 6, 6, 6, 6, 6, 7, 8, 8, 8, 8, 8, 8, 9, 10, 11, 12, 13, 14, 14, 14, 13, 12, 11, 10, 9, 8, 8, 8, 8, 8, 8, 7, 7, 7, 7, 7, 7, 6}
     };
-    static int[][] lutY = {
+    private static int[][] lutY = {
         {0, 6, 6, 6, 6, 6, 5, 4, 3, 2, 1, 0, 0, 0, 1, 2, 3, 4, 5, 6, 6, 6, 6, 6, 6, 7, 8, 8, 8, 8, 8, 8, 9, 10, 11, 12, 13, 14, 14, 14, 13, 12, 11, 10, 9, 8, 8, 8, 8, 8, 8, 7, 7, 7, 7, 7, 7, 6},
         {0, 1, 2, 3, 4, 5, 6, 6, 6, 6, 6, 6, 7, 8, 8, 8, 8, 8, 8, 9, 10, 11, 12, 13, 14, 14, 14, 13, 12, 11, 10, 9, 8, 8, 8, 8, 8, 8, 7, 6, 6, 6, 6, 6, 6, 5, 4, 3, 2, 1, 0, 0, 1, 2, 3, 4, 5, 6},
         {9, 8, 8, 8, 8, 8, 9, 10, 11, 12, 13, 14, 14, 14, 13, 12, 11, 10, 9, 8, 8, 8,  8,  8,  8,  7,  6,  6,  6,  6,  6,  6,  5, 4, 3, 2, 1, 0, 0, 0, 1, 2, 3, 4, 5, 6, 6, 6, 6, 6, 6, 7, 7, 7, 7, 7, 7, 6},
         {9, 13, 12, 11, 10, 9, 8, 8, 8, 8, 8, 8, 7, 6, 6, 6, 6, 6, 6, 5, 4, 3, 2, 1, 0, 0, 0, 1, 2, 3, 4, 5, 6, 6, 6, 6, 6, 6, 7, 8, 8, 8, 8, 8, 8, 9, 10, 11, 12, 13, 14, 14, 13, 12, 11, 10, 9, 6}
     };
-    static int[] lutSize = {
+    private static int[] lutSize = {
         6*LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, LADO, 3*LADO
     };
 
-    FacadeC controller;
-    int[][] posPioes = new int[4][4];
-    Cor corVez = Cor.vermelho;
-    int dadoAtual = 0;
+    private FacadeC controller = FacadeC.getController();
+    private int[][] posPioes = new int[4][4];
+    private Cor corVez = Cor.vermelho;
+    private int dadoAtual = 0;
 
     {
         addMouseListener(this);
@@ -52,7 +50,7 @@ public class View extends JPanel implements MouseListener, ObserverLudo {
         // construtor bloqueado pelo Singleton
     }
 
-    public static View create() {
+    protected static View create() {
         if (singleton == null) singleton = new View();
         return singleton;
     }
@@ -67,13 +65,8 @@ public class View extends JPanel implements MouseListener, ObserverLudo {
         
         this.repaint();
     }
-    
-    public void updateController (FacadeC c) {
-        controller = c;
-        controller.addObserver(this);
-    }
-    
-    Cor peaoNaMesmaCasa (Cor cor, int pos) {
+
+    private Cor peaoNaMesmaCasa (Cor cor, int pos) {
         int idxPiao = -1;
         for (int i = 0; i < 4; i++) {
             if (posPioes[cor.ordinal()][i] == pos) {
@@ -98,7 +91,7 @@ public class View extends JPanel implements MouseListener, ObserverLudo {
         return null;
     }
 
-    static Color getCor (Cor c) {
+    private static Color getCor (Cor c) {
         switch (c) {
             case vermelho:
                 return colorR;
@@ -111,7 +104,7 @@ public class View extends JPanel implements MouseListener, ObserverLudo {
         }
     }
 
-    void desenhaPiao (Graphics g, Cor c, int pos) {
+    private void desenhaPiao (Graphics g, Cor c, int pos) {
         if (pos > 56) return;
         if (pos < 1) return;
         Graphics2D g2d = (Graphics2D) g;
@@ -124,7 +117,7 @@ public class View extends JPanel implements MouseListener, ObserverLudo {
         g2d.draw(piao);
     }
 
-    void desenhaPiao (Graphics g, Cor c, int pos, Cor prev) {
+    private void desenhaPiao (Graphics g, Cor c, int pos, Cor prev) {
         if (pos > 56) return;
         if (pos < 1) return;
         Graphics2D g2d = (Graphics2D) g;
@@ -144,7 +137,7 @@ public class View extends JPanel implements MouseListener, ObserverLudo {
         g2d.fill(piao);
     }
     
-    void desenhaPioesInicial (Graphics g, Cor c, int qtd) {
+    private void desenhaPioesInicial (Graphics g, Cor c, int qtd) {
         if (qtd < 1) return;
         Graphics2D g2d = (Graphics2D) g;
         g2d.setPaint(getCor(c));
@@ -157,7 +150,7 @@ public class View extends JPanel implements MouseListener, ObserverLudo {
         }
     }
 
-    static private void parteTabuleiro(Graphics g, Cor cor1, Cor cor2) {
+    private static void parteTabuleiro(Graphics g, Cor cor1, Cor cor2) {
         int x = 0, y = 0;
         Graphics2D g2d = (Graphics2D) g;
         Rectangle2D rect1=new Rectangle2D.Double(x, y, LADO*6, LADO*6);
@@ -224,7 +217,7 @@ public class View extends JPanel implements MouseListener, ObserverLudo {
         g2d.fillPolygon(xPoints, yPoints, 3);
     }
 
-    static public void desenhaTabuleiro(Graphics g){
+    private static void desenhaTabuleiro(Graphics g){
         Graphics2D g2d=(Graphics2D) g;
         parteTabuleiro(g, Cor.vermelho, Cor.verde);
         g2d.rotate(-1.57079632679, 270, 270);
@@ -236,7 +229,7 @@ public class View extends JPanel implements MouseListener, ObserverLudo {
         g2d.rotate(-1.57079632679, 270, 270);
     }
 
-    public void desenhaDado(Graphics g, int resultado, Cor cor){
+    private void desenhaDado(Graphics g, int resultado, Cor cor){
         System.out.println("View.desenhaDado("+resultado+"): View.dadoAtual é "+dadoAtual);
         Graphics2D g2d = (Graphics2D) g;
         Image dado;

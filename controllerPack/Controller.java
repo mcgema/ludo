@@ -1,17 +1,15 @@
 package controllerPack;
 
 import cores.*;
-import modelPack.Model;
+import modelPack.FacadeM;
 
 import javax.swing.*;
 import observer.*;
-import viewPack.View;
 
 import java.util.List;
 import java.util.ArrayList;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
-import java.awt.Container;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -19,11 +17,12 @@ import java.io.IOException;
 import java.io.FileWriter;
 
 class Controller {
-    protected static Controller singleton;
-    protected View view = View.create();
-    protected Model model = Model.create();
-    protected JButton botaoDado = null;
-    protected boolean jogadorJaJogou = false;
+    private static Controller singleton;
+    private FacadeM model = FacadeM.getModel();
+    private boolean jogadorJaJogou = false;
+    {
+        novoJogo();
+    }
 
     private Controller() {
         // Construtor bloqueado pelo Singleton
@@ -34,10 +33,6 @@ class Controller {
         return singleton;
     }
 
-    protected void addContentPane (Container c) {
-        c.add(view);
-    }
-
     protected void addObserver (ObserverLudo o) {
         model.addObserver(o);
     }
@@ -46,7 +41,6 @@ class Controller {
         if (!jogadorJaJogou) return false;
         int resultado = model.tentaMoverPiao(c, indice);
         if (resultado == 1) {
-            botaoDado.setEnabled(true);
             jogadorJaJogou = false;
         }
         return (resultado > 0);
@@ -54,21 +48,18 @@ class Controller {
     
     protected int lancaDado () {
         int resultado = model.lancaDado();
-        if (resultado != 0) botaoDado.setEnabled(false);
         jogadorJaJogou = true;
         return resultado;
     }
 
     protected int lancaDado (int forcado) {
         int resultado = model.lancaDado(forcado);
-        if (resultado != 0) botaoDado.setEnabled(false);
         jogadorJaJogou = true;
         return resultado;
     }
 
     protected void novoJogo() {
         model.reset();
-        botaoDado.setEnabled(true);
     }
 
     protected void salvarJogo() {
@@ -117,14 +108,16 @@ class Controller {
     }
 
     protected void setBotaoDado (JButton botao) {
-        botaoDado = botao;
+        //botaoDado = botao;
     }
 
+    /*
     public void debug () {
         System.out.println("View:");
         view.dump();
         System.out.println("\nModel:");
         model.dump();
     }
+    */
 
 }

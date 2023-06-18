@@ -9,14 +9,13 @@ import java.util.*;
 import observer.*;
 
 // Model é a fachada das regras, e é a única classe pública da 1a iteração.
-public class Model implements ObservableLudo {
+class Model implements ObservableLudo {
     public Tabuleiro tabuleiro = Tabuleiro.create();
     public Cor corVez = Cor.vermelho;
     private int qtdSeisRolados = 0;
     private Piao ultimoPiaoMovido = tabuleiro.arrayPioes[0][0];
     public int dadoAtual = 0;
     private static Model singleton;
-    //private boolean devePassarVez = true;
     private boolean bonusDeCaptura = false;
     List<ObserverLudo> lob = new ArrayList<ObserverLudo>();
 
@@ -24,12 +23,12 @@ public class Model implements ObservableLudo {
         // construtor bloqueado pelo singleton
     }
 
-    public static Model create () {
+    protected static Model create () {
         if (singleton == null) singleton = new Model();
         return singleton;
     }
 
-    public void reset() {
+    protected void reset() {
         for (Cor c: Cor.values()) for (int i = 0; i < 4; i++) {
             System.out.printf("Casa inicial do %8s: %d -> ",c.toString(),tabuleiro.tabuleiro[c.ordinal()][1].getQtdPioes());
             tabuleiro.arrayPioes[c.ordinal()][i].reset();
@@ -37,17 +36,15 @@ public class Model implements ObservableLudo {
         }
         dump();
         corVez = Cor.vermelho;
-        // = false;
         qtdSeisRolados = 0;
         ultimoPiaoMovido = tabuleiro.arrayPioes[0][0];
         dadoAtual = 0;
-        //devePassarVez = true;
         bonusDeCaptura = false;
         for (ObserverLudo o: lob) o.notify(this);
         for (int i = 0; i < 4; i++) this.lancaDado(5);
     }
 
-    public void set(List<String> lread){
+    protected void set(List<String> lread){
         if (lread.size() == 21){
             corVez = Cor.valueOf(lread.get(0));
             for (int i=0; i<4; i++){
@@ -61,8 +58,8 @@ public class Model implements ObservableLudo {
         for (ObserverLudo o: lob) o.notify(this);
     }
     
-    public void escreverJogo(FileWriter saidaTxt) {
-        try{
+    protected void escreverJogo(FileWriter saidaTxt) {
+        try {
             saidaTxt.write(corVez.toString());
             saidaTxt.write(System.lineSeparator());
             for (Cor c: Cor.values()) {
@@ -82,14 +79,14 @@ public class Model implements ObservableLudo {
 
     // lancaDado() lanca um dado virtual de 6 lados, retornando um inteiro dentre {1, 2, 3, 4, 5, 6} com chance pseudo-aleatória.
     // também realiza jogadas forçadas, retornando 0 caso ocorram.
-    public int lancaDado () {
+    protected int lancaDado () {
         System.out.println("Model.lancaDado(): fui chamada!");
         System.out.printf("Model.lancaDado(): Lançando dado normal: ", corVez.toString());
         int resultado = Dado.rolar();
         return lancaDado(resultado);
     }
 
-    public int lancaDado (int forcado) {
+    protected int lancaDado (int forcado) {
         if (forcado > 6) return 0;
         if (forcado < 0) return 0;
         System.out.println("Model.lancaDado("+forcado+"): fui chamada!");
@@ -99,7 +96,7 @@ public class Model implements ObservableLudo {
         return dadoAtual;
     }
 
-    public int tentaJogadaForcada () {
+    protected int tentaJogadaForcada () {
         processo: {
             if (dadoAtual == 6) {
                 qtdSeisRolados++;
@@ -164,12 +161,12 @@ public class Model implements ObservableLudo {
 
     }
     
-    public int tentaMoverPiao (Cor corPiao, int idPiao, int casas) {
+    protected int tentaMoverPiao (Cor corPiao, int idPiao, int casas) {
         return tentaMoverPiao (corPiao, idPiao);
     }
 
     // tentamoverPiao(corPiao, idPiao, casas) tenta mover o "idPiao-ésimo" Pião de cor "corPiao" "casas" casas para a frente. retorna TRUE em caso de sucesso e FALSE em caso de falha.
-    public int tentaMoverPiao (Cor corPiao, int idPiao) {
+    protected int tentaMoverPiao (Cor corPiao, int idPiao) {
         System.out.println("Model.tentaMoverPiao("+corPiao.toString()+","+idPiao+","+dadoAtual+"): fui chamada!");
         Piao p = tabuleiro.getPiao(corPiao, idPiao);
         int retorno = tabuleiro.move(p, dadoAtual, bonusDeCaptura);
@@ -232,7 +229,7 @@ public class Model implements ObservableLudo {
         return data;
     }
 
-    public void dump () {
+    protected void dump () {
         for (Cor c: Cor.values()) {
             System.out.printf("%8s:\t",c.toString());
             for (int i = 0; i < 4; i++) {

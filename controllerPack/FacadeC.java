@@ -1,18 +1,11 @@
 package controllerPack;
 
-import java.awt.Container;
-
-import javax.swing.JButton;
 import observer.*;
 import cores.*;
 
 public class FacadeC {
     Controller controller = Controller.create();
     private static FacadeC singleton;
-
-    {
-        controller.view.updateController(this);
-    }
 
     private FacadeC () {
         // bloqueado pelo singleton
@@ -29,10 +22,6 @@ public class FacadeC {
 
     public int lancaDado (int num) {
         return controller.lancaDado(num);
-    }
-
-    public void addContentPane (Container c) {
-        c.add(controller.view);
     }
 
     public void addObserver (ObserverLudo o) {
@@ -55,11 +44,8 @@ public class FacadeC {
         controller.carregarJogo();
     }
 
-    public void setBotaoDado (JButton b) {
-        controller.setBotaoDado(b);
+    public void debug () {
+        //controller.debug();
     }
 
-    public void debug () {
-        controller.debug();
-    }
 }

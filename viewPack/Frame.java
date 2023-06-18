@@ -1,40 +1,34 @@
 package viewPack;
 
-import javax.swing.*;
-
+import observer.*;
+import cores.*;
 import controllerPack.*;
 
+import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import observer.*;
-import cores.*;
 
+class Frame extends JFrame implements ObserverLudo {
+    private static Frame singleton;
 
-
-public class Frame extends JFrame implements ObserverLudo {
-    public static final int LADO = 36;
-    public static final int LARG_DEFAULT = 22*LADO;
-    public static final int ALT_DEFAULT = 16*LADO;
-    FacadeC controller = FacadeC.getController();
+    private static final int LADO = 36;
+    private static final int LARG_DEFAULT = 22*LADO;
+    private static final int ALT_DEFAULT = 16*LADO;
+    private FacadeC controller = FacadeC.getController();
+    private View view = View.create();
+    
+    JButton novoJogoButton =     new JButton("Novo Jogo");
+    JButton carregarJogoButton = new JButton("Carregar Jogo");
+    JButton salvarJogoButton =   new JButton("Salvar Jogo");
+    JButton lancarDadoButton =   new JButton("Lançar Dado");
 
     {
-        controller.addObserver(this);
-    }
-
-    public Frame () {
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setTitle("Super Ludo");
 
-        controller.addContentPane(getContentPane());
-
-        JButton novoJogoButton =     new JButton("Novo Jogo");
-        JButton carregarJogoButton = new JButton("Carregar Jogo");
-        JButton salvarJogoButton =   new JButton("Salvar Jogo");
-        JButton lancarDadoButton =   new JButton("Lançar Dado");
-
-        controller.setBotaoDado(lancarDadoButton);
+        getContentPane().add(view);
 
         novoJogoButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -79,9 +73,24 @@ public class Frame extends JFrame implements ObserverLudo {
         setVisible(true);
     }
 
+    private Frame () {
+        // bloqueado
+    }
+
+    protected static Frame getFrame () {
+        if (singleton == null) singleton = new Frame();
+        return singleton;
+    }
+
+    protected JButton getBotaoDado () {
+        return lancarDadoButton;
+    }
+
     public void notify (ObservableLudo model) {
         Object[] data = (Object[]) model.get();
         Object[][] dataPosPioes = (Object[][]) data[0];
+        boolean podeDado = ((int) data[2]) == 0;
+        lancarDadoButton.setEnabled(podeDado);
         int[] placar = new int[4];
         for (int i = 0; i < 4; i++) {
             placar[i] = 0;
