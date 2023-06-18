@@ -2,7 +2,7 @@ package viewPack;
 
 import observer.*;
 import cores.*;
-import controllerPack.*;
+import controllerPack.FacadeC;
 
 import javax.swing.*;
 import java.awt.*;
@@ -19,10 +19,10 @@ class Frame extends JFrame implements ObserverLudo {
     private FacadeC controller = FacadeC.getController();
     private View view = View.create();
     
-    JButton novoJogoButton =     new JButton("Novo Jogo");
-    JButton carregarJogoButton = new JButton("Carregar Jogo");
-    JButton salvarJogoButton =   new JButton("Salvar Jogo");
-    JButton lancarDadoButton =   new JButton("Lançar Dado");
+    private JButton novoJogoButton =     new JButton("Novo Jogo");
+    private JButton carregarJogoButton = new JButton("Carregar Jogo");
+    private JButton salvarJogoButton =   new JButton("Salvar Jogo");
+    private JButton lancarDadoButton =   new JButton("Lançar Dado");
 
     {
         setDefaultCloseOperation(EXIT_ON_CLOSE);

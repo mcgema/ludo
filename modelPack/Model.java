@@ -1,23 +1,21 @@
 package modelPack;
 
 import cores.*;
-
-import java.io.FileWriter;
-import java.io.IOException;
-
-import java.util.*;
 import observer.*;
+
+import java.io.*;
+import java.util.*;
 
 // Model é a fachada das regras, e é a única classe pública da 1a iteração.
 class Model implements ObservableLudo {
-    public Tabuleiro tabuleiro = Tabuleiro.create();
-    public Cor corVez = Cor.vermelho;
+    private Tabuleiro tabuleiro = Tabuleiro.create();
+    private Cor corVez = Cor.vermelho;
     private int qtdSeisRolados = 0;
     private Piao ultimoPiaoMovido = tabuleiro.arrayPioes[0][0];
-    public int dadoAtual = 0;
+    private int dadoAtual = 0;
     private static Model singleton;
     private boolean bonusDeCaptura = false;
-    List<ObserverLudo> lob = new ArrayList<ObserverLudo>();
+    private List<ObserverLudo> lob = new ArrayList<ObserverLudo>();
 
     private Model() {
         // construtor bloqueado pelo singleton

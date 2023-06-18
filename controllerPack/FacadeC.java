@@ -48,4 +48,8 @@ public class FacadeC {
         //controller.debug();
     }
 
+    public void comecaJogo () {
+        controller.comecaJogo();
+    }
+
 }
