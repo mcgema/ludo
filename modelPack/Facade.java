@@ -1,4 +1,4 @@
-package model;
+package modelPack;
 
 public class Facade {
     
