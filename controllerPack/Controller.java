@@ -2,19 +2,14 @@ package controllerPack;
 
 import cores.*;
 import modelPack.FacadeM;
+import viewPack.FacadeV;
 
 import javax.swing.*;
-import observer.*;
-
-import java.util.List;
-import java.util.ArrayList;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.FileWriter;
+import observer.*;
+import java.util.*;
+import java.io.*;
 
 class Controller {
     private static Controller singleton;
@@ -105,6 +100,11 @@ class Controller {
                 model.set(listRead);
             }
         }
+    }
+
+    protected void comecaJogo () {
+        FacadeV.getView();
+        novoJogo();
     }
 
     protected void setBotaoDado (JButton botao) {
