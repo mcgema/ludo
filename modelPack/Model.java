@@ -113,7 +113,7 @@ class Model implements ObservableLudo {
                 if (piaoBarreiraQuebravel != null) {
                     System.out.println("Model.lancaDado("+dadoAtual+"): Cod2: barreira quebrada automaticamente");
 
-                    tentaMoverPiao(piaoBarreiraQuebravel.getCor(), piaoBarreiraQuebravel.getIndice(), 6);   // quebra barreira
+                    tentaMoverPiao(piaoBarreiraQuebravel.getCor(), piaoBarreiraQuebravel.getIndice());   // quebra barreira
 
                     //updateVez();  // essa linha faz com que uma barreira desfeita deixe jogar de novo mesmo assim por ser um 6.
 
@@ -127,7 +127,7 @@ class Model implements ObservableLudo {
 
                     Piao p = tabuleiro.getInicial(corVez).getPiao();
                     if (tabuleiro.getInicial(corVez).getQtdPioes() > 0) {
-                        tentaMoverPiao(p.getCor(), p.getIndice(), dadoAtual);
+                        tentaMoverPiao(p.getCor(), p.getIndice());
                         break processo;
                     }
                 }
@@ -159,10 +159,6 @@ class Model implements ObservableLudo {
         for (ObserverLudo o: lob) o.notify(this);
         return dadoAtual;
 
-    }
-    
-    protected int tentaMoverPiao (Cor corPiao, int idPiao, int casas) {
-        return tentaMoverPiao (corPiao, idPiao);
     }
 
     // tentamoverPiao(corPiao, idPiao, casas) tenta mover o "idPiao-ésimo" Pião de cor "corPiao" "casas" casas para a frente. retorna TRUE em caso de sucesso e FALSE em caso de falha.
