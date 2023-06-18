@@ -9,7 +9,6 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-
 class Frame extends JFrame implements ObserverLudo {
     private static Frame singleton;
 
@@ -179,7 +178,6 @@ class Frame extends JFrame implements ObserverLudo {
 
         String colocacaoString = "";
         for (int i = 0; i < 16; i++) if (podium[i] != null) colocacaoString = colocacaoString + (1+(i/4)) + "o lugar: " + podium[i].toString() + "\n";
-
 
         JOptionPane.showMessageDialog(this, "Jogo acabou!\n\nColocação dos jogadores:\n"+ colocacaoString,"Fim de Jogo", JOptionPane.INFORMATION_MESSAGE);
 

@@ -19,7 +19,6 @@ class Tabuleiro {
     protected Piao ultimoPiaoMovimentado;
     protected int qtdSeisRolados = 0;
 
-    
     protected Casa casasNormais[] = new Casa [52];
     // bloco de inicialização
     {
@@ -322,6 +321,7 @@ class Tabuleiro {
                 distanciasTotais[p.getCorNum()][1] += p.getPosicao();
             }
         }
+        
         // ordena pontuacao
         Arrays.sort(distanciasTotais, Comparator.comparingDouble(o -> o[1]));
         for (int j=3; j>-1; j--){

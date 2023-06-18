@@ -51,5 +51,4 @@ public class FacadeC {
     public void comecaJogo () {
         controller.comecaJogo();
     }
-
 }

@@ -107,10 +107,6 @@ class Controller {
         novoJogo();
     }
 
-    protected void setBotaoDado (JButton botao) {
-        //botaoDado = botao;
-    }
-
     /*
     public void debug () {
         System.out.println("View:");
@@ -119,5 +115,4 @@ class Controller {
         model.dump();
     }
     */
-
 }

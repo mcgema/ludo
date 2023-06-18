@@ -1,10 +1,8 @@
 import java.util.*;
-
 import controllerPack.FacadeC;
 
 // A Main serve para testar.
 public class Main {
-
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
         FacadeC controller = FacadeC.getController();

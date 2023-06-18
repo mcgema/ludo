@@ -1,6 +1,7 @@
 package modelPack;
 
 import cores.*;
+
 // Piao representa um Pião colorido.
 class Piao {
     private int posicao;
@@ -37,7 +38,6 @@ class Piao {
     }
     
     // setPosicao() seta a posição do Piao como novaPosicao
-    // não foi usado no código ainda
     protected void setPosicao (int novaPosicao) {
         this.tabuleiro.search(this).removePiao(this);
         posicao = novaPosicao;

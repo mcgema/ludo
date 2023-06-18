@@ -118,7 +118,6 @@ class Model implements ObservableLudo {
                     break processo;
                 }
             }
-            
 
             else {
                 if (dadoAtual == 5 && !tabuleiro.isEmptyInicial(corVez)) {

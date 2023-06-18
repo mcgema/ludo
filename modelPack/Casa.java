@@ -15,6 +15,7 @@ class Casa {
         tipo = t;
         indice = i;
     }
+
     protected Casa (int i, Tipo t, Cor c) {
         tipo = t;
         cor = c;
